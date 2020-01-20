@@ -19,15 +19,19 @@
 
 import sys
 import logging
+import inspect
 import traceback
 
 import click
 
 from cli import __version__
+from cli.info import BUILD_DATETIME, COMMIT, BRANCH, OS, VERSION
 from cli.validator import validator_cli
 from cli.utils.validations import UrlType
 from cli.utils.helper import safe_mk_dirs, write_json, download_file
-from cli.utils.constants import SKALE_VAL_CONFIG_FOLDER, SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE
+from cli.utils.constants import (SKALE_VAL_CONFIG_FOLDER, SKALE_VAL_CONFIG_FILE,
+                                 SKALE_VAL_ABI_FILE, LONG_LINE)
+
 
 logger = logging.getLogger(__name__)
 URL_TYPE = UrlType()
@@ -36,6 +40,20 @@ URL_TYPE = UrlType()
 @click.group()
 def cli():
     pass
+
+
+@cli.command('info', help="Show SKALE node CLI info")
+def info():
+    print(inspect.cleandoc(f'''
+            {LONG_LINE}
+            Version: {__version__}
+            Full version: {VERSION}
+            Build time: {BUILD_DATETIME}
+            Build OS: {OS}
+            Commit: {COMMIT}
+            Git branch: {BRANCH}
+            {LONG_LINE}
+        '''))
 
 
 @cli.command('init', help="Set Ethereum endpoint and contracts URL")

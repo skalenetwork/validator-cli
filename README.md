@@ -15,7 +15,7 @@
 - Download executable
 
 ```bash
-VERSION_NUM=0.0.0 && sudo -E bash -c "curl -L https://skale-cli.sfo2.cdn.digitaloceanspaces.com/skale-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/skale"
+VERSION_NUM=0.0.0 && sudo -E bash -c "curl -L https://validator-cli.sfo2.cdn.digitaloceanspaces.com/skale-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/skale"
 ```
 
 - Apply executable permissions to the binary:
