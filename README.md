@@ -5,10 +5,10 @@
 ## Table of Contents
 
 1. [Installation](#installation)
-2. [CLI usage](#cli-usage)
-    2.1 [Init](#init)
-    2.1 [Register](#register)
-3. [Development](#development)
+2. [CLI usage](#cli-usage)  
+    2.1 [Init](#init)  
+    2.1 [Register](#register)  
+3. [Development](#development)  
 
 ## Installation
 
@@ -70,3 +70,39 @@ Usage example:
 ```bash
 sk-val register -n test -d "test description" -c 20 --min-delegation 1000 -p 0x000000000...
 ```
+
+## Development
+
+### Setup repo
+
+#### Install development dependencies
+
+```bash
+pip install -e .[dev]
+```
+
+##### Add flake8 git hook
+
+In file `.git/hooks/pre-commit` add:
+
+```bash
+#!/bin/sh
+flake8 .
+```
+
+### Debugging
+
+Run commands in dev mode:
+
+```bash
+python main.py YOUR_COMMAND
+```
+
+### Setting up Travis
+
+Required environment variables:
+
+- `ACCESS_KEY_ID` - DO Spaces/AWS S3 API Key ID
+- `SECRET_ACCESS_KEY` - DO Spaces/AWS S3 Secret access key
+- `GITHUB_EMAIL` - Email of GitHub user
+- `GITHUB_OAUTH_TOKEN` - GitHub auth token
