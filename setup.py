@@ -72,6 +72,7 @@ setup(
         "skale-py==2.1dev12",
         "terminaltables==3.1.0",
         "yaspin==0.16.0",
+        "texttable==1.6.2",
     ],
     python_requires='>=3.6,<4',
     extras_require=extras_require,

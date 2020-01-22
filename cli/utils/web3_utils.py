@@ -19,15 +19,28 @@
 
 from yaspin import yaspin
 from skale import Skale
-from skale.wallets import Web3Wallet
+from skale.wallets import Web3Wallet, LedgerWallet
 from skale.utils.web3_utils import init_web3
 
+from cli.utils.constants import SKALE_VAL_ABI_FILE
 
-def init_skale(endpoint, abi_file, private_key):
+
+def init_skale(endpoint, wallet=None, spin=True):
+    """Init read-only instance of SKALE library"""
+    if not spin:
+        return Skale(endpoint, SKALE_VAL_ABI_FILE, wallet)
     with yaspin(text="Loading", color="yellow") as sp:
         sp.text = 'Connecting to SKALE Manager contracts'
-        web3 = init_web3(endpoint)
-        wallet = Web3Wallet(private_key, web3)
-        skale = Skale(endpoint, abi_file, wallet)
-        sp.write("✔ Connected to SKALE Manager contracts")
+        skale = Skale(endpoint, SKALE_VAL_ABI_FILE, wallet)
         return skale
+
+
+def init_skale_w_wallet(endpoint, wallet_type, pk_file=None, spin=True):
+    web3 = init_web3(endpoint)
+    if wallet_type == 'hardware':
+        wallet = LedgerWallet(web3)
+    else:
+        with open(pk_file, 'r') as f:
+            pk = str(f.read()).replace('\n', '')
+        wallet = Web3Wallet(pk, web3)
+    return init_skale(endpoint, wallet, spin)

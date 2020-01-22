@@ -28,13 +28,15 @@ from cli import __version__
 from cli.info import BUILD_DATETIME, COMMIT, BRANCH, OS, VERSION
 from cli.validator import validator_cli
 from cli.utils.validations import UrlType
+from cli.utils.texts import Texts
 from cli.utils.helper import safe_mk_dirs, write_json, download_file
 from cli.utils.constants import (SKALE_VAL_CONFIG_FOLDER, SKALE_VAL_CONFIG_FILE,
-                                 SKALE_VAL_ABI_FILE, LONG_LINE)
+                                 SKALE_VAL_ABI_FILE, LONG_LINE, WALLET_TYPES)
 
 
 logger = logging.getLogger(__name__)
 URL_TYPE = UrlType()
+TEXTS = Texts()
 
 
 @click.group()
@@ -42,7 +44,7 @@ def cli():
     pass
 
 
-@cli.command('info', help="Show SKALE node CLI info")
+@cli.command('info', help=TEXTS['info']['help'])
 def info():
     print(inspect.cleandoc(f'''
             {LONG_LINE}
@@ -56,23 +58,33 @@ def info():
         '''))
 
 
-@cli.command('init', help="Set Ethereum endpoint and contracts URL")
+@cli.command('init', help=TEXTS['init']['help'])
 @click.option(
     '--endpoint', '-e',
     type=URL_TYPE,
-    help='Endpoint of the Ethereum network',
-    prompt='Please enter endpoint of the Ethereum network'
+    help=TEXTS['init']['endpoint']['help'],
+    prompt=TEXTS['init']['endpoint']['prompt']
 )
 @click.option(
     '--contracts-url', '-c',
     type=URL_TYPE,
-    help='Download URL for the SKALE Manager ABIs and addresses',
-    prompt='Please enter URL for the SKALE Manager ABIs and addresses'
+    help=TEXTS['init']['contracts_url']['help'],
+    prompt=TEXTS['init']['contracts_url']['prompt']
 )
-def init(endpoint, contracts_url):
+@click.option(
+    '--wallet', '-w',
+    type=click.Choice(WALLET_TYPES),
+    help=TEXTS['init']['wallet']['help'],
+    prompt=TEXTS['init']['wallet']['prompt']
+)
+def init(endpoint, contracts_url, wallet):
     safe_mk_dirs(SKALE_VAL_CONFIG_FOLDER)
     download_file(contracts_url, SKALE_VAL_ABI_FILE)
-    write_json(SKALE_VAL_CONFIG_FILE, {'endpoint': endpoint})
+    config = {
+        'endpoint': endpoint,
+        'wallet': wallet
+    }
+    write_json(SKALE_VAL_CONFIG_FILE, config)
 
 
 def handle_exception(exc_type, exc_value, exc_traceback):

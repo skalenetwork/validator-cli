@@ -61,6 +61,11 @@ def read_config():
     return config
 
 
+def get_config():
+    if config_exists():
+        return read_config()
+
+
 def abort_if_false(ctx, param, value):
     if not value:
         ctx.abort()

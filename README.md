@@ -7,6 +7,7 @@
 1. [Installation](#installation)
 2. [CLI usage](#cli-usage)  
     2.1 [Init](#init)  
+    2.2 [Validator commands](#validator-commands)
     2.1 [Register](#register)  
 3. [Development](#development)  
 
@@ -38,19 +39,22 @@ Required arguments:
 
 - `--endpoint/-e` - RPC endpoint of the node in the network where SKALE manager is deployed (`ws` or `wss`)
 - `--contracts-url/-c` - - URL to SKALE Manager contracts ABI and addresses
+- `--wallet-type` - Type of the wallet that will be used for signing transactions (software or ledger)
 
 Usage example:
 
 ```bash
-sk-val init -e ws://geth.test.com:8546 -c https://test.com/manager.json
+sk-val init -e ws://geth.test.com:8546 -c https://test.com/manager.json --wallet-type software
 ```
 
-### Register
+### Validator commands
+
+#### Register
 
 Register as a new SKALE validator
 
 ```bash
-sk-val register
+sk-val validator register
 ```
 
 Required arguments:
@@ -59,16 +63,24 @@ Required arguments:
 - `--description/-d` - Validator description
 - `--commission-rate/-c` - Commission rate (percentage)
 - `--min-delegation` - Validator minimum delegation amount
-- `--private-key/-p` - Validator's private key
 
 Optional arguments:
 
+- `--private-key/-p` - Validator's private key (only for `software` wallet type)
 - `--yes` - Confirmation flag
 
 Usage example:
 
 ```bash
 sk-val register -n test -d "test description" -c 20 --min-delegation 1000 -p 0x000000000...
+```
+
+#### List
+
+List of available validators
+
+```bash
+sk-val validator ls
 ```
 
 ## Development

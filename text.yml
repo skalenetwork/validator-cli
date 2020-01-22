@@ -1,0 +1,20 @@
+info:
+  help: Show validator CLI info
+init:
+  help: Set Ethereum endpoint and contracts URL
+  endpoint:
+    help: Endpoint of the Ethereum network
+    prompt: Please enter endpoint of the Ethereum network
+  contracts_url:
+    help: Download URL for the SKALE Manager ABIs and addresses
+    prompt: Please enter URL for the SKALE Manager ABIs and addresses
+  wallet:
+    help: Type of the wallet that will be used for signing transactions
+    prompt: Please enter type of the wallet that will be used for signing transactions
+validator:
+  register:
+    help: test
+  ls:
+    help: List of available validators
+msg:
+  run_init: You should run < init > first
