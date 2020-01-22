@@ -10,6 +10,7 @@ block_cipher = None
 a = Analysis(['./cli/main.py'],
              pathex=['.'],
              binaries=[],
+             datas=[("./text.yml", "data")],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],

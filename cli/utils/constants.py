@@ -18,7 +18,27 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
+import sys
 from pathlib import Path
+
+
+def _get_env():
+    try:
+        sys._MEIPASS
+    except AttributeError:
+        return 'dev'
+    return 'prod'
+
+
+ENV = _get_env()
+CURRENT_FILE_LOCATION = os.path.dirname(os.path.realpath(__file__))
+
+if ENV == 'dev':
+    ROOT_DIR = os.path.join(CURRENT_FILE_LOCATION, os.pardir, os.pardir)
+else:
+    ROOT_DIR = os.path.join(sys._MEIPASS, 'data')
+
+TEXT_FILE = os.path.join(ROOT_DIR, 'text.yml')
 
 LONG_LINE = '-' * 50
 
@@ -26,3 +46,5 @@ HOME_DIR = str(Path.home())
 SKALE_VAL_CONFIG_FOLDER = os.path.join(HOME_DIR, '.skale-val-cli')
 SKALE_VAL_CONFIG_FILE = os.path.join(SKALE_VAL_CONFIG_FOLDER, 'config.json')
 SKALE_VAL_ABI_FILE = os.path.join(SKALE_VAL_CONFIG_FOLDER, 'abi.json')
+
+WALLET_TYPES = ['software', 'ledger']
