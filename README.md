@@ -121,6 +121,6 @@ Required environment variables:
 
 ### License
 
-![GitHub](https://img.shields.io/github/license/skalenetwork/validator.py.svg)
+![GitHub](https://img.shields.io/github/license/skalenetwork/validator.py)
 
 All contributions are made under the [GNU Affero General Public License v3](https://www.gnu.org/licenses/agpl-3.0.en.html). See [LICENSE](LICENSE).
