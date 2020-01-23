@@ -1,5 +1,6 @@
 # SKALE Validator CLI
 
+[![Build Status](https://travis-ci.com/skalenetwork/validator-cli.svg?token=tLesVRTSHvWZxoyqXdoA&branch=develop)](https://travis-ci.com/skalenetwork/validator-cli)
 [![Discord](https://img.shields.io/discord/534485763354787851.svg)](https://discord.gg/vvUtWJB)
 
 ## Table of Contents
@@ -15,7 +16,7 @@
 - Download executable
 
 ```bash
-VERSION_NUM=0.0.0 && sudo -E bash -c "curl -L https://validator-cli.sfo2.cdn.digitaloceanspaces.com/develop/sk-val-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/sk-val"
+VERSION_NUM=0.1.0-develop.3 && sudo -E bash -c "curl -L https://validator-cli.sfo2.digitaloceanspaces.com/develop/sk-val-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/sk-val"
 ```
 
 - Apply executable permissions to the binary:
