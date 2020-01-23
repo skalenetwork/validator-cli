@@ -8,7 +8,6 @@
 2. [CLI usage](#cli-usage)  
     2.1 [Init](#init)  
     2.2 [Validator commands](#validator-commands)
-    2.1 [Register](#register)  
 3. [Development](#development)  
 
 ## Installation
