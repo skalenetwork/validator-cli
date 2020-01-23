@@ -16,7 +16,7 @@
 - Download executable
 
 ```bash
-VERSION_NUM=0.0.0 && sudo -E bash -c "curl -L https://validator-cli.sfo2.cdn.digitaloceanspaces.com/skale-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/skale"
+VERSION_NUM=0.0.0 && sudo -E bash -c "curl -L https://validator-cli.sfo2.cdn.digitaloceanspaces.com/develop/sk-val-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/sk-val"
 ```
 
 - Apply executable permissions to the binary:
@@ -66,13 +66,13 @@ Required arguments:
 
 Optional arguments:
 
-- `--private-key/-p` - Validator's private key (only for `software` wallet type)
+- `--pk-file` - File with validator's private key (only for `software` wallet type)
 - `--yes` - Confirmation flag
 
 Usage example:
 
 ```bash
-sk-val register -n test -d "test description" -c 20 --min-delegation 1000 -p 0x000000000...
+sk-val register -n test -d "test description" -c 20 --min-delegation 1000 --pk-file ./pk.txt
 ```
 
 #### List
