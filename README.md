@@ -5,21 +5,21 @@
 
 ## Table of Contents
 
-1. [Installation](#installation)
-2. [CLI usage](#cli-usage)  
+1.  [Installation](#installation)
+2.  [CLI usage](#cli-usage)  
     2.1 [Init](#init)  
     2.2 [Validator commands](#validator-commands)
-3. [Development](#development)  
+3.  [Development](#development)  
 
 ## Installation
 
-- Download executable
+-   Download executable
 
 ```bash
 VERSION_NUM=0.1.0-develop.3 && sudo -E bash -c "curl -L https://validator-cli.sfo2.digitaloceanspaces.com/develop/sk-val-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/sk-val"
 ```
 
-- Apply executable permissions to the binary:
+-   Apply executable permissions to the binary:
 
 ```bash
 chmod +x /usr/local/bin/sk-val
@@ -37,9 +37,9 @@ sk-val init
 
 Required arguments:
 
-- `--endpoint/-e` - RPC endpoint of the node in the network where SKALE manager is deployed (`ws` or `wss`)
-- `--contracts-url/-c` - - URL to SKALE Manager contracts ABI and addresses
-- `--wallet-type` - Type of the wallet that will be used for signing transactions (software or ledger)
+-   `--endpoint/-e` - RPC endpoint of the node in the network where SKALE manager is deployed (`ws` or `wss`)
+-   `--contracts-url/-c` - - URL to SKALE Manager contracts ABI and addresses
+-   `--wallet-type` - Type of the wallet that will be used for signing transactions (software or ledger)
 
 Usage example:
 
@@ -59,15 +59,15 @@ sk-val validator register
 
 Required arguments:
 
-- `--name/-n` - Validator name
-- `--description/-d` - Validator description
-- `--commission-rate/-c` - Commission rate (percentage)
-- `--min-delegation` - Validator minimum delegation amount
+-   `--name/-n` - Validator name
+-   `--description/-d` - Validator description
+-   `--commission-rate/-c` - Commission rate (percentage)
+-   `--min-delegation` - Validator minimum delegation amount
 
 Optional arguments:
 
-- `--pk-file` - File with validator's private key (only for `software` wallet type)
-- `--yes` - Confirmation flag
+-   `--pk-file` - File with validator's private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
 
 Usage example:
 
@@ -114,7 +114,13 @@ python main.py YOUR_COMMAND
 
 Required environment variables:
 
-- `ACCESS_KEY_ID` - DO Spaces/AWS S3 API Key ID
-- `SECRET_ACCESS_KEY` - DO Spaces/AWS S3 Secret access key
-- `GITHUB_EMAIL` - Email of GitHub user
-- `GITHUB_OAUTH_TOKEN` - GitHub auth token
+-   `ACCESS_KEY_ID` - DO Spaces/AWS S3 API Key ID
+-   `SECRET_ACCESS_KEY` - DO Spaces/AWS S3 Secret access key
+-   `GITHUB_EMAIL` - Email of GitHub user
+-   `GITHUB_OAUTH_TOKEN` - GitHub auth token
+
+### License
+
+![GitHub](https://img.shields.io/github/license/skalenetwork/validator.py.svg)
+
+All contributions are made under the [GNU Affero General Public License v3](https://www.gnu.org/licenses/agpl-3.0.en.html). See [LICENSE](LICENSE).
