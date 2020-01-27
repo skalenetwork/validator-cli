@@ -62,7 +62,8 @@ def init_skale_w_wallet_from_config(pk_file=None):
         print('You should run < init > first')
         return
     if config['wallet'] == 'software' and not pk_file:
-        print('Please specify path to the private key file to use software vallet')
+        print('Please specify path to the private key file to use software vallet with `--pk-file`\
+            option')
         return
     return init_skale_w_wallet(config['endpoint'], config['wallet'], pk_file)
 

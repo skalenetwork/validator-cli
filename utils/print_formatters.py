@@ -70,9 +70,10 @@ def print_validators(validators):
     print(Formatter().table(headers, rows))
 
 
-def print_delegations(delegations):
+def print_delegations(delegations: list) -> None:
     headers = [
-        'Address',
+        'Id',
+        'Delegator Address',
         'Status',
         'Validator Id',
         'Amount (SKL)',
@@ -84,6 +85,7 @@ def print_delegations(delegations):
     for delegation in delegations:
         date = datetime.datetime.fromtimestamp(delegation['created'])
         rows.append([
+            delegation['id'],
             delegation['address'],
             delegation['status'],
             delegation['validator_id'],

@@ -34,7 +34,7 @@ ENV = _get_env()
 CURRENT_FILE_LOCATION = os.path.dirname(os.path.realpath(__file__))
 
 if ENV == 'dev':
-    ROOT_DIR = os.path.join(CURRENT_FILE_LOCATION, os.pardir, os.pardir)
+    ROOT_DIR = os.path.join(CURRENT_FILE_LOCATION, os.pardir)
 else:
     ROOT_DIR = os.path.join(sys._MEIPASS, 'data')
 

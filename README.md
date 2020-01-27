@@ -84,6 +84,35 @@ List of available validators
 sk-val validator ls
 ```
 
+#### Delegations
+
+List of delegations for address
+
+```bash
+sk-val validator delegations [ADDRESS]
+```
+
+Required params:
+
+1) Address - Ethereum address of the validator
+
+#### Accept pending delegation
+
+Accept pending delegation request by delegation ID
+
+```bash
+sk-val validator accept-delegation --pk-file ./pk.txt
+```
+
+Required arguments:
+
+- `--delegation-id` - ID of the delegation request to accept
+
+Optional arguments:
+
+- `--pk-file` - Path to file with private key (only for `software` wallet type)
+- `--yes` - Confirmation flag
+
 ### Holder commands
 
 #### Delegate
@@ -115,7 +144,7 @@ sk-val holder delegations [ADDRESS]
 
 Required params:
 
-1) Address - Token holder address
+1) Address - Ethereum address of the token holder
 
 ## Development
 

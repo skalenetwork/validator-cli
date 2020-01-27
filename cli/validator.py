@@ -19,7 +19,7 @@
 
 import click
 
-from core.validator import register, validators_list
+from core.validator import register, validators_list, delegations, accept_pending_delegation
 from utils.helper import abort_if_false
 from utils.validations import EthAddressType, PercentageType, UrlType
 from utils.constants import LONG_LINE
@@ -90,3 +90,30 @@ def _register(name, description, commission_rate, min_delegation, pk_file):
 @validator.command('ls', help=TEXTS['ls']['help'])
 def _ls():
     validators_list()
+
+
+@validator.command('delegations', help=TEXTS['delegations']['help'])
+@click.argument('address')
+def _delegations(address):
+    delegations(address)
+
+
+@validator.command('accept-delegation', help=TEXTS['accept_delegation']['help'])
+@click.option(
+    '--delegation-id',
+    type=int,
+    help=TEXTS['accept_delegation']['delegation_id']['help'],
+    prompt=TEXTS['accept_delegation']['delegation_id']['prompt']
+)
+@click.option(
+    '--pk-file',
+    help=TEXTS['accept_delegation']['pk_file']['help']
+)
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=TEXTS['accept_delegation']['confirm'])
+def _accept_delegation(delegation_id, pk_file):
+    accept_pending_delegation(
+        delegation_id=int(delegation_id),
+        pk_file=pk_file
+    )
