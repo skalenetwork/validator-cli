@@ -18,7 +18,7 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import yaml
-from cli.utils.constants import TEXT_FILE
+from utils.constants import TEXT_FILE
 
 
 class Texts():

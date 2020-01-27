@@ -20,9 +20,10 @@
 from yaspin import yaspin
 from skale import Skale
 from skale.wallets import Web3Wallet, LedgerWallet
-from skale.utils.web3_utils import init_web3
+from skale.utils.web3_utils import init_web3, wait_receipt, check_receipt
 
-from cli.utils.constants import SKALE_VAL_ABI_FILE
+from utils.constants import SKALE_VAL_ABI_FILE
+from utils.helper import get_config
 
 
 def init_skale(endpoint, wallet=None, spin=True):
@@ -36,6 +37,7 @@ def init_skale(endpoint, wallet=None, spin=True):
 
 
 def init_skale_w_wallet(endpoint, wallet_type, pk_file=None, spin=True):
+    """Init instance of SKALE library with wallet"""
     web3 = init_web3(endpoint)
     if wallet_type == 'hardware':
         wallet = LedgerWallet(web3)
@@ -44,3 +46,28 @@ def init_skale_w_wallet(endpoint, wallet_type, pk_file=None, spin=True):
             pk = str(f.read()).replace('\n', '')
         wallet = Web3Wallet(pk, web3)
     return init_skale(endpoint, wallet, spin)
+
+
+def init_skale_from_config():
+    config = get_config()
+    if not config:
+        print('You should run < init > first')
+        return
+    return init_skale(config['endpoint'])
+
+
+def init_skale_w_wallet_from_config(pk_file=None):
+    config = get_config()
+    if not config:
+        print('You should run < init > first')
+        return
+    if config['wallet'] == 'software' and not pk_file:
+        print('Please specify path to the private key file to use software vallet with `--pk-file`\
+            option')
+        return
+    return init_skale_w_wallet(config['endpoint'], config['wallet'], pk_file)
+
+
+def check_tx_result(tx_hash, web3):
+    receipt = wait_receipt(web3, tx_hash)
+    return check_receipt(receipt, raise_error=False)

@@ -22,7 +22,7 @@ import json
 import urllib
 import logging
 
-from cli.utils.constants import SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE
+from utils.constants import SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE
 
 logger = logging.getLogger(__name__)
 

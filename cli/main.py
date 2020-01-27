@@ -27,11 +27,12 @@ import click
 from cli import __version__
 from cli.info import BUILD_DATETIME, COMMIT, BRANCH, OS, VERSION
 from cli.validator import validator_cli
-from cli.utils.validations import UrlType
-from cli.utils.texts import Texts
-from cli.utils.helper import safe_mk_dirs, write_json, download_file
-from cli.utils.constants import (SKALE_VAL_CONFIG_FOLDER, SKALE_VAL_CONFIG_FILE,
-                                 SKALE_VAL_ABI_FILE, LONG_LINE, WALLET_TYPES)
+from cli.holder import holder_cli
+from utils.validations import UrlType
+from utils.texts import Texts
+from utils.helper import safe_mk_dirs, write_json, download_file
+from utils.constants import (SKALE_VAL_CONFIG_FOLDER, SKALE_VAL_CONFIG_FILE,
+                             SKALE_VAL_ABI_FILE, LONG_LINE, WALLET_TYPES)
 
 
 logger = logging.getLogger(__name__)
@@ -99,7 +100,7 @@ sys.excepthook = handle_exception
 
 if __name__ == '__main__':
     logger.info(f'cmd: {" ".join(str(x) for x in sys.argv)}, v.{__version__}')
-    cmd_collection = click.CommandCollection(sources=[cli, validator_cli])
+    cmd_collection = click.CommandCollection(sources=[cli, validator_cli, holder_cli])
     try:
         cmd_collection()
     except Exception as err:

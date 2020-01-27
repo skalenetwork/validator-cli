@@ -19,15 +19,11 @@
 
 import click
 
-from yaspin import yaspin
-from skale.utils.web3_utils import wait_receipt, check_receipt
-
-from cli.utils.helper import get_config, abort_if_false
-from cli.utils.validations import EthAddressType, PercentageType, UrlType
-from cli.utils.web3_utils import init_skale, init_skale_w_wallet
-from cli.utils.constants import LONG_LINE
-from cli.utils.print_formatters import print_validators
-from cli.utils.texts import Texts
+from core.validator import register, validators_list, delegations, accept_pending_delegation
+from utils.helper import abort_if_false
+from utils.validations import EthAddressType, PercentageType, UrlType
+from utils.constants import LONG_LINE
+from utils.texts import Texts
 
 
 ETH_ADDRESS_TYPE = EthAddressType()
@@ -81,38 +77,43 @@ def validator():
               expose_value=False,
               prompt=f'{LONG_LINE}\nAre you sure you want to register a new validator account? \
                   \nPlease, re-check all values above before confirming.')
-def register(name, description, commission_rate, min_delegation, pk_file):
-    config = get_config()
-    if not config:
-        print('You should run < init > first')
-        return
-    if config['wallet'] and not pk_file:
-        print('Please specify path to the private key file to use software vallet')
-        return
-    skale = init_skale_w_wallet(config['endpoint'], config['wallet'], pk_file)
-    with yaspin(text="Loading", color="yellow") as sp:
-        sp.text = 'Registering new validator'
-        tx_res = skale.delegation_service.register_validator(
-            name=name,
-            description=description,
-            fee_rate=int(commission_rate),
-            min_delegation_amount=int(min_delegation)
-        )
-        receipt = wait_receipt(skale.web3, tx_res.hash)
-        try:
-            check_receipt(receipt)
-        except ValueError:
-            sp.write(f'Transaction failed, check receipt: {tx_res.hash}')
-            return
-        sp.write("✔ New validator registered")
+def _register(name, description, commission_rate, min_delegation, pk_file):
+    register(
+        name=name,
+        description=description,
+        commission_rate=int(commission_rate),
+        min_delegation=int(min_delegation),
+        pk_file=pk_file
+    )
 
 
 @validator.command('ls', help=TEXTS['ls']['help'])
-def ls():
-    config = get_config()
-    if not config:
-        print(G_TEXTS['msg']['run_init'])
-        return
-    skale = init_skale(config['endpoint'])
-    validators = skale.validator_service.ls()
-    print_validators(validators)
+def _ls():
+    validators_list()
+
+
+@validator.command('delegations', help=TEXTS['delegations']['help'])
+@click.argument('address')
+def _delegations(address):
+    delegations(address)
+
+
+@validator.command('accept-delegation', help=TEXTS['accept_delegation']['help'])
+@click.option(
+    '--delegation-id',
+    type=int,
+    help=TEXTS['accept_delegation']['delegation_id']['help'],
+    prompt=TEXTS['accept_delegation']['delegation_id']['prompt']
+)
+@click.option(
+    '--pk-file',
+    help=TEXTS['accept_delegation']['pk_file']['help']
+)
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=TEXTS['accept_delegation']['confirm'])
+def _accept_delegation(delegation_id, pk_file):
+    accept_pending_delegation(
+        delegation_id=int(delegation_id),
+        pk_file=pk_file
+    )
