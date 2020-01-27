@@ -8,7 +8,8 @@
 1. [Installation](#installation)
 2. [CLI usage](#cli-usage)  
     2.1 [Init](#init)  
-    2.2 [Validator commands](#validator-commands)
+    2.2 [Validator commands](#validator-commands)  
+    2.3 [Holder commands](#holder-commands)
 3. [Development](#development)  
 
 ## Installation
@@ -66,7 +67,7 @@ Required arguments:
 
 Optional arguments:
 
-- `--pk-file` - File with validator's private key (only for `software` wallet type)
+- `--pk-file` - Path to file with private key (only for `software` wallet type)
 - `--yes` - Confirmation flag
 
 Usage example:
@@ -82,6 +83,39 @@ List of available validators
 ```bash
 sk-val validator ls
 ```
+
+### Holder commands
+
+#### Delegate
+
+Delegate tokens to validator
+
+```bash
+sk-val holder delegate
+```
+
+Required arguments:
+
+- `--validator-id` - ID of the validator to delegate
+- `--amount` - Amount of SKALE tokens to delegate
+- `--delegation-period` - Delegation period (in months)
+- `--info` - Delegation request info
+
+Optional arguments:
+
+- `--pk-file` - Path to file with private key (only for `software` wallet type)
+
+#### Delegations
+
+List of delegations for address
+
+```bash
+sk-val holder delegations [ADDRESS]
+```
+
+Required params:
+
+1) Address - Token holder address
 
 ## Development
 
