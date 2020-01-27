@@ -2,7 +2,7 @@ language: python
 os: linux
 dist: bionic
 python: '3.6'
-cache: pip
+# cache: pip # todo: tmp
 install:
   - pip install -e .
   - pip install -e .[dev]
