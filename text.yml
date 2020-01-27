@@ -16,5 +16,8 @@ validator:
     help: test
   ls:
     help: List of available validators
+holder:
+  delegate:
+    help: AAA
 msg:
   run_init: You should run < init > first

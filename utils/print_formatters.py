@@ -68,3 +68,28 @@ def print_validators(validators):
             validator['minimum_delegation_amount']
         ])
     print(Formatter().table(headers, rows))
+
+
+def print_delegations(delegations):
+    headers = [
+        'Address',
+        'Status',
+        'Validator Id',
+        'Amount (SKL)',
+        'Delegation period (months)',
+        'Created At',
+        'Info'
+    ]
+    rows = []
+    for delegation in delegations:
+        date = datetime.datetime.fromtimestamp(delegation['created'])
+        rows.append([
+            delegation['address'],
+            delegation['status'],
+            delegation['validator_id'],
+            delegation['amount'],
+            delegation['delegation_period'],
+            date,
+            delegation['info']
+        ])
+    print(Formatter().table(headers, rows))
