@@ -28,6 +28,26 @@ validator:
       prompt: Please enter ID of the delegation request to accept
     pk_file:
       help: Path to file with private key (only for `software` wallet type)
+  link_address:
+    help: Link node address to your validator account
+    node_address:
+      help: Address of the node to link
+      prompt: Please enter address of the node to link
+    pk_file:
+      help: Path to file with private key (only for `software` wallet type)
+    confirm: |-
+      Are you sure you want to link this address to your validator account?
+  unlink_address:
+    help: Unlink node address from your validator account
+    node_address:
+      help: Address of the node to unlink
+      prompt: Please enter address of the node to unlink
+    pk_file:
+      help: Path to file with private key (only for `software` wallet type)
+    confirm: |-
+      Are you sure you want to unlink this address from your validator account?
+  linked_addresses:
+    help: List of the linked addresses for validator address
 holder:
   delegate:
     help: Delegate tokens to validator

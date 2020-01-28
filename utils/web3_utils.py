@@ -22,7 +22,7 @@ from skale import Skale
 from skale.wallets import Web3Wallet, LedgerWallet
 from skale.utils.web3_utils import init_web3, wait_receipt, check_receipt
 
-from utils.constants import SKALE_VAL_ABI_FILE
+from utils.constants import SKALE_VAL_ABI_FILE, SPIN_COLOR
 from utils.helper import get_config
 
 
@@ -30,7 +30,7 @@ def init_skale(endpoint, wallet=None, spin=True):
     """Init read-only instance of SKALE library"""
     if not spin:
         return Skale(endpoint, SKALE_VAL_ABI_FILE, wallet)
-    with yaspin(text="Loading", color="yellow") as sp:
+    with yaspin(text="Loading", color=SPIN_COLOR) as sp:
         sp.text = 'Connecting to SKALE Manager contracts'
         skale = Skale(endpoint, SKALE_VAL_ABI_FILE, wallet)
         return skale

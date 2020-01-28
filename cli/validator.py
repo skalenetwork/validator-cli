@@ -19,7 +19,8 @@
 
 import click
 
-from core.validator import register, validators_list, delegations, accept_pending_delegation
+from core.validator import (register, validators_list, delegations, accept_pending_delegation,
+                            link_node_address, unlink_node_address, linked_addresses)
 from utils.helper import abort_if_false
 from utils.validations import EthAddressType, PercentageType, UrlType
 from utils.constants import LONG_LINE
@@ -117,3 +118,45 @@ def _accept_delegation(delegation_id, pk_file):
         delegation_id=int(delegation_id),
         pk_file=pk_file
     )
+
+
+@validator.command('link-address', help=TEXTS['link_address']['help'])
+@click.option(
+    '--node-address',
+    type=str,
+    help=TEXTS['link_address']['node_address']['help'],
+    prompt=TEXTS['link_address']['node_address']['prompt']
+)
+@click.option(
+    '--pk-file',
+    help=TEXTS['link_address']['pk_file']['help']
+)
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=TEXTS['link_address']['confirm'])
+def _link_address(node_address, pk_file):
+    link_node_address(node_address, pk_file)
+
+
+@validator.command('unlink-address', help=TEXTS['unlink_address']['help'])
+@click.option(
+    '--node-address',
+    type=str,
+    help=TEXTS['unlink_address']['node_address']['help'],
+    prompt=TEXTS['unlink_address']['node_address']['prompt']
+)
+@click.option(
+    '--pk-file',
+    help=TEXTS['unlink_address']['pk_file']['help']
+)
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=TEXTS['unlink_address']['confirm'])
+def _unlink_address(node_address, pk_file):
+    unlink_node_address(node_address, pk_file)
+
+
+@validator.command('linked-addresses', help=TEXTS['linked_addresses']['help'])
+@click.argument('address')
+def _linked_addresses(address):
+    linked_addresses(address)

@@ -71,7 +71,7 @@ def _delegate(validator_id, amount, delegation_period, info, pk_file):
     delegate(
         validator_id=validator_id,
         amount=amount,
-        delegation_period=delegation_period,
+        delegation_period=int(delegation_period),
         info=info,
         pk_file=pk_file
     )

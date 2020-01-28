@@ -22,6 +22,7 @@ from skale.utils.web3_utils import wait_receipt, check_receipt
 
 from utils.web3_utils import init_skale_from_config, init_skale_w_wallet_from_config
 from utils.print_formatters import print_delegations
+from utils.constants import SPIN_COLOR
 
 
 def delegations(address):
@@ -37,7 +38,7 @@ def delegate(validator_id, amount, delegation_period, info, pk_file):
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
-    with yaspin(text='Sending delegation request', color="yellow") as sp:
+    with yaspin(text='Sending delegation request', color=SPIN_COLOR) as sp:
         tx_res = skale.delegation_service.delegate(
             validator_id=validator_id,
             amount=amount,

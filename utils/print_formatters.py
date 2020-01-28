@@ -95,3 +95,17 @@ def print_delegations(delegations: list) -> None:
             delegation['info']
         ])
     print(Formatter().table(headers, rows))
+
+
+def print_linked_addresses(addresses):
+    headers = [
+        'Address',
+        'Balance (ETH)'
+    ]
+    rows = []
+    for address_info in addresses:
+        rows.append([
+            address_info['address'],
+            address_info['balance'],
+        ])
+    print(Formatter().table(headers, rows))
