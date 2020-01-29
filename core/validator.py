@@ -22,14 +22,15 @@ from yaspin import yaspin
 
 from utils.web3_utils import (init_skale_from_config, init_skale_w_wallet_from_config,
                               check_tx_result)
-from utils.print_formatters import print_validators, print_delegations
+from utils.print_formatters import print_validators, print_delegations, print_linked_addresses
+from utils.constants import SPIN_COLOR
 
 
 def register(name: str, description: str, commission_rate: int, min_delegation: int, pk_file: str):
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
-    with yaspin(text='Registering new validator', color="yellow") as sp:
+    with yaspin(text='Registering new validator', color=SPIN_COLOR) as sp:
         tx_res = skale.delegation_service.register_validator(
             name=name,
             description=description,
@@ -61,7 +62,7 @@ def accept_pending_delegation(delegation_id, pk_file: str) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
-    with yaspin(text='Accepting delegation request', color="yellow") as sp:
+    with yaspin(text='Accepting delegation request', color=SPIN_COLOR) as sp:
         tx_res = skale.delegation_service.accept_pending_delegation(
             delegation_id=delegation_id
         )
@@ -69,3 +70,51 @@ def accept_pending_delegation(delegation_id, pk_file: str) -> None:
             sp.write(f'Transaction failed: {tx_res.hash}')
             return
         sp.write(f'✔ Delegation request with ID {delegation_id} accepted')
+
+
+def link_node_address(node_address: str, pk_file: str) -> None:
+    skale = init_skale_w_wallet_from_config(pk_file)
+    if not skale:
+        return
+    with yaspin(text='Linking node address', color=SPIN_COLOR) as sp:
+        tx_res = skale.delegation_service.link_node_address(
+            node_address=node_address
+        )
+        if not check_tx_result(tx_res.hash, skale.web3):
+            sp.write(f'Transaction failed: {tx_res.hash}')
+            return
+        sp.write(f'✔ Node address {node_address} linked to your validator address')
+
+
+def unlink_node_address(node_address: str, pk_file: str) -> None:
+    skale = init_skale_w_wallet_from_config(pk_file)
+    if not skale:
+        return
+    with yaspin(text='Unlinking node address', color=SPIN_COLOR) as sp:
+        tx_res = skale.delegation_service.unlink_node_address(
+            node_address=node_address
+        )
+        if not check_tx_result(tx_res.hash, skale.web3):
+            sp.write(f'Transaction failed: {tx_res.hash}')
+            return
+        sp.write(f'✔ Node address {node_address} unlinked from your validator address')
+
+
+def linked_addresses(address):
+    skale = init_skale_from_config()
+    if not skale:
+        return
+    addresses = skale.validator_service.get_linked_addresses_by_validator_address(address)
+    addresses_w_balances = get_balances(skale.web3, addresses)
+    print(f'Linked addresses for {address}:\n')
+    print_linked_addresses(addresses_w_balances)
+
+
+def get_balances(web3, addresses):
+    return [
+        {
+            'address': address,
+            'balance': str(web3.fromWei(web3.eth.getBalance(address), 'ether'))
+        }
+        for address in addresses
+    ]
