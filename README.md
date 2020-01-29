@@ -113,6 +113,52 @@ Optional arguments:
 - `--pk-file` - Path to file with private key (only for `software` wallet type)
 - `--yes` - Confirmation flag
 
+#### Validator linked addresses
+
+List of the linked addresses for validator address
+
+```bash
+sk-val validator linked-addresses [ADDRESS]
+```
+
+Required params:
+
+1) Address - Ethereum address of the validator
+
+#### Link address
+
+Link node address to the validator account
+
+```bash
+sk-val validator link-address --pk-file ./pk.txt
+```
+
+Required arguments:
+
+- `--node-address` - Address of the node to link
+
+Optional arguments:
+
+- `--pk-file` - Path to file with private key (only for `software` wallet type)
+- `--yes` - Confirmation flag
+
+#### Unlink address
+
+Unlink node address from the validator account
+
+```bash
+sk-val validator unlink-address --pk-file ./pk.txt
+```
+
+Required arguments:
+
+- `--node-address` - Address of the node to link
+
+Optional arguments:
+
+- `--pk-file` - Path to file with private key (only for `software` wallet type)
+- `--yes` - Confirmation flag
+
 ### Holder commands
 
 #### Delegate

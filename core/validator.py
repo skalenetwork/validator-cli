@@ -105,16 +105,17 @@ def linked_addresses(address):
     if not skale:
         return
     addresses = skale.validator_service.get_linked_addresses_by_validator_address(address)
-    addresses_w_balances = get_balances(skale.web3, addresses)
+    addresses_info = get_addresses_info(skale, addresses)
     print(f'Linked addresses for {address}:\n')
-    print_linked_addresses(addresses_w_balances)
+    print_linked_addresses(addresses_info)
 
 
-def get_balances(web3, addresses):
+def get_addresses_info(skale, addresses):
     return [
         {
             'address': address,
-            'balance': str(web3.fromWei(web3.eth.getBalance(address), 'ether'))
+            'balance': str(skale.web3.fromWei(skale.web3.eth.getBalance(address), 'ether')),
+            'nodes': len(skale.nodes_data.get_active_node_ids_by_address(address))
         }
         for address in addresses
     ]
