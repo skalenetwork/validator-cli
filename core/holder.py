@@ -50,3 +50,18 @@ def delegate(validator_id, amount, delegation_period, info, pk_file):
             sp.write(f'Transaction failed, check receipt: {tx_res.hash}')
             return
         sp.write("✔ Delegation request sent")
+
+
+def cancel_pending_delegation(delegation_id: int, pk_file: str) -> None:
+    skale = init_skale_w_wallet_from_config(pk_file)
+    if not skale:
+        return
+    with yaspin(text='Canceling delegation request', color=SPIN_COLOR) as sp:
+        tx_res = skale.delegation_service.cancel_pending_delegation(
+            delegation_id=delegation_id
+        )
+        receipt = wait_receipt(skale.web3, tx_res.hash)
+        if not check_receipt(receipt, raise_error=False):
+            sp.write(f'Transaction failed, check receipt: {tx_res.hash}')
+            return
+        sp.write("✔ Delegation request canceled")
