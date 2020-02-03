@@ -114,6 +114,7 @@ def get_addresses_info(skale, addresses):
     return [
         {
             'address': address,
+            'status': 'Primary' if skale.validator_service.is_main_address(address) else 'Linked',
             'balance': str(skale.web3.fromWei(skale.web3.eth.getBalance(address), 'ether')),
             'nodes': len(skale.nodes_data.get_active_node_ids_by_address(address))
         }
