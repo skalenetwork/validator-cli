@@ -130,12 +130,12 @@ Required params:
 Link node address to the validator account
 
 ```bash
-sk-val validator link-address --pk-file ./pk.txt
+sk-val validator link-address [ADDRESS] --pk-file ./pk.txt
 ```
 
-Required arguments:
+Required params:
 
-- `--node-address` - Address of the node to link
+1) Address - Ethereum address of the validator
 
 Optional arguments:
 
@@ -147,17 +147,40 @@ Optional arguments:
 Unlink node address from the validator account
 
 ```bash
-sk-val validator unlink-address --pk-file ./pk.txt
+sk-val validator unlink-address [ADDRESS] --pk-file ./pk.txt
 ```
 
-Required arguments:
+Required params:
 
-- `--node-address` - Address of the node to link
+1) Address - Ethereum address of the validator
 
 Optional arguments:
 
 - `--pk-file` - Path to file with private key (only for `software` wallet type)
 - `--yes` - Confirmation flag
+
+#### Validator info
+
+Info about the validator
+
+```bash
+sk-val validator info [VALIDATOR_ID]
+```
+
+Required params:
+
+1) Address - Ethereum address of the validator
+
+Output info:
+
+1) Validator ID
+2) Name
+3) Address
+4) Fee rate (%)
+5) Minimum delegation amount (SKL)
+6) Delegated tokens
+7) Earned bounty
+8) MSR
 
 ### Holder commands
 
