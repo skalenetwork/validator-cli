@@ -19,6 +19,7 @@
 
 
 from yaspin import yaspin
+from terminaltables import SingleTable
 
 from utils.web3_utils import (init_skale_from_config, init_skale_w_wallet_from_config,
                               check_tx_result)
@@ -120,3 +121,25 @@ def get_addresses_info(skale, addresses):
         }
         for address in addresses
     ]
+
+
+def info(validator_id):
+    skale = init_skale_from_config()
+    if not skale:
+        return
+    validator_info = skale.validator_service.get(validator_id)
+    delegated_amount = skale.delegation_service.get_delegated_amount(validator_id)
+    earned_bounty_amount = skale.delegation_service.get_earned_bounty_amount(
+        validator_info['validator_address'])
+    msr = skale.constants.msr()
+    table = SingleTable([
+        ['Validator ID', validator_id],
+        ['Name', validator_info['name']],
+        ['Address', validator_info['validator_address']],
+        ['Fee rate (%)', validator_info['fee_rate']],
+        ['Minimum delegation amount (SKL)', validator_info['minimum_delegation_amount']],
+        ['Delegated tokens', delegated_amount],
+        ['Earned bounty', earned_bounty_amount],
+        ['MSR', msr]
+    ])
+    print(table.table)
