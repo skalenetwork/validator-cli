@@ -215,6 +215,22 @@ Required params:
 
 1) Address - Ethereum address of the token holder
 
+#### Cancel pending delegation
+
+Cancel pending delegation request
+
+```bash
+sk-val holder cancel-delegation [DELEGATION_ID]
+```
+
+Required params:
+
+1) Delegation ID - ID of the delegation to cancel
+
+Optional arguments:
+
+- `--pk-file` - Path to file with private key (only for `software` wallet type)
+
 ## Development
 
 ### Setup repo
