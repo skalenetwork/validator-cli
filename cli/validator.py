@@ -18,6 +18,7 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import click
+from web3 import Web3
 
 from core.validator import (register, validators_list, delegations, accept_pending_delegation,
                             link_node_address, unlink_node_address, linked_addresses, info)
@@ -130,6 +131,7 @@ def _accept_delegation(delegation_id, pk_file):
               expose_value=False,
               prompt=TEXTS['link_address']['confirm'])
 def _link_address(node_address, pk_file):
+    node_address = Web3.toChecksumAddress(node_address)
     link_node_address(node_address, pk_file)
 
 
