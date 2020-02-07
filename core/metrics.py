@@ -33,9 +33,21 @@ def find_block_for_tx_stamp(skale, tx_stamp, lo=0, hi=None):
     return lo - 1
 
 
-def get_bounty_from_events(node_id, start_date=None, end_date=None, is_limited=True):
+def yy_mm_dd_to_date(date_str):
+    format_str = '%y-%m-%d'
+    return datetime.strptime(date_str, format_str)
+
+
+def get_bounty_from_events(node_id, start_date=None, end_date=None, is_limited=False):
     skale = init_skale_from_config()
     bounties = []
+    if start_date is None:
+        start_date = datetime.utcfromtimestamp(get_start_date(node_id))
+    else:
+        start_date = yy_mm_dd_to_date(start_date)
+    if end_date is not None:
+        end_date = yy_mm_dd_to_date(end_date)
+
     start_block_number = find_block_for_tx_stamp(skale, start_date)
     cur_block_number = skale.web3.eth.blockNumber
     last_block_number = find_block_for_tx_stamp(skale, end_date) if end_date is not None \
@@ -70,11 +82,9 @@ def get_bounty_from_events(node_id, start_date=None, end_date=None, is_limited=T
         start_block_number = start_block_number + BLOCK_STEP
         if end_chunk_block_number >= last_block_number:
             break
-    return bounties
+    return {'bounties': bounties}
 
 
-def get_all_bounties(node_id):
-    node_start_date = datetime.utcfromtimestamp(get_start_date(node_id))
-    bounties_list = get_bounty_from_events(node_id, node_start_date, is_limited=False)
-    return {'bounties': bounties_list}
-
+if __name__ == '__main__':
+    date = yy_mm_dd_to_date('20-12-11')
+    print(date)

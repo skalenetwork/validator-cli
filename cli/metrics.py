@@ -18,7 +18,7 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import click
-from core.metrics import get_all_bounties, get_start_date
+from core.metrics import get_bounty_from_events
 from utils.print_formatters import print_metrics
 
 
@@ -35,11 +35,12 @@ def metrics():
 @metrics.command(help="List of bounties and metrics for node with given id")
 @click.option('--id', '-id')
 @click.option('--since', '-s')
-@click.option('--till', '-s')
+@click.option('--till', '-t')
 def node(id, since, till):
     if id is None:
         print('Node ID expected: "metrics node -id N"')
         return
-    bounties = get_all_bounties(int(id))
+    print('Please wait - collecting metrics from blockchain...')
+    bounties = get_bounty_from_events(int(id), since, till)
     print_metrics(bounties)
 
