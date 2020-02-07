@@ -25,8 +25,9 @@ import traceback
 import click
 
 from cli import __version__
-from cli.info import BUILD_DATETIME, COMMIT, BRANCH, OS, VERSION
+# from cli.info import BUILD_DATETIME, COMMIT, BRANCH, OS, VERSION
 from cli.validator import validator_cli
+from cli.metrics import metrics_cli
 from cli.holder import holder_cli
 from utils.validations import UrlType
 from utils.texts import Texts
@@ -100,7 +101,7 @@ sys.excepthook = handle_exception
 
 if __name__ == '__main__':
     logger.info(f'cmd: {" ".join(str(x) for x in sys.argv)}, v.{__version__}')
-    cmd_collection = click.CommandCollection(sources=[cli, validator_cli, holder_cli])
+    cmd_collection = click.CommandCollection(sources=[cli, validator_cli, holder_cli, metrics_cli])
     try:
         cmd_collection()
     except Exception as err:
