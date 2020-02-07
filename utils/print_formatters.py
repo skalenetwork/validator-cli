@@ -109,3 +109,14 @@ def print_linked_addresses(addresses):
             address_info['balance'],
         ])
     print(Formatter().table(headers, rows))
+
+
+def print_metrics(metrics):
+    headers = [
+        'Date',
+        'Bounty',
+        'Downtime',
+        'Latency'
+    ]
+    rows = metrics['bounties']
+    print(Formatter().table(headers, rows))
