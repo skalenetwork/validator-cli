@@ -18,8 +18,8 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import click
-from core.metrics import get_bounty_from_events, get_nodes_for_validators
-from utils.print_formatters import print_metrics, print_validator_metrics
+from core.metrics import get_bounty_from_events, get_nodes_for_validator
+from utils.print_formatters import print_node_metrics, print_validator_metrics
 
 
 @click.group()
@@ -44,7 +44,7 @@ def node(id, since, till):
     print('Please wait - collecting metrics from blockchain...')
     bounties = get_bounty_from_events(nodes, since, till)
     # print(bounties)
-    print_metrics(bounties)
+    print_node_metrics(bounties)
 
 
 @metrics.command(help="List of bounties and metrics for validator with given id")
@@ -55,7 +55,7 @@ def validator(id, since, till):
     if id is None:
         print('Validator ID expected: "metrics node -id N"')
         return
-    nodes = get_nodes_for_validators(id)
+    nodes = get_nodes_for_validator(id)
     print('Please wait - collecting metrics from blockchain...')
     nodes = [int(node) for node in nodes]
     bounties = get_bounty_from_events(nodes, since, till, is_validator=True)
