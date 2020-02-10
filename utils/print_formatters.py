@@ -128,3 +128,23 @@ def print_metrics(metrics):
     table.set_deco(table.HEADER)
     table.set_chars(['-', '|', '+', '-'])
     print(table.draw())
+
+
+def print_validator_metrics(metrics):
+    headers = [
+        'Date',
+        'Node ID',
+        'Bounty',
+        'Downtime',
+        'Latency'
+    ]
+    rows = metrics['bounties']
+
+    table = texttable.Texttable(max_width=get_tty_width())
+    table.set_cols_align(["l", "r", "r", "r", "r"])
+    table.set_cols_dtype(["t", "i", "i", "i", "f"])
+    table.set_precision(1)
+    table.add_rows([headers] + rows)
+    table.set_deco(table.HEADER)
+    table.set_chars(['-', '|', '+', '-'])
+    print(table.draw())
