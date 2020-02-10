@@ -7,6 +7,10 @@ BLOCK_STEP = 1000
 FILTER_PERIOD = 12
 
 
+def get_nodes_for_validators(val_id):
+    return ['12', '13', '15']  # TODO: Return test array. Implement later
+
+
 def get_start_date(node_id):
     skale = init_skale_from_config()
     return skale.nodes_data.get(node_id)['start_date']
@@ -38,11 +42,12 @@ def yy_mm_dd_to_date(date_str):
     return datetime.strptime(date_str, format_str)
 
 
-def get_bounty_from_events(node_id, start_date=None, end_date=None, is_limited=False):
+def get_bounty_from_events(nodes, start_date=None, end_date=None,
+                           is_validator=False, is_limited=False):
     skale = init_skale_from_config()
     bounties = []
     if start_date is None:
-        start_date = datetime.utcfromtimestamp(get_start_date(node_id))
+        start_date = datetime.utcfromtimestamp(get_start_date(nodes[0]))
     else:
         start_date = yy_mm_dd_to_date(start_date)
     if end_date is not None:
@@ -60,23 +65,33 @@ def get_bounty_from_events(node_id, start_date=None, end_date=None, is_limited=F
         event_filter = SkaleFilter(
             skale.manager.contract.events.BountyGot,
             from_block=hex(start_block_number),
-            argument_filters={'nodeIndex': node_id},
+            argument_filters={'nodeIndex': nodes},
             to_block=hex(end_chunk_block_number)
         )
         logs = event_filter.get_events()
 
         for log in logs:
             args = log['args']
-
+            # print(log)
             tx_block_number = log['blockNumber']
             block_data = skale.web3.eth.getBlock(tx_block_number)
             block_timestamp = str(datetime.utcfromtimestamp(block_data['timestamp']))
-            bounties.append([
-                block_timestamp,
-                args['bounty'],
-                args['averageDowntime'],
-                round(args['averageLatency'] / 1000, 1)
-            ])
+            if is_validator:
+                bounties.append([
+                    block_timestamp,
+                    args['nodeIndex'],
+                    args['bounty'],
+                    args['averageDowntime'],
+                    round(args['averageLatency'] / 1000, 1)
+                ])
+            else:
+                bounties.append([
+                    block_timestamp,
+                    args['bounty'],
+                    args['averageDowntime'],
+                    round(args['averageLatency'] / 1000, 1)
+                ])
+
             if is_limited and len(bounties) >= FILTER_PERIOD:
                 break
         start_block_number = start_block_number + BLOCK_STEP
