@@ -40,7 +40,7 @@ Required arguments:
 
 -   `--endpoint/-e` - RPC endpoint of the node in the network where SKALE manager is deployed (`ws` or `wss`)
 -   `--contracts-url/-c` - - URL to SKALE Manager contracts ABI and addresses
--   `--wallet-type` - Type of the wallet that will be used for signing transactions (software or ledger)
+-   `-w/--wallet` - Type of the wallet that will be used for signing transactions (software or ledger)
 
 Usage example:
 
