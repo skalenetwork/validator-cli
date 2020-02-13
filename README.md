@@ -40,7 +40,7 @@ Required arguments:
 
 -   `--endpoint/-e` - RPC endpoint of the node in the network where SKALE manager is deployed (`ws` or `wss`)
 -   `--contracts-url/-c` - - URL to SKALE Manager contracts ABI and addresses
--   `--wallet-type` - Type of the wallet that will be used for signing transactions (software or ledger)
+-   `-w/--wallet` - Type of the wallet that will be used for signing transactions (software or ledger)
 
 Usage example:
 
@@ -113,6 +113,75 @@ Optional arguments:
 - `--pk-file` - Path to file with private key (only for `software` wallet type)
 - `--yes` - Confirmation flag
 
+#### Validator linked addresses
+
+List of the linked addresses for validator address
+
+```bash
+sk-val validator linked-addresses [ADDRESS]
+```
+
+Required params:
+
+1) Address - Ethereum address of the validator
+
+#### Link address
+
+Link node address to the validator account
+
+```bash
+sk-val validator link-address [ADDRESS] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) Address - Ethereum address of the validator
+
+Optional arguments:
+
+- `--pk-file` - Path to file with private key (only for `software` wallet type)
+- `--yes` - Confirmation flag
+
+#### Unlink address
+
+Unlink node address from the validator account
+
+```bash
+sk-val validator unlink-address [ADDRESS] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) Address - Ethereum address of the validator
+
+Optional arguments:
+
+- `--pk-file` - Path to file with private key (only for `software` wallet type)
+- `--yes` - Confirmation flag
+
+#### Validator info
+
+Info about the validator
+
+```bash
+sk-val validator info [VALIDATOR_ID]
+```
+
+Required params:
+
+1) Address - Ethereum address of the validator
+
+Output info:
+
+1) Validator ID
+2) Name
+3) Address
+4) Fee rate (%)
+5) Minimum delegation amount (SKL)
+6) Delegated tokens
+7) Earned bounty
+8) MSR
+
 ### Holder commands
 
 #### Delegate
@@ -145,6 +214,22 @@ sk-val holder delegations [ADDRESS]
 Required params:
 
 1) Address - Ethereum address of the token holder
+
+#### Cancel pending delegation
+
+Cancel pending delegation request
+
+```bash
+sk-val holder cancel-delegation [DELEGATION_ID]
+```
+
+Required params:
+
+1) Delegation ID - ID of the delegation to cancel
+
+Optional arguments:
+
+- `--pk-file` - Path to file with private key (only for `software` wallet type)
 
 ## Development
 

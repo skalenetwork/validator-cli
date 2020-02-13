@@ -16,6 +16,8 @@ validator:
     help: test
   ls:
     help: List of available validators
+  info:
+    help: Info about the validator
   delegations:
     help: List of delegations for validator
   accept_delegation:

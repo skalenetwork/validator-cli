@@ -19,6 +19,7 @@
 
 
 from yaspin import yaspin
+from terminaltables import SingleTable
 
 from utils.web3_utils import (init_skale_from_config, init_skale_w_wallet_from_config,
                               check_tx_result)
@@ -105,16 +106,40 @@ def linked_addresses(address):
     if not skale:
         return
     addresses = skale.validator_service.get_linked_addresses_by_validator_address(address)
-    addresses_w_balances = get_balances(skale.web3, addresses)
+    addresses_info = get_addresses_info(skale, addresses)
     print(f'Linked addresses for {address}:\n')
-    print_linked_addresses(addresses_w_balances)
+    print_linked_addresses(addresses_info)
 
 
-def get_balances(web3, addresses):
+def get_addresses_info(skale, addresses):
     return [
         {
             'address': address,
-            'balance': str(web3.fromWei(web3.eth.getBalance(address), 'ether'))
+            'status': 'Primary' if skale.validator_service.is_main_address(address) else 'Linked',
+            'balance': str(skale.web3.fromWei(skale.web3.eth.getBalance(address), 'ether')),
+            'nodes': len(skale.nodes_data.get_active_node_ids_by_address(address))
         }
         for address in addresses
     ]
+
+
+def info(validator_id):
+    skale = init_skale_from_config()
+    if not skale:
+        return
+    validator_info = skale.validator_service.get(validator_id)
+    delegated_amount = skale.delegation_service.get_delegated_amount(validator_id)
+    earned_bounty_amount = skale.delegation_service.get_earned_bounty_amount(
+        validator_info['validator_address'])
+    msr = skale.constants.msr()
+    table = SingleTable([
+        ['Validator ID', validator_id],
+        ['Name', validator_info['name']],
+        ['Address', validator_info['validator_address']],
+        ['Fee rate (%)', validator_info['fee_rate']],
+        ['Minimum delegation amount (SKL)', validator_info['minimum_delegation_amount']],
+        ['Delegated tokens', delegated_amount],
+        ['Earned bounty', earned_bounty_amount],
+        ['MSR', msr]
+    ])
+    print(table.table)

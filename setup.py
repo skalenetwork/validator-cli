@@ -70,8 +70,7 @@ setup(
     url='https://github.com/skalenetwork/validators-cli',
     install_requires=[
         "click==7.0",
-        # "skale-py==2.1dev12",
-        "skale.py @ https://github.com/skalenetwork/skale.py/archive/feature/SKALE-1642-delegation-functionality.zip#egg=skale-1.0.0", # noqa
+        "skale.py==3.0.dev0",
         "terminaltables==3.1.0",
         "yaspin==0.16.0",
         "texttable==1.6.2",
