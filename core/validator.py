@@ -131,7 +131,7 @@ def info(validator_id):
     delegated_amount = skale.delegation_service.get_delegated_amount(validator_id)
     earned_bounty_amount = skale.delegation_service.get_earned_bounty_amount(
         validator_info['validator_address'])
-    msr = skale.constants.msr()
+    msr = skale.constants_holder.msr()
     table = SingleTable([
         ['Validator ID', validator_id],
         ['Name', validator_info['name']],
