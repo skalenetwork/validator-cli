@@ -48,7 +48,7 @@ extras_require = {
         "pytest-cov==2.8.1",
         "twine==2.0.0",
         "mock==3.0.5",
-        "boto3==1.11.7"
+        "boto3==1.12.0"
     ]
 }
 
