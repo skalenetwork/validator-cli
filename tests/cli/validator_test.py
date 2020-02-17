@@ -186,7 +186,6 @@ def test_linked_addresses(runner, skale):
     ))
 
     assert f'\x1b[KLinked addresses for {skale.wallet.address}:' in output_list
-    assert '                 Address                     Status       Balance (ETH)      Nodes' in output_list  # noqa
     assert f'{skale.wallet.address}   Primary   {wallet_balance}   0    ' in output_list
 
 

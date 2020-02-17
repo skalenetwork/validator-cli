@@ -54,5 +54,7 @@ validator:
 holder:
   delegate:
     help: Delegate tokens to validator
+    confirm: |-
+      Are you sure you want to delegate your tokens?
 msg:
   run_init: You should run < init > first

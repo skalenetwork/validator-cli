@@ -20,6 +20,7 @@
 import click
 
 from utils.texts import Texts
+from utils.helper import abort_if_false
 from core.holder import delegate, delegations, cancel_pending_delegation
 from utils.constants import DELEGATION_PERIOD_OPTIONS
 
@@ -67,6 +68,9 @@ def holder():
     '--pk-file',
     help='File with private key'
 )
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=TEXTS['delegate']['confirm'])
 def _delegate(validator_id, amount, delegation_period, info, pk_file):
     delegate(
         validator_id=validator_id,
@@ -89,7 +93,7 @@ def _delegations(address):
     '--pk-file',
     help='File with private key'
 )
-def cancel_delegation(delegation_id, pk_file):
+def _cancel_delegation(delegation_id, pk_file):
     cancel_pending_delegation(
         delegation_id=int(delegation_id),
         pk_file=pk_file
