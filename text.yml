@@ -1,6 +1,7 @@
 info:
   help: Show validator CLI info
 init:
+  done: Validator CLI initialized successfully
   help: Set Ethereum endpoint and contracts URL
   endpoint:
     help: Endpoint of the Ethereum network

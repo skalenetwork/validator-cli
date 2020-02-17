@@ -8,6 +8,10 @@ install:
   - pip install -e .[dev]
 jobs:
   include:
+    - stage: test
+      script:
+        - bash ./scripts/prerare_tests.sh
+        - bash ./scripts/run_tests.sh
     - stage: deploy
       if: branch IN (develop, beta, stable, master)
       script:
