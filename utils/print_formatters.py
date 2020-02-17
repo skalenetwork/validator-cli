@@ -111,15 +111,13 @@ def print_linked_addresses(addresses):
     print(Formatter().table(headers, rows))
 
 
-def print_node_metrics(metrics):
+def print_node_metrics(rows):
     headers = [
         'Date',
         'Bounty',
         'Downtime',
         'Latency'
     ]
-    rows = metrics['metrics']
-
     table = texttable.Texttable(max_width=get_tty_width())
     table.set_cols_align(["l", "r", "r", "r"])
     table.set_cols_dtype(["t", "i", "i", "f"])
@@ -130,7 +128,7 @@ def print_node_metrics(metrics):
     print(table.draw())
 
 
-def print_validator_metrics(metrics):
+def print_validator_metrics(rows):
     headers = [
         'Date',
         'Node ID',
@@ -138,8 +136,6 @@ def print_validator_metrics(metrics):
         'Downtime',
         'Latency'
     ]
-    rows = metrics['metrics']
-
     table = texttable.Texttable(max_width=get_tty_width())
     table.set_cols_align(["l", "r", "r", "r", "r"])
     table.set_cols_dtype(["t", "i", "i", "i", "f"])
@@ -150,14 +146,17 @@ def print_validator_metrics(metrics):
     print(table.draw())
 
 
-def print_bounties(nodes, rows):
-    headers = ['Date']
+def print_bounties(nodes, metrics):
+    headers = ['Date', 'Total']
     node_headers = [f'Node ID = {node}' for node in nodes]
     headers.extend(node_headers)
     table = texttable.Texttable(max_width=get_tty_width())
+    format_string = ['t']
+    format_string.extend(['f' for h in range(len(headers) - 1)])
+    table.set_cols_dtype(format_string)
     table.set_cols_align(['r' for h in headers])
-    table.set_cols_dtype(['t' for h in headers])
-    table.add_rows([headers] + rows)
+    table.set_precision(3)
+    table.add_rows([headers] + metrics)
     table.set_deco(table.HEADER)
     table.set_chars(['-', '|', '+', '-'])
     print(table.draw())

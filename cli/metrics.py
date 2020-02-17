@@ -43,7 +43,6 @@ def node(id, since, till):
     nodes = [int(id)]
     print('Please wait - collecting metrics from blockchain...')
     bounties = get_bounty_from_events(nodes, since, till)
-    # print(bounties)
     print_node_metrics(bounties)
 
 
@@ -59,5 +58,4 @@ def validator(id, since, till):
     print('Please wait - collecting metrics from blockchain...')
     nodes = [int(node) for node in nodes]
     bounties = get_bounty_from_events(nodes, since, till, is_validator=True)
-    # print(bounties)
     print_validator_metrics(bounties)

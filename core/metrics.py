@@ -43,10 +43,9 @@ def yy_mm_dd_to_date(date_str):
 
 
 def get_bounty_from_events(nodes, start_date=None, end_date=None,
-                           is_validator=False, is_limited=False):
+                           is_validator=False, aggregate=False, is_limited=False):
     skale = init_skale_from_config()
-    metrics = []
-    bounties = []
+    bounty_rows = []
     cur_month_record = {}
     if start_date is None:
         start_date = datetime.utcfromtimestamp(get_start_date(nodes[0]))
@@ -59,7 +58,7 @@ def get_bounty_from_events(nodes, start_date=None, end_date=None,
     cur_block_number = skale.web3.eth.blockNumber
     last_block_number = find_block_for_tx_stamp(skale, end_date) if end_date is not None \
         else cur_block_number
-    while not is_limited or len(metrics) < FILTER_PERIOD:
+    while not is_limited or len(bounty_rows) < FILTER_PERIOD:
         end_chunk_block_number = start_block_number + BLOCK_STEP - 1
         if end_chunk_block_number > last_block_number:
             end_chunk_block_number = last_block_number
@@ -82,41 +81,64 @@ def get_bounty_from_events(nodes, start_date=None, end_date=None,
             cur_year_month = f'{block_timestamp.strftime("%Y")} {block_timestamp.strftime("%B")}'
             # for tests where epoch = 1 hour
             cur_year_month = f'{cur_year_month} ' \
-                             f'{block_timestamp.strftime("%d")}-{block_timestamp.strftime("%H")}'
+                             f'{block_timestamp.strftime("%d")}'
             if is_validator:
-                if cur_year_month in cur_month_record:
-                    if node_id in cur_month_record[cur_year_month]:
-                        cur_month_record[cur_year_month][node_id] += bounty
+                if aggregate:
+                    if cur_year_month in cur_month_record:
+                        if node_id in cur_month_record[cur_year_month]:
+                            cur_month_record[cur_year_month][node_id] += bounty
+                        else:
+                            cur_month_record[cur_year_month][node_id] = bounty
                     else:
-                        cur_month_record[cur_year_month][node_id] = bounty
+                        if bool(cur_month_record):  # if dict is not empty
+                            bounty_row = bounty_to_ordered_row(cur_month_record, nodes)
+                            bounty_rows.append(bounty_row)
+
+                        cur_month_record = {cur_year_month: {node_id: bounty}}
                 else:
-                    if cur_month_record != {}:
-                        bounties.append(cur_month_record)
-                    cur_month_record = {cur_year_month: {node_id: bounty}}
-                # metrics.append([
-                #     str(block_timestamp),
-                #     args['nodeIndex'],
-                #     args['bounty'],
-                #     args['averageDowntime'],
-                #     round(args['averageLatency'] / 1000, 1)
-                # ])
+
+                    bounty_rows.append([
+                        str(block_timestamp),
+                        args['nodeIndex'],
+                        args['bounty'],
+                        args['averageDowntime'],
+                        round(args['averageLatency'] / 1000, 1)
+                    ])
+
             else:
-                metrics.append([
+                bounty_rows.append([
                     str(block_timestamp),
                     args['bounty'],
                     args['averageDowntime'],
                     round(args['averageLatency'] / 1000, 1)
                 ])
 
-            if is_limited and len(metrics) >= FILTER_PERIOD:
+            if is_limited and len(bounty_rows) >= FILTER_PERIOD:
                 break
         start_block_number = start_block_number + BLOCK_STEP
         if end_chunk_block_number >= last_block_number:
             break
-    if cur_month_record != {}:
-        bounties.append(cur_month_record)
-    # return {'metrics': metrics}
-    return bounties
+
+    if bool(cur_month_record) and is_validator:  # if dict is not empty
+        bounty_row = bounty_to_ordered_row(cur_month_record, nodes)
+        bounty_rows.append(bounty_row)
+    return bounty_rows
+
+
+def bounty_to_ordered_row(cur_month_record, nodes):
+    sum = 0
+    bounty_row = []
+    key_date = next(iter(cur_month_record))
+    bounty_row.append(key_date)
+
+    for node in nodes:
+        cur_bounty = cur_month_record[key_date].get(node, '')
+        if cur_bounty:
+            cur_bounty = cur_bounty / (10 ** 18)
+            sum += cur_bounty
+        bounty_row.append(cur_bounty)
+    bounty_row.insert(1, sum)
+    return bounty_row
 
 
 def get_bounty_rows(nodes, bounties):
