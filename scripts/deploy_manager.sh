@@ -14,6 +14,6 @@ docker run \
     -v $DIR/contracts_data:/usr/src/manager/data \
     --network host -it \
     skalenetwork/skale-manager:$MANAGER_BRANCH-latest \
-    npx truffle migrate
+    npx truffle migrate --network test
 
 cp $DIR/contracts_data/test.json $DIR/../test_abi.json

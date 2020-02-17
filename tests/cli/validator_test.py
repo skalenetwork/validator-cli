@@ -17,8 +17,9 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import datetime
 from click.testing import CliRunner
-from cli.validator import _register
+from cli.validator import _register, _ls, _delegations
 
 from skale.wallets.web3_wallet import generate_wallet
 from skale.utils.account_tools import send_ether
@@ -57,3 +58,35 @@ def test_register(skale):
     n_of_validators_after = skale.validator_service.number_of_validators()
     assert n_of_validators_after == n_of_validators_before + 1
     assert result.exit_code == 0
+
+
+def test_ls(skale):
+    runner = CliRunner()
+    result = runner.invoke(_ls)
+    output_list = result.output.splitlines()
+
+    validators = skale.validator_service.ls()
+    registration_time = datetime.datetime.fromtimestamp(validators[0]['registration_time'])
+
+    assert "\x1b[KName   Id                    Address                     Description   Fee rate (%)    Registration time    Minimum delegation (SKL)" in output_list  # noqa
+    assert "------------------------------------------------------------------------------------------------------------------------------------" in output_list  # noqa
+    assert f'test   1    {skale.wallet.address}   test          10             {registration_time}   1000                    ' in output_list  # noqa
+    assert result.exit_code == 0
+
+
+def test_delegations(skale):
+    runner = CliRunner()
+    result = runner.invoke(
+        _delegations,
+        [skale.wallet.address]
+    )
+    output_list = result.output.splitlines()
+
+    delegations_list = skale.delegation_service.get_all_delegations_by_validator(
+        skale.wallet.address
+    )
+    created_time = datetime.datetime.fromtimestamp(delegations_list[0]['created'])
+
+    assert f'\x1b[KDelegations for address {skale.wallet.address}:' in output_list
+    assert 'Id               Delegator Address                 Status     Validator Id   Amount (SKL)   Delegation period (months)       Created At        Info' in output_list  # noqa
+    assert f'0    {skale.wallet.address}   DELEGATED   1              10000          3                            {created_time}   test' in output_list  # noqa
