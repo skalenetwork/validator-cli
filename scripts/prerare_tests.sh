@@ -13,6 +13,8 @@ TEST_PK_FILE=$DIR/../tests/test-pk.txt
 
 ENDPOINT='http://localhost:8545'
 
+mkdir $CLI_CONFIG_FOLDER
+
 bash $DIR/deploy_manager.sh
 cp $DIR/../test_abi.json $CLI_ABI_FILE
 
