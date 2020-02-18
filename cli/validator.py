@@ -24,7 +24,6 @@ from core.validator import (register, validators_list, delegations, accept_pendi
                             link_node_address, unlink_node_address, linked_addresses, info)
 from utils.helper import abort_if_false
 from utils.validations import EthAddressType, PercentageType, UrlType
-from utils.constants import LONG_LINE
 from utils.texts import Texts
 
 
@@ -46,39 +45,37 @@ def validator():
     pass
 
 
-@validator.command('register', help="Register new SKALE validator")
+@validator.command('register', help=TEXTS['register']['help'])
 @click.option(
     '--name', '-n',
     type=str,
-    help='Validator name',
-    prompt='Please enter validator name'
+    help=TEXTS['register']['name']['help'],
+    prompt=TEXTS['register']['name']['prompt']
 )
 @click.option(
     '--description', '-d',
     type=str,
-    help='Validator description',
-    prompt='Please enter validator description'
+    help=TEXTS['register']['description']['help'],
+    prompt=TEXTS['register']['description']['prompt']
 )
 @click.option(
     '--commission-rate', '-c',
     type=PERCENTAGE_TYPE,
-    help='Commission rate (percentage)',
-    prompt='Please enter validator commission rate (in percents)'
+    help=TEXTS['register']['commission_rate']['help'],
+    prompt=TEXTS['register']['commission_rate']['prompt']
 )
 @click.option(
     '--min-delegation',
     type=int,
-    help='Validator minimum delegation amount',
-    prompt='Please enter minimum delegation amount'
+    help=TEXTS['register']['min_delegation']['help'],
+    prompt=TEXTS['register']['min_delegation']['prompt']
 )
 @click.option(
     '--pk-file',
-    help='File with validator\'s private key'
+    help=G_TEXTS['pk_file']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
-              expose_value=False,
-              prompt=f'{LONG_LINE}\nAre you sure you want to register a new validator account? \
-                  \nPlease, re-check all values above before confirming.')
+              expose_value=False, prompt=TEXTS['register']['confirm'])
 def _register(name, description, commission_rate, min_delegation, pk_file):
     register(
         name=name,
@@ -109,7 +106,7 @@ def _delegations(address):
 )
 @click.option(
     '--pk-file',
-    help=TEXTS['accept_delegation']['pk_file']['help']
+    help=G_TEXTS['pk_file']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
@@ -125,7 +122,7 @@ def _accept_delegation(delegation_id, pk_file):
 @click.argument('node_address')
 @click.option(
     '--pk-file',
-    help=TEXTS['link_address']['pk_file']['help']
+    help=G_TEXTS['pk_file']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
@@ -139,7 +136,7 @@ def _link_address(node_address, pk_file):
 @click.argument('node_address')
 @click.option(
     '--pk-file',
-    help=TEXTS['unlink_address']['pk_file']['help']
+    help=G_TEXTS['pk_file']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
