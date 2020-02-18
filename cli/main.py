@@ -86,6 +86,7 @@ def init(endpoint, contracts_url, wallet):
         'wallet': wallet
     }
     write_json(SKALE_VAL_CONFIG_FILE, config)
+    print(TEXTS['init']['done'])
 
 
 def handle_exception(exc_type, exc_value, exc_traceback):

@@ -6,8 +6,15 @@ python: '3.6'
 install:
   - pip install -e .
   - pip install -e .[dev]
+  - bash scripts/build.sh 1.0.0 test-branch
 jobs:
   include:
+    - stage: test
+      before_script:
+        - flake8 .
+      script:
+        - bash ./scripts/prerare_tests.sh
+        - bash ./scripts/run_tests.sh
     - stage: deploy
       if: branch IN (develop, beta, stable, master)
       script:

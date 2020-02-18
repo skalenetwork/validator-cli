@@ -20,6 +20,7 @@
 import click
 
 from utils.texts import Texts
+from utils.helper import abort_if_false
 from core.holder import delegate, delegations, cancel_pending_delegation
 from utils.constants import DELEGATION_PERIOD_OPTIONS
 
@@ -33,40 +34,43 @@ def holder_cli():
     pass
 
 
-@holder_cli.group('holder', help="Token holder commands")
+@holder_cli.group('holder', help=TEXTS['help'])
 def holder():
     pass
 
 
-@holder.command('delegate', help="Delegate tokens to validator")
+@holder.command('delegate', help=TEXTS['delegate']['help'])
 @click.option(
     '--validator-id',
     type=int,
-    help='ID of the validator to delegate',
-    prompt='Please enter ID of the validator to delegate'
+    help=TEXTS['delegate']['validator_id']['help'],
+    prompt=TEXTS['delegate']['validator_id']['prompt']
 )
 @click.option(
     '--amount',
     type=int,
-    help='Amount of SKALE tokens to delegate',
-    prompt='Please enter amount of SKALE tokens to delegate'
+    help=TEXTS['delegate']['amount']['help'],
+    prompt=TEXTS['delegate']['amount']['prompt']
 )
 @click.option(
     '--delegation-period',
     type=click.Choice(DELEGATION_PERIOD_OPTIONS),
-    help='Delegation period (in months)',
-    prompt='Please enter delegation period (in months)'
+    help=TEXTS['delegate']['delegation_period']['help'],
+    prompt=TEXTS['delegate']['delegation_period']['prompt']
 )
 @click.option(
     '--info',
     type=str,
-    help='Delegation request info',
-    prompt='Please enter delegation request info'
+    help=TEXTS['delegate']['info']['help'],
+    prompt=TEXTS['delegate']['info']['prompt']
 )
 @click.option(
     '--pk-file',
-    help='File with private key'
+    help=G_TEXTS['pk_file']['help']
 )
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=TEXTS['delegate']['confirm'])
 def _delegate(validator_id, amount, delegation_period, info, pk_file):
     delegate(
         validator_id=validator_id,
@@ -77,19 +81,19 @@ def _delegate(validator_id, amount, delegation_period, info, pk_file):
     )
 
 
-@holder.command('delegations', help="List of delegations for address")
+@holder.command('delegations', help=TEXTS['delegations']['help'])
 @click.argument('address')
 def _delegations(address):
     delegations(address)
 
 
-@holder.command('cancel-delegation', help="Cancel pending delegation request")
+@holder.command('cancel-delegation', help=TEXTS['cancel_delegation']['help'])
 @click.argument('delegation_id')
 @click.option(
     '--pk-file',
-    help='File with private key'
+    help=G_TEXTS['pk_file']['help']
 )
-def cancel_delegation(delegation_id, pk_file):
+def _cancel_delegation(delegation_id, pk_file):
     cancel_pending_delegation(
         delegation_id=int(delegation_id),
         pk_file=pk_file

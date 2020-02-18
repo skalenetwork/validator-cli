@@ -68,6 +68,11 @@ def init_skale_w_wallet_from_config(pk_file=None):
     return init_skale_w_wallet(config['endpoint'], config['wallet'], pk_file)
 
 
+def get_data_from_config():
+    config = get_config()
+    return config['endpoint'], config['wallet']
+
+
 def check_tx_result(tx_hash, web3):
     receipt = wait_receipt(web3, tx_hash)
     return check_receipt(receipt, raise_error=False)
