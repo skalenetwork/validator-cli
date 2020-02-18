@@ -1,3 +1,5 @@
+""" Constants for tests """
+
 import os
 
 

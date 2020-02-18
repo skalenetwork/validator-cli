@@ -1,3 +1,5 @@
+""" Preparation scripts for tests """
+
 from skale.utils.helper import init_default_logger
 from skale.utils.web3_utils import check_receipt
 from tests.constants import (

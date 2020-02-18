@@ -112,8 +112,6 @@ venv.bak/
 cli/info.py
 
 # test files
-pk.txt
-pk-val.txt
 test-abi.json
 test-pk.txt
 second-test-pk.txt
