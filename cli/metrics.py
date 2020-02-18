@@ -36,13 +36,13 @@ def metrics():
 @click.option('--id', '-id')
 @click.option('--since', '-s')
 @click.option('--till', '-t')
-def node(id, since, till):
+@click.option('--limit', '-l')
+def node(id, since, till, limit):
     if id is None:
         print('Node ID expected: "metrics node -id N"')
         return
-    nodes = [int(id)]
     print('Please wait - collecting metrics from blockchain...')
-    bounties = get_metrics_from_events(nodes, since, till)
+    bounties = get_metrics_from_events([int(id)], since, till, limit)
     print_node_metrics(bounties)
 
 
@@ -50,12 +50,13 @@ def node(id, since, till):
 @click.option('--id', '-id')
 @click.option('--since', '-s')
 @click.option('--till', '-t')
-def validator(id, since, till):
+@click.option('--limit', '-l')
+def validator(id, since, till, limit):
     if id is None:
         print('Validator ID expected: "metrics node -id N"')
         return
     nodes = get_nodes_for_validator(id)
     print('Please wait - collecting metrics from blockchain...')
     nodes = [int(node) for node in nodes]
-    bounties = get_metrics_from_events(nodes, since, till, is_validator=True)
+    bounties = get_metrics_from_events(nodes, since, till, limit, is_validator=True)
     print_validator_metrics(bounties)

@@ -69,15 +69,14 @@ def get_start_end_block_numbers(skale, nodes, start_date=None, end_date=None):
 
 
 def get_metrics_from_events(nodes, start_date=None, end_date=None,
-                            is_validator=False, is_limited=False):
+                            limit=None, is_validator=False):
     skale = init_skale_from_config()
     metrics_rows = []
     start_block_number, last_block_number = get_start_end_block_numbers(skale, nodes,
                                                                         start_date, end_date)
     start_chunk_block_number = start_block_number
     blocks_total = last_block_number - start_block_number
-
-    while not is_limited or len(metrics_rows) < FILTER_PERIOD:
+    while limit is None or len(metrics_rows) < int(limit):
         progress(start_chunk_block_number - start_block_number, blocks_total)
 
         end_chunk_block_number = start_chunk_block_number + BLOCK_CHUNK_SIZE - 1
@@ -103,7 +102,7 @@ def get_metrics_from_events(nodes, start_date=None, end_date=None,
             if is_validator:
                 metrics_row.insert(1, args['nodeIndex'])
             metrics_rows.append(metrics_row)
-            if is_limited and len(metrics_rows) >= FILTER_PERIOD:
+            if limit is not None and len(metrics_rows) >= int(limit):
                 break
         start_chunk_block_number = start_chunk_block_number + BLOCK_CHUNK_SIZE
         if end_chunk_block_number >= last_block_number:
@@ -112,7 +111,7 @@ def get_metrics_from_events(nodes, start_date=None, end_date=None,
     return metrics_rows
 
 
-def get_bounty_from_events(nodes, start_date=None, end_date=None, is_limited=False):
+def get_bounty_from_events(nodes, start_date=None, end_date=None, limit=None):
     skale = init_skale_from_config()
     bounty_rows = []
     cur_month_record = {}
@@ -121,7 +120,7 @@ def get_bounty_from_events(nodes, start_date=None, end_date=None, is_limited=Fal
     start_chunk_block_number = start_block_number
     blocks_total = last_block_number - start_block_number
 
-    while not is_limited or len(bounty_rows) < FILTER_PERIOD:
+    while limit is None or len(bounty_rows) < int(limit):
         progress(start_chunk_block_number - start_block_number, blocks_total)
         end_chunk_block_number = start_chunk_block_number + BLOCK_CHUNK_SIZE - 1
         if end_chunk_block_number > last_block_number:
@@ -151,18 +150,19 @@ def get_bounty_from_events(nodes, start_date=None, end_date=None, is_limited=Fal
                 else:
                     cur_month_record[cur_year_month][node_id] = bounty
             else:
+                if limit is not None and len(bounty_rows) >= int(limit):
+                    break
                 if bool(cur_month_record):  # if dict is not empty
                     bounty_row = bounty_to_ordered_row(cur_month_record, nodes)
                     bounty_rows.append(bounty_row)
                 cur_month_record = {cur_year_month: {node_id: bounty}}
 
-            if is_limited and len(bounty_rows) >= FILTER_PERIOD:
-                break
         start_chunk_block_number = start_chunk_block_number + BLOCK_CHUNK_SIZE
         if end_chunk_block_number >= last_block_number:
+            cur_month_record = {}
             break
     progress(blocks_total, blocks_total)
-    if bool(cur_month_record):  # if dict is not empty
+    if bool(cur_month_record):
         bounty_row = bounty_to_ordered_row(cur_month_record, nodes)
         bounty_rows.append(bounty_row)
     return bounty_rows

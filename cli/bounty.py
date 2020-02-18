@@ -36,13 +36,14 @@ def bounty():
 @click.option('--id', '-id')
 @click.option('--since', '-s')
 @click.option('--till', '-t')
+@click.option('--limit', '-l')
 @click.option('--accuracy', '-a', is_flag=True)
-def validator(id, since, till, accuracy=False):
+def validator(id, since, till, limit, accuracy=False):
     if id is None:
         print('Validator ID expected: "bounty validator -id n"')
         return
     node_ids = get_nodes_for_validator(id)
     print('Please wait - collecting bounty data from blockchain...')
     node_ids = [int(node) for node in node_ids]
-    bounties = get_bounty_from_events(node_ids, since, till)
+    bounties = get_bounty_from_events(node_ids, since, till, limit)
     print_bounties(node_ids, bounties)
