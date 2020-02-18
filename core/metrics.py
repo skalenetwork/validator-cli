@@ -1,9 +1,9 @@
 from datetime import datetime
 from utils.web3_utils import init_skale_from_config
 from utils.filter import SkaleFilter
+import sys
 
-
-BLOCK_STEP = 1000
+BLOCK_CHUNK_SIZE = 1000
 FILTER_PERIOD = 12
 
 
@@ -42,11 +42,17 @@ def yy_mm_dd_to_date(date_str):
     return datetime.strptime(date_str, format_str)
 
 
-def get_bounty_from_events(nodes, start_date=None, end_date=None,
-                           is_validator=False, aggregate=False, is_limited=False):
-    skale = init_skale_from_config()
-    bounty_rows = []
-    cur_month_record = {}
+def progress(count, total, status='', bar_len=60):
+    filled_len = int(round(bar_len * count / float(total)))
+
+    percents = round(100.0 * count / float(total), 1)
+    bar = '=' * filled_len + '-' * (bar_len - filled_len)
+
+    sys.stdout.write('[%s] %s%s %s\r' % (bar, percents, '%', status))
+    sys.stdout.flush()
+
+
+def get_start_end_block_numbers(skale, nodes, start_date=None, end_date=None):
     if start_date is None:
         start_date = datetime.utcfromtimestamp(get_start_date(nodes[0]))
     else:
@@ -58,19 +64,76 @@ def get_bounty_from_events(nodes, start_date=None, end_date=None,
     cur_block_number = skale.web3.eth.blockNumber
     last_block_number = find_block_for_tx_stamp(skale, end_date) if end_date is not None \
         else cur_block_number
-    while not is_limited or len(bounty_rows) < FILTER_PERIOD:
-        end_chunk_block_number = start_block_number + BLOCK_STEP - 1
+
+    return start_block_number, last_block_number
+
+
+def get_metrics_from_events(nodes, start_date=None, end_date=None,
+                            is_validator=False, is_limited=False):
+    skale = init_skale_from_config()
+    metrics_rows = []
+    start_block_number, last_block_number = get_start_end_block_numbers(skale, nodes,
+                                                                        start_date, end_date)
+    start_chunk_block_number = start_block_number
+    blocks_total = last_block_number - start_block_number
+
+    while not is_limited or len(metrics_rows) < FILTER_PERIOD:
+        progress(start_chunk_block_number - start_block_number, blocks_total)
+
+        end_chunk_block_number = start_chunk_block_number + BLOCK_CHUNK_SIZE - 1
         if end_chunk_block_number > last_block_number:
             end_chunk_block_number = last_block_number
 
         event_filter = SkaleFilter(
             skale.manager.contract.events.BountyGot,
-            from_block=hex(start_block_number),
+            from_block=hex(start_chunk_block_number),
             argument_filters={'nodeIndex': nodes},
             to_block=hex(end_chunk_block_number)
         )
         logs = event_filter.get_events()
+        for log in logs:
+            args = log['args']
+            tx_block_number = log['blockNumber']
+            block_data = skale.web3.eth.getBlock(tx_block_number)
+            block_timestamp = datetime.utcfromtimestamp(block_data['timestamp'])
+            metrics_row = [str(block_timestamp),
+                           args['bounty'],
+                           args['averageDowntime'],
+                           round(args['averageLatency'] / 1000, 1)]
+            if is_validator:
+                metrics_row.insert(1, args['nodeIndex'])
+            metrics_rows.append(metrics_row)
+            if is_limited and len(metrics_rows) >= FILTER_PERIOD:
+                break
+        start_chunk_block_number = start_chunk_block_number + BLOCK_CHUNK_SIZE
+        if end_chunk_block_number >= last_block_number:
+            break
+    progress(blocks_total, blocks_total)
+    return metrics_rows
 
+
+def get_bounty_from_events(nodes, start_date=None, end_date=None, is_limited=False):
+    skale = init_skale_from_config()
+    bounty_rows = []
+    cur_month_record = {}
+    start_block_number, last_block_number = get_start_end_block_numbers(skale, nodes,
+                                                                        start_date, end_date)
+    start_chunk_block_number = start_block_number
+    blocks_total = last_block_number - start_block_number
+
+    while not is_limited or len(bounty_rows) < FILTER_PERIOD:
+        progress(start_chunk_block_number - start_block_number, blocks_total)
+        end_chunk_block_number = start_chunk_block_number + BLOCK_CHUNK_SIZE - 1
+        if end_chunk_block_number > last_block_number:
+            end_chunk_block_number = last_block_number
+
+        event_filter = SkaleFilter(
+            skale.manager.contract.events.BountyGot,
+            from_block=hex(start_chunk_block_number),
+            argument_filters={'nodeIndex': nodes},
+            to_block=hex(end_chunk_block_number)
+        )
+        logs = event_filter.get_events()
         for log in logs:
             args = log['args']
             node_id = args['nodeIndex']
@@ -82,44 +145,24 @@ def get_bounty_from_events(nodes, start_date=None, end_date=None,
             # for tests where epoch = 1 hour
             cur_year_month = f'{cur_year_month} ' \
                              f'{block_timestamp.strftime("%d")}'
-            if is_validator:
-                if aggregate:
-                    if cur_year_month in cur_month_record:
-                        if node_id in cur_month_record[cur_year_month]:
-                            cur_month_record[cur_year_month][node_id] += bounty
-                        else:
-                            cur_month_record[cur_year_month][node_id] = bounty
-                    else:
-                        if bool(cur_month_record):  # if dict is not empty
-                            bounty_row = bounty_to_ordered_row(cur_month_record, nodes)
-                            bounty_rows.append(bounty_row)
-
-                        cur_month_record = {cur_year_month: {node_id: bounty}}
+            if cur_year_month in cur_month_record:
+                if node_id in cur_month_record[cur_year_month]:
+                    cur_month_record[cur_year_month][node_id] += bounty
                 else:
-
-                    bounty_rows.append([
-                        str(block_timestamp),
-                        args['nodeIndex'],
-                        args['bounty'],
-                        args['averageDowntime'],
-                        round(args['averageLatency'] / 1000, 1)
-                    ])
-
+                    cur_month_record[cur_year_month][node_id] = bounty
             else:
-                bounty_rows.append([
-                    str(block_timestamp),
-                    args['bounty'],
-                    args['averageDowntime'],
-                    round(args['averageLatency'] / 1000, 1)
-                ])
+                if bool(cur_month_record):  # if dict is not empty
+                    bounty_row = bounty_to_ordered_row(cur_month_record, nodes)
+                    bounty_rows.append(bounty_row)
+                cur_month_record = {cur_year_month: {node_id: bounty}}
 
             if is_limited and len(bounty_rows) >= FILTER_PERIOD:
                 break
-        start_block_number = start_block_number + BLOCK_STEP
+        start_chunk_block_number = start_chunk_block_number + BLOCK_CHUNK_SIZE
         if end_chunk_block_number >= last_block_number:
             break
-
-    if bool(cur_month_record) and is_validator:  # if dict is not empty
+    progress(blocks_total, blocks_total)
+    if bool(cur_month_record):  # if dict is not empty
         bounty_row = bounty_to_ordered_row(cur_month_record, nodes)
         bounty_rows.append(bounty_row)
     return bounty_rows

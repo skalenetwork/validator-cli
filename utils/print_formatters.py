@@ -125,6 +125,7 @@ def print_node_metrics(rows):
     table.add_rows([headers] + rows)
     table.set_deco(table.HEADER)
     table.set_chars(['-', '|', '+', '-'])
+    print('\n')
     print(table.draw())
 
 
@@ -143,6 +144,7 @@ def print_validator_metrics(rows):
     table.add_rows([headers] + rows)
     table.set_deco(table.HEADER)
     table.set_chars(['-', '|', '+', '-'])
+    print('\n')
     print(table.draw())
 
 
@@ -159,4 +161,5 @@ def print_bounties(nodes, metrics):
     table.add_rows([headers] + metrics)
     table.set_deco(table.HEADER)
     table.set_chars(['-', '|', '+', '-'])
+    print('\n')
     print(table.draw())

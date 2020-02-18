@@ -44,5 +44,5 @@ def validator(id, since, till, accuracy=False):
     node_ids = get_nodes_for_validator(id)
     print('Please wait - collecting bounty data from blockchain...')
     node_ids = [int(node) for node in node_ids]
-    bounties = get_bounty_from_events(node_ids, since, till, is_validator=True, aggregate=True)
+    bounties = get_bounty_from_events(node_ids, since, till)
     print_bounties(node_ids, bounties)
