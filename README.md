@@ -135,7 +135,7 @@ sk-val validator link-address [ADDRESS] --pk-file ./pk.txt
 
 Required params:
 
-1) Address - Ethereum address of the validator
+1) Address - Ethereum address that will be linked
 
 Optional arguments:
 
@@ -152,7 +152,7 @@ sk-val validator unlink-address [ADDRESS] --pk-file ./pk.txt
 
 Required params:
 
-1) Address - Ethereum address of the validator
+1) Address - Ethereum address that will be unlinked
 
 Optional arguments:
 
