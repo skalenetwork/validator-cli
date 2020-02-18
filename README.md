@@ -266,6 +266,8 @@ Required environment variables:
 -   `SECRET_ACCESS_KEY` - DO Spaces/AWS S3 Secret access key
 -   `GITHUB_EMAIL` - Email of GitHub user
 -   `GITHUB_OAUTH_TOKEN` - GitHub auth token
+-   `ETH_PRIVATE_KEY` - Ethereum private key for tests (with `0x` prefix)
+-   `MANAGER_BRANCH` - Branch of the `skale-manager` to pull from DockerHub (`$MANAGER_BRANCH-latest` tag will be used)
 
 ### License
 
