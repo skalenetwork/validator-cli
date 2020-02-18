@@ -25,7 +25,7 @@ import traceback
 import click
 
 from cli import __version__
-from cli.info import BUILD_DATETIME, COMMIT, BRANCH, OS, VERSION
+# from cli.info import BUILD_DATETIME, COMMIT, BRANCH, OS, VERSION
 from cli.validator import validator_cli
 from cli.metrics import metrics_cli
 from cli.bounty import bounty_cli

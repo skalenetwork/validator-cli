@@ -79,6 +79,7 @@ def get_metrics_from_events(nodes, start_date=None, end_date=None,
                             limit=None, is_validator=False):
     skale = init_skale_from_config()
     metrics_rows = []
+    total_bounty = 0
     limit = format_limit(limit)
     start_block_number, last_block_number = get_start_end_block_numbers(skale, nodes,
                                                                         start_date, end_date)
@@ -110,18 +111,20 @@ def get_metrics_from_events(nodes, start_date=None, end_date=None,
             if is_validator:
                 metrics_row.insert(1, args['nodeIndex'])
             metrics_rows.append(metrics_row)
+            total_bounty += metrics_row[1]
             if len(metrics_rows) >= limit:
                 break
         start_chunk_block_number = start_chunk_block_number + BLOCK_CHUNK_SIZE
         if end_chunk_block_number >= last_block_number:
             break
     progress(blocks_total, blocks_total)
-    return metrics_rows
+    return metrics_rows, total_bounty
 
 
-def get_bounty_from_events(nodes, start_date=None, end_date=None, limit=None):
+def get_bounty_from_events(nodes, start_date=None, end_date=None, limit=None) -> tuple:
     skale = init_skale_from_config()
     bounty_rows = []
+    total_bounty = 0
     cur_month_record = {}
     limit = format_limit(limit)
     start_block_number, last_block_number = get_start_end_block_numbers(skale, nodes,
@@ -161,6 +164,7 @@ def get_bounty_from_events(nodes, start_date=None, end_date=None, limit=None):
             else:
                 if bool(cur_month_record):  # if dict is not empty
                     bounty_row = bounty_to_ordered_row(cur_month_record, nodes)
+                    total_bounty += bounty_row[1]
                     bounty_rows.append(bounty_row)
                 cur_month_record = {cur_year_month: {node_id: bounty}}
             if len(bounty_rows) >= limit:
@@ -172,8 +176,9 @@ def get_bounty_from_events(nodes, start_date=None, end_date=None, limit=None):
     progress(blocks_total, blocks_total)
     if bool(cur_month_record) and len(bounty_rows) < limit:
         bounty_row = bounty_to_ordered_row(cur_month_record, nodes)
+        total_bounty += bounty_row[1]
         bounty_rows.append(bounty_row)
-    return bounty_rows
+    return bounty_rows, total_bounty
 
 
 def bounty_to_ordered_row(cur_month_record, nodes):

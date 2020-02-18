@@ -42,8 +42,8 @@ def node(id, since, till, limit):
         print('Node ID expected: "metrics node -id N"')
         return
     print('Please wait - collecting metrics from blockchain...')
-    bounties = get_metrics_from_events([int(id)], since, till, limit)
-    print_node_metrics(bounties)
+    bounties, total = get_metrics_from_events([int(id)], since, till, limit)
+    print_node_metrics(bounties, total)
 
 
 @metrics.command(help="List of bounties and metrics for validator with given id")
@@ -58,5 +58,5 @@ def validator(id, since, till, limit):
     nodes = get_nodes_for_validator(id)
     print('Please wait - collecting metrics from blockchain...')
     nodes = [int(node) for node in nodes]
-    bounties = get_metrics_from_events(nodes, since, till, limit, is_validator=True)
-    print_validator_metrics(bounties)
+    bounties, total = get_metrics_from_events(nodes, since, till, limit, is_validator=True)
+    print_validator_metrics(bounties, total)

@@ -111,7 +111,7 @@ def print_linked_addresses(addresses):
     print(Formatter().table(headers, rows))
 
 
-def print_node_metrics(rows):
+def print_node_metrics(rows, total):
     headers = [
         'Date',
         'Bounty',
@@ -127,9 +127,10 @@ def print_node_metrics(rows):
     table.set_chars(['-', '|', '+', '-'])
     print('\n')
     print(table.draw())
+    print_total_info(total)
 
 
-def print_validator_metrics(rows):
+def print_validator_metrics(rows, total):
     headers = [
         'Date',
         'Node ID',
@@ -146,9 +147,10 @@ def print_validator_metrics(rows):
     table.set_chars(['-', '|', '+', '-'])
     print('\n')
     print(table.draw())
+    print_total_info(total)
 
 
-def print_bounties(nodes, metrics):
+def print_bounties(nodes, bounties, total):
     headers = ['Date', 'Total']
     node_headers = [f'Node ID = {node}' for node in nodes]
     headers.extend(node_headers)
@@ -158,8 +160,15 @@ def print_bounties(nodes, metrics):
     table.set_cols_dtype(format_string)
     table.set_cols_align(['r' for h in headers])
     table.set_precision(3)
-    table.add_rows([headers] + metrics)
+    table.add_rows([headers] + bounties)
     table.set_deco(table.HEADER)
     table.set_chars(['-', '|', '+', '-'])
     print('\n')
     print(table.draw())
+    print_total_info(total)
+
+
+def print_total_info(total):
+    total_string = f'Total bounty for the given period = {total:.3f} SKL'
+
+    print('-' * (len(total_string) + 1), '\n', total_string)
