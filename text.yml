@@ -1,40 +1,54 @@
 info:
   help: Show validator CLI info
 init:
+  done: Validator CLI initialized successfully
   help: Set Ethereum endpoint and contracts URL
   endpoint:
-    help: Endpoint of the Ethereum network
-    prompt: Please enter endpoint of the Ethereum network
+    help: Endpoint of an Ethereum network
+    prompt: Please enter an endpoint for the Ethereum network to connect
   contracts_url:
     help: Download URL for the SKALE Manager ABIs and addresses
-    prompt: Please enter URL for the SKALE Manager ABIs and addresses
+    prompt: Please enter the URL for the SKALE Manager ABIs and addresses
   wallet:
-    help: Type of the wallet that will be used for signing transactions
-    prompt: Please enter type of the wallet that will be used for signing transactions
+    help: Type of wallet that will be used for signing transactions
+    prompt: Please enter the type of the wallet that will be used for signing transactions
 validator:
   register:
-    help: test
+    confirm: |-
+      Are you sure you want to register a new validator account?
+      Please, re-check all values above before confirming.
+    help: Register a new SKALE validator
+    name:
+      help: Validator name
+      prompt: Please enter validator name
+    description:
+      help: Validator description
+      prompt: Please enter validator description
+    commission_rate:
+      help: Commission rate (percentage)
+      prompt: Please enter validator commission rate (e.g. enter 0.05 for 5%)
+    min_delegation:
+      help: Validator minimum delegation amount
+      prompt: Please enter minimum delegation amount in SKALE tokens
   ls:
     help: List of available validators
+  info:
+    help: Info about the validator
   delegations:
-    help: List of delegations for validator
+    help: List delegations for a validator
   accept_delegation:
     help: Accept pending delegation request by delegation ID
     confirm: |-
       Are you sure you want to accept this delegation request?
-      Please, re-check all provided values before confirming
+      Please, re-check all provided values before confirming.
     delegation_id:
       help: ID of the delegation request to accept
       prompt: Please enter ID of the delegation request to accept
-    pk_file:
-      help: Path to file with private key (only for `software` wallet type)
   link_address:
     help: Link node address to your validator account
     node_address:
       help: Address of the node to link
       prompt: Please enter address of the node to link
-    pk_file:
-      help: Path to file with private key (only for `software` wallet type)
     confirm: |-
       Are you sure you want to link this address to your validator account?
   unlink_address:
@@ -42,14 +56,33 @@ validator:
     node_address:
       help: Address of the node to unlink
       prompt: Please enter address of the node to unlink
-    pk_file:
-      help: Path to file with private key (only for `software` wallet type)
     confirm: |-
       Are you sure you want to unlink this address from your validator account?
   linked_addresses:
     help: List of the linked addresses for validator address
 holder:
+  help: Token holder commands
   delegate:
     help: Delegate tokens to validator
+    validator_id:
+      help: ID of the validator to delegate
+      prompt: Please enter ID of the validator to delegate
+    amount:
+      help: Amount of SKALE tokens to delegate
+      prompt: Please enter amount of SKALE tokens to delegate
+    delegation_period:
+      help: Delegation period (in months)
+      prompt: Please enter delegation period (in months)
+    info:
+      help: Delegation request info
+      prompt: Please enter delegation request info
+    confirm: |-
+      Are you sure you want to delegate your tokens?
+  delegations:
+    help: List of delegations for address
+  cancel_delegation:
+    help: Cancel pending delegation request
 msg:
   run_init: You should run < init > first
+pk_file:
+  help: Path to file with private key (only for `software` wallet type)

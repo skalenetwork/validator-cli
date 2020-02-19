@@ -100,13 +100,17 @@ def print_delegations(delegations: list) -> None:
 def print_linked_addresses(addresses):
     headers = [
         'Address',
-        'Balance (ETH)'
+        'Status',
+        'Balance (ETH)',
+        'Nodes'
     ]
     rows = []
     for address_info in addresses:
         rows.append([
             address_info['address'],
+            address_info['status'],
             address_info['balance'],
+            address_info['nodes'],
         ])
     print(Formatter().table(headers, rows))
 
