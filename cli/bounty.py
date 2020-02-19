@@ -18,8 +18,14 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import click
+
 from core.metrics import get_bounty_from_events, get_nodes_for_validator
 from utils.print_formatters import print_bounties
+from utils.texts import Texts
+
+
+G_TEXTS = Texts()
+TEXTS = G_TEXTS['bounty']
 
 
 @click.group()
@@ -27,22 +33,27 @@ def bounty_cli():
     pass
 
 
-@bounty_cli.group('bounty', help="Validators bounty commands")
+@bounty_cli.group('bounty', help=TEXTS['help'])
 def bounty():
     pass
 
 
-@bounty.command(help="List of aggregated bounties for validator with given id")
-@click.option('--index', '-id')
+@bounty.command(help=TEXTS['validator']['help'])
+@click.option(
+    '--index', '-id',
+    type=int,
+    help=TEXTS['validator']['index']['help'],
+    prompt=TEXTS['validator']['index']['prompt']
+)
 @click.option('--since', '-s')
 @click.option('--till', '-t')
 @click.option('--limit', '-l')
 def validator(index, since, till, limit):
-    if index is None:
-        print('Validator ID expected: "bounty validator -id n"')
+    if index < 0:
+        print(TEXTS['validator']['index']['valid_msg'])
         return
     node_ids = get_nodes_for_validator(index)
-    print('Please wait - collecting bounty data from blockchain...')
+    print(TEXTS['validator']['index']['wait_msg'])
     node_ids = [int(node_id) for node_id in node_ids]
     bounties, total = get_bounty_from_events(node_ids, since, till, limit)
     sums = ['Total per period:']

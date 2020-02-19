@@ -18,8 +18,13 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import click
+
 from core.metrics import get_metrics_from_events, get_nodes_for_validator
 from utils.print_formatters import print_node_metrics, print_validator_metrics
+from utils.texts import Texts
+
+G_TEXTS = Texts()
+TEXTS = G_TEXTS['metrics']
 
 
 @click.group()
@@ -27,36 +32,46 @@ def metrics_cli():
     pass
 
 
-@metrics_cli.group('metrics', help="Node metrics commands")
+@metrics_cli.group('metrics', help=TEXTS['help'])
 def metrics():
     pass
 
 
-@metrics.command(help="List of bounties and metrics for node with given id")
-@click.option('--index', '-id')
+@metrics.command(help=TEXTS['node']['help'])
+@click.option(
+    '--index', '-id',
+    type=int,
+    help=TEXTS['node']['index']['help'],
+    prompt=TEXTS['node']['index']['prompt']
+)
 @click.option('--since', '-s')
 @click.option('--till', '-t')
 @click.option('--limit', '-l')
 def node(index, since, till, limit):
-    if index is None:
-        print('Node ID expected: "metrics node -id N"')
+    if index < 0:
+        print(TEXTS['node']['index']['valid_msg'])
         return
-    print('Please wait - collecting metrics from blockchain...')
+    print(TEXTS['validator']['index']['wait_msg'])
     metrics, total_bounty = get_metrics_from_events([int(index)], since, till, limit)
     print_node_metrics(metrics, total_bounty)
 
 
-@metrics.command(help="List of bounties and metrics for validator with given id")
-@click.option('--index', '-id')
+@metrics.command(help=TEXTS['validator']['help'])
+@click.option(
+    '--index', '-id',
+    type=int,
+    help=TEXTS['validator']['index']['help'],
+    prompt=TEXTS['validator']['index']['prompt']
+)
 @click.option('--since', '-s')
 @click.option('--till', '-t')
 @click.option('--limit', '-l')
 def validator(index, since, till, limit):
-    if index is None:
-        print('Validator ID expected: "metrics node -id N"')
+    if index < 0:
+        print(TEXTS['validator']['index']['valid_msg'])
         return
     nodes_ids = get_nodes_for_validator(index)
-    print('Please wait - collecting metrics from blockchain...')
+    print(TEXTS['validator']['index']['wait_msg'])
     nodes = [int(node_id) for node_id in nodes_ids]
     metrics, total_bounty = get_metrics_from_events(nodes, since, till, limit, is_validator=True)
     print_validator_metrics(metrics, total_bounty)

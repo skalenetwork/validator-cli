@@ -86,3 +86,30 @@ msg:
   run_init: You should run < init > first
 pk_file:
   help: Path to file with private key (only for `software` wallet type)
+
+bounty:
+  help: Validator bounty commands
+  validator:
+    help: List of aggregated bounties for a validator with given id
+    index:
+      help: Validator ID
+      prompt: Enter validator ID
+      valid_msg: Error - Validator ID should be greater than 0
+      wait_msg: Please wait - collecting bounty data from blockchain...
+
+metrics:
+  help: Validator metrics commands
+  node:
+    help: List of bounties and metrics for a node with given id
+    index:
+      help: Validator ID
+      prompt: Enter validator ID
+      valid_msg: Error - Validator ID should be greater than 0
+      wait_msg: Please wait - collecting metrics data from blockchain...
+  validator:
+    help: List of bounties and metrics for a validator with given id
+    index:
+      help: Validator ID
+      prompt: Enter validator ID
+      valid_msg: Error - Validator ID should be greater than 0
+      wait_msg: Please wait - collecting metrics data from blockchain...
