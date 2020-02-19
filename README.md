@@ -10,9 +10,13 @@
     2.1 [Init](#init)  
     2.2 [Validator commands](#validator-commands)  
     2.3 [Holder commands](#holder-commands)
-3. [Development](#development)  
+3.  [Development](#development)  
 
 ## Installation
+
+### Requirements
+
+-   Linux x86_64 machine
 
 -   Download executable
 
@@ -67,8 +71,8 @@ Required arguments:
 
 Optional arguments:
 
-- `--pk-file` - Path to file with private key (only for `software` wallet type)
-- `--yes` - Confirmation flag
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
 
 Usage example:
 
@@ -106,12 +110,12 @@ sk-val validator accept-delegation --pk-file ./pk.txt
 
 Required arguments:
 
-- `--delegation-id` - ID of the delegation request to accept
+-   `--delegation-id` - ID of the delegation request to accept
 
 Optional arguments:
 
-- `--pk-file` - Path to file with private key (only for `software` wallet type)
-- `--yes` - Confirmation flag
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
 
 #### Validator linked addresses
 
@@ -139,8 +143,8 @@ Required params:
 
 Optional arguments:
 
-- `--pk-file` - Path to file with private key (only for `software` wallet type)
-- `--yes` - Confirmation flag
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
 
 #### Unlink address
 
@@ -156,8 +160,8 @@ Required params:
 
 Optional arguments:
 
-- `--pk-file` - Path to file with private key (only for `software` wallet type)
-- `--yes` - Confirmation flag
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
 
 #### Validator info
 
@@ -194,14 +198,14 @@ sk-val holder delegate
 
 Required arguments:
 
-- `--validator-id` - ID of the validator to delegate
-- `--amount` - Amount of SKALE tokens to delegate
-- `--delegation-period` - Delegation period (in months)
-- `--info` - Delegation request info
+-   `--validator-id` - ID of the validator to delegate
+-   `--amount` - Amount of SKALE tokens to delegate
+-   `--delegation-period` - Delegation period (in months)
+-   `--info` - Delegation request info
 
 Optional arguments:
 
-- `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
 
 #### Delegations
 
@@ -229,7 +233,7 @@ Required params:
 
 Optional arguments:
 
-- `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
 
 ## Development
 
