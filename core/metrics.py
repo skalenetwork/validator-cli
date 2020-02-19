@@ -105,13 +105,15 @@ def get_metrics_from_events(nodes, start_date=None, end_date=None,
             block_data = skale.web3.eth.getBlock(tx_block_number)
             block_timestamp = datetime.utcfromtimestamp(block_data['timestamp'])
             metrics_row = [str(block_timestamp),
-                           args['bounty'],
+                           to_skl(args['bounty']),
                            args['averageDowntime'],
                            round(args['averageLatency'] / 1000, 1)]
             if is_validator:
                 metrics_row.insert(1, args['nodeIndex'])
+                total_bounty += metrics_row[2]
+            else:
+                total_bounty += metrics_row[1]
             metrics_rows.append(metrics_row)
-            total_bounty += metrics_row[1]
             if len(metrics_rows) >= limit:
                 break
         start_chunk_block_number = start_chunk_block_number + BLOCK_CHUNK_SIZE
@@ -171,7 +173,6 @@ def get_bounty_from_events(nodes, start_date=None, end_date=None, limit=None) ->
                 break
         start_chunk_block_number = start_chunk_block_number + BLOCK_CHUNK_SIZE
         if end_chunk_block_number >= last_block_number:
-            cur_month_record = {}
             break
     progress(blocks_total, blocks_total)
     if bool(cur_month_record) and len(bounty_rows) < limit:
@@ -181,6 +182,10 @@ def get_bounty_from_events(nodes, start_date=None, end_date=None, limit=None) ->
     return bounty_rows, total_bounty
 
 
+def to_skl(digits):
+    return digits / (10 ** 18)
+
+
 def bounty_to_ordered_row(cur_month_record, nodes):
     sum = 0
     bounty_row = []
@@ -188,34 +193,11 @@ def bounty_to_ordered_row(cur_month_record, nodes):
     bounty_row.append(key_date)
 
     for node in nodes:
-        cur_bounty = cur_month_record[key_date].get(node, '')
+        cur_bounty = cur_month_record[key_date].get(node, 0)
         if cur_bounty:
-            cur_bounty = cur_bounty / (10 ** 18)
+            cur_bounty = to_skl(cur_bounty)
             sum += cur_bounty
         bounty_row.append(cur_bounty)
     bounty_row.insert(1, sum)
     return bounty_row
 
-
-def get_bounty_rows(nodes, bounties):
-    rows = []
-
-    for object in bounties:
-        node_bounties = []
-        key = next(iter(object))
-        node_bounties.append(key)
-        for node in nodes:
-            node_bounties.append(object[key].get(node, ''))
-        rows.append(node_bounties)
-    return rows
-
-
-if __name__ == '__main__':
-    # For tests
-    date = yy_mm_dd_to_date('20-12-11')
-    nodes = get_nodes_for_validator(id)
-    print('Please wait - collecting metrics from blockchain...')
-    nodes = [int(node) for node in nodes]
-    bounties = get_bounty_from_events(nodes, '20-01-27', '20-01-28', is_validator=True)
-    for b in bounties:
-        print(b)

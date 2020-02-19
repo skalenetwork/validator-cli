@@ -120,7 +120,7 @@ def print_node_metrics(rows, total):
     ]
     table = texttable.Texttable(max_width=get_tty_width())
     table.set_cols_align(["l", "r", "r", "r"])
-    table.set_cols_dtype(["t", "i", "i", "f"])
+    table.set_cols_dtype(["t", "a", "i", "f"])
     table.set_precision(1)
     table.add_rows([headers] + rows)
     table.set_deco(table.HEADER)
@@ -140,7 +140,7 @@ def print_validator_metrics(rows, total):
     ]
     table = texttable.Texttable(max_width=get_tty_width())
     table.set_cols_align(["l", "r", "r", "r", "r"])
-    table.set_cols_dtype(["t", "i", "i", "i", "f"])
+    table.set_cols_dtype(["t", "i", "f", "i", "f"])
     table.set_precision(1)
     table.add_rows([headers] + rows)
     table.set_deco(table.HEADER)
@@ -150,8 +150,8 @@ def print_validator_metrics(rows, total):
     print_total_info(total)
 
 
-def print_bounties(nodes, bounties, total):
-    headers = ['Date', 'Total']
+def print_bounties(nodes, bounties):
+    headers = ['Date', 'All nodes']
     node_headers = [f'Node ID = {node}' for node in nodes]
     headers.extend(node_headers)
     table = texttable.Texttable(max_width=get_tty_width())
@@ -165,10 +165,8 @@ def print_bounties(nodes, bounties, total):
     table.set_chars(['-', '|', '+', '-'])
     print('\n')
     print(table.draw())
-    print_total_info(total)
 
 
 def print_total_info(total):
-    total_string = f'Total bounty for the given period = {total:.3f} SKL'
-
-    print('-' * (len(total_string) + 1), '\n', total_string)
+    total_string = f'Total bounty per the given period: {total:.3f} SKL'
+    print('\n', total_string)

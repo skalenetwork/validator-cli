@@ -33,17 +33,22 @@ def bounty():
 
 
 @bounty.command(help="List of aggregated bounties for validator with given id")
-@click.option('--id', '-id')
+@click.option('--index', '-id')
 @click.option('--since', '-s')
 @click.option('--till', '-t')
 @click.option('--limit', '-l')
-@click.option('--accuracy', '-a', is_flag=True)
-def validator(id, since, till, limit, accuracy=False):
-    if id is None:
+def validator(index, since, till, limit):
+    if index is None:
         print('Validator ID expected: "bounty validator -id n"')
         return
-    node_ids = get_nodes_for_validator(id)
+    node_ids = get_nodes_for_validator(index)
     print('Please wait - collecting bounty data from blockchain...')
-    node_ids = [int(node) for node in node_ids]
+    node_ids = [int(node_id) for node_id in node_ids]
     bounties, total = get_bounty_from_events(node_ids, since, till, limit)
-    print_bounties(node_ids, bounties, total)
+    sums = ['Total per period:']
+    for i in range(1, len(bounties[0])):
+        sums.append(sum([bounty[i] for bounty in bounties]))
+    spaces = [''] * len(bounties[0])
+    bounties.append(spaces)
+    bounties.append(sums)
+    print_bounties(node_ids, bounties)
