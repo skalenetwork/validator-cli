@@ -33,30 +33,30 @@ def metrics():
 
 
 @metrics.command(help="List of bounties and metrics for node with given id")
-@click.option('--id', '-id')
+@click.option('--index', '-id')
 @click.option('--since', '-s')
 @click.option('--till', '-t')
 @click.option('--limit', '-l')
-def node(id, since, till, limit):
-    if id is None:
+def node(index, since, till, limit):
+    if index is None:
         print('Node ID expected: "metrics node -id N"')
         return
     print('Please wait - collecting metrics from blockchain...')
-    bounties, total = get_metrics_from_events([int(id)], since, till, limit)
-    print_node_metrics(bounties, total)
+    metrics, total_bounty = get_metrics_from_events([int(index)], since, till, limit)
+    print_node_metrics(metrics, total_bounty)
 
 
 @metrics.command(help="List of bounties and metrics for validator with given id")
-@click.option('--id', '-id')
+@click.option('--index', '-id')
 @click.option('--since', '-s')
 @click.option('--till', '-t')
 @click.option('--limit', '-l')
-def validator(id, since, till, limit):
-    if id is None:
+def validator(index, since, till, limit):
+    if index is None:
         print('Validator ID expected: "metrics node -id N"')
         return
-    nodes = get_nodes_for_validator(id)
+    nodes_ids = get_nodes_for_validator(index)
     print('Please wait - collecting metrics from blockchain...')
-    nodes = [int(node) for node in nodes]
-    bounties, total = get_metrics_from_events(nodes, since, till, limit, is_validator=True)
-    print_validator_metrics(bounties, total)
+    nodes = [int(node_id) for node_id in nodes_ids]
+    metrics, total_bounty = get_metrics_from_events(nodes, since, till, limit, is_validator=True)
+    print_validator_metrics(metrics, total_bounty)

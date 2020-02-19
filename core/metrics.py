@@ -52,9 +52,9 @@ def progress(count, total, status='', bar_len=60):
     sys.stdout.flush()
 
 
-def get_start_end_block_numbers(skale, nodes, start_date=None, end_date=None):
+def get_start_end_block_numbers(skale, node_ids, start_date=None, end_date=None):
     if start_date is None:
-        start_date = datetime.utcfromtimestamp(get_start_date(nodes[0]))
+        start_date = datetime.utcfromtimestamp(get_start_date(node_ids[0]))
     else:
         start_date = yy_mm_dd_to_date(start_date)
     if end_date is not None:
@@ -75,13 +75,13 @@ def format_limit(limit):
         return int(limit)
 
 
-def get_metrics_from_events(nodes, start_date=None, end_date=None,
+def get_metrics_from_events(node_ids, start_date=None, end_date=None,
                             limit=None, is_validator=False):
     skale = init_skale_from_config()
     metrics_rows = []
     total_bounty = 0
     limit = format_limit(limit)
-    start_block_number, last_block_number = get_start_end_block_numbers(skale, nodes,
+    start_block_number, last_block_number = get_start_end_block_numbers(skale, node_ids,
                                                                         start_date, end_date)
     start_chunk_block_number = start_block_number
     blocks_total = last_block_number - start_block_number
@@ -95,7 +95,7 @@ def get_metrics_from_events(nodes, start_date=None, end_date=None,
         event_filter = SkaleFilter(
             skale.manager.contract.events.BountyGot,
             from_block=hex(start_chunk_block_number),
-            argument_filters={'nodeIndex': nodes},
+            argument_filters={'nodeIndex': node_ids},
             to_block=hex(end_chunk_block_number)
         )
         logs = event_filter.get_events()
@@ -123,13 +123,13 @@ def get_metrics_from_events(nodes, start_date=None, end_date=None,
     return metrics_rows, total_bounty
 
 
-def get_bounty_from_events(nodes, start_date=None, end_date=None, limit=None) -> tuple:
+def get_bounty_from_events(node_ids, start_date=None, end_date=None, limit=None) -> tuple:
     skale = init_skale_from_config()
     bounty_rows = []
     total_bounty = 0
     cur_month_record = {}
     limit = format_limit(limit)
-    start_block_number, last_block_number = get_start_end_block_numbers(skale, nodes,
+    start_block_number, last_block_number = get_start_end_block_numbers(skale, node_ids,
                                                                         start_date, end_date)
     start_chunk_block_number = start_block_number
     blocks_total = last_block_number - start_block_number
@@ -143,7 +143,7 @@ def get_bounty_from_events(nodes, start_date=None, end_date=None, limit=None) ->
         event_filter = SkaleFilter(
             skale.manager.contract.events.BountyGot,
             from_block=hex(start_chunk_block_number),
-            argument_filters={'nodeIndex': nodes},
+            argument_filters={'nodeIndex': node_ids},
             to_block=hex(end_chunk_block_number)
         )
         logs = event_filter.get_events()
@@ -165,7 +165,7 @@ def get_bounty_from_events(nodes, start_date=None, end_date=None, limit=None) ->
                     cur_month_record[cur_year_month][node_id] = bounty
             else:
                 if bool(cur_month_record):  # if dict is not empty
-                    bounty_row = bounty_to_ordered_row(cur_month_record, nodes)
+                    bounty_row = bounty_to_ordered_row(cur_month_record, node_ids)
                     total_bounty += bounty_row[1]
                     bounty_rows.append(bounty_row)
                 cur_month_record = {cur_year_month: {node_id: bounty}}
@@ -176,7 +176,7 @@ def get_bounty_from_events(nodes, start_date=None, end_date=None, limit=None) ->
             break
     progress(blocks_total, blocks_total)
     if bool(cur_month_record) and len(bounty_rows) < limit:
-        bounty_row = bounty_to_ordered_row(cur_month_record, nodes)
+        bounty_row = bounty_to_ordered_row(cur_month_record, node_ids)
         total_bounty += bounty_row[1]
         bounty_rows.append(bounty_row)
     return bounty_rows, total_bounty
@@ -186,18 +186,17 @@ def to_skl(digits):
     return digits / (10 ** 18)
 
 
-def bounty_to_ordered_row(cur_month_record, nodes):
+def bounty_to_ordered_row(cur_month_record, node_ids):
     sum = 0
     bounty_row = []
     key_date = next(iter(cur_month_record))
     bounty_row.append(key_date)
 
-    for node in nodes:
-        cur_bounty = cur_month_record[key_date].get(node, 0)
+    for node_id in node_ids:
+        cur_bounty = cur_month_record[key_date].get(node_id, 0)
         if cur_bounty:
             cur_bounty = to_skl(cur_bounty)
             sum += cur_bounty
         bounty_row.append(cur_bounty)
     bounty_row.insert(1, sum)
     return bounty_row
-

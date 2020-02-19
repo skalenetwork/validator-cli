@@ -18,7 +18,7 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import click
-from core.metrics import get_bounty_from_events, get_nodes_for_validator, get_bounty_rows
+from core.metrics import get_bounty_from_events, get_nodes_for_validator
 from utils.print_formatters import print_bounties
 
 
