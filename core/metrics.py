@@ -37,16 +37,11 @@ def find_block_for_tx_stamp(skale, tx_stamp, lo=0, hi=None):
     return lo - 1
 
 
-def yy_mm_dd_to_date(date_str):
-    format_str = '%y-%m-%d'
-    return datetime.strptime(date_str, format_str)
-
-
-def progress(count, total, status='', bar_len=60):
-    filled_len = int(round(bar_len * count / float(total)))
+def progress_bar(count, total, status='', bar_len=60):
+    done_len = int(round(bar_len * count / float(total)))
 
     percents = round(100.0 * count / float(total), 1)
-    bar = '=' * filled_len + '-' * (bar_len - filled_len)
+    bar = '=' * done_len + '-' * (bar_len - done_len)
 
     sys.stdout.write('[%s] %s%s %s\r' % (bar, percents, '%', status))
     sys.stdout.flush()
@@ -55,10 +50,6 @@ def progress(count, total, status='', bar_len=60):
 def get_start_end_block_numbers(skale, node_ids, start_date=None, end_date=None):
     if start_date is None:
         start_date = datetime.utcfromtimestamp(get_start_date(node_ids[0]))
-    else:
-        start_date = yy_mm_dd_to_date(start_date)
-    if end_date is not None:
-        end_date = yy_mm_dd_to_date(end_date)
 
     start_block_number = find_block_for_tx_stamp(skale, start_date)
     cur_block_number = skale.web3.eth.blockNumber
@@ -86,7 +77,7 @@ def get_metrics_from_events(node_ids, start_date=None, end_date=None,
     start_chunk_block_number = start_block_number
     blocks_total = last_block_number - start_block_number
     while len(metrics_rows) < limit:
-        progress(start_chunk_block_number - start_block_number, blocks_total)
+        progress_bar(start_chunk_block_number - start_block_number, blocks_total)
 
         end_chunk_block_number = start_chunk_block_number + BLOCK_CHUNK_SIZE - 1
         if end_chunk_block_number > last_block_number:
@@ -119,7 +110,7 @@ def get_metrics_from_events(node_ids, start_date=None, end_date=None,
         start_chunk_block_number = start_chunk_block_number + BLOCK_CHUNK_SIZE
         if end_chunk_block_number >= last_block_number:
             break
-    progress(blocks_total, blocks_total)
+    progress_bar(blocks_total, blocks_total)
     return metrics_rows, total_bounty
 
 
@@ -135,7 +126,7 @@ def get_bounty_from_events(node_ids, start_date=None, end_date=None, limit=None)
     blocks_total = last_block_number - start_block_number
 
     while len(bounty_rows) < limit:
-        progress(start_chunk_block_number - start_block_number, blocks_total)
+        progress_bar(start_chunk_block_number - start_block_number, blocks_total)
         end_chunk_block_number = start_chunk_block_number + BLOCK_CHUNK_SIZE - 1
         if end_chunk_block_number > last_block_number:
             end_chunk_block_number = last_block_number
@@ -164,7 +155,7 @@ def get_bounty_from_events(node_ids, start_date=None, end_date=None, limit=None)
                 else:
                     cur_month_record[cur_year_month][node_id] = bounty
             else:
-                if bool(cur_month_record):  # if dict is not empty
+                if bool(cur_month_record):  # if prepared dict is not empty
                     bounty_row = bounty_to_ordered_row(cur_month_record, node_ids)
                     total_bounty += bounty_row[1]
                     bounty_rows.append(bounty_row)
@@ -174,7 +165,7 @@ def get_bounty_from_events(node_ids, start_date=None, end_date=None, limit=None)
         start_chunk_block_number = start_chunk_block_number + BLOCK_CHUNK_SIZE
         if end_chunk_block_number >= last_block_number:
             break
-    progress(blocks_total, blocks_total)
+    progress_bar(blocks_total, blocks_total)
     if bool(cur_month_record) and len(bounty_rows) < limit:
         bounty_row = bounty_to_ordered_row(cur_month_record, node_ids)
         total_bounty += bounty_row[1]
@@ -182,7 +173,7 @@ def get_bounty_from_events(node_ids, start_date=None, end_date=None, limit=None)
     return bounty_rows, total_bounty
 
 
-def to_skl(digits):
+def to_skl(digits):  # convert to SKL
     return digits / (10 ** 18)
 
 

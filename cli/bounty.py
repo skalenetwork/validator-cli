@@ -26,6 +26,7 @@ from utils.texts import Texts
 
 G_TEXTS = Texts()
 TEXTS = G_TEXTS['bounty']
+MSGS = G_TEXTS['msg']
 
 
 @click.group()
@@ -45,9 +46,21 @@ def bounty():
     help=TEXTS['validator']['index']['help'],
     prompt=TEXTS['validator']['index']['prompt']
 )
-@click.option('--since', '-s')
-@click.option('--till', '-t')
-@click.option('--limit', '-l')
+@click.option(
+    '--since', '-s',
+    type=click.DateTime(formats=['%Y-%m-%d']),
+    help=MSGS['since']['help']
+)
+@click.option(
+    '--till', '-t',
+    type=click.DateTime(formats=['%Y-%m-%d']),
+    help=MSGS['till']['help']
+)
+@click.option(
+    '--limit', '-l',
+    type=int,
+    help=MSGS['limit']['help']
+)
 def validator(index, since, till, limit):
     if index < 0:
         print(TEXTS['validator']['index']['valid_msg'])
