@@ -35,7 +35,6 @@ jobs:
       if: matrix.os == 'macOS-latest'
       run: |
         brew install docker-machine docker
-        sudo docker –version
     - name: Prepare tests
       run: |
         bash ./scripts/prerare_tests.sh
