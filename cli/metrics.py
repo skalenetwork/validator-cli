@@ -97,6 +97,6 @@ def validator(index, since, till, limit):
         return
     nodes_ids = get_nodes_for_validator(index)
     print(TEXTS['validator']['index']['wait_msg'])
-    nodes = [int(node_id) for node_id in nodes_ids]
-    metrics, total_bounty = get_metrics_from_events(nodes, since, till, limit, is_validator=True)
+    metrics, total_bounty = get_metrics_from_events(nodes_ids, since, till, limit,
+                                                    is_validator=True)
     print_validator_metrics(metrics, total_bounty)
