@@ -42,6 +42,7 @@ jobs:
         bash ./scripts/build.sh $VERSION $BRANCH
         export OS=`uname -s`-`uname -m`
         export EXECUTABLE_NAME=sk-val-$VERSION-$OS
+        echo "::set-env name=BRANCH::$BRANCH"
         echo "::set-env name=EXECUTABLE_NAME::$EXECUTABLE_NAME"
     - name: Upload to DO
       run: |
@@ -68,3 +69,6 @@ jobs:
         asset_path: ./dist/${{ env.EXECUTABLE_NAME }}
         asset_name: ${{ env.EXECUTABLE_NAME }}
         asset_content_type: application/octet-stream
+
+./dist/sk-val-0.1.0-SKALE-2241-move-to-github-actions.0-Linux-x86_64
+./dist/sk-val-0.1.0-SKALE-2241-move-to-github-actions.0-Linux-x86_64
