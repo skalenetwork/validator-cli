@@ -3,9 +3,10 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }} 
     strategy:
       matrix:
+        os: [macos-latest, ubuntu-latest]
         python-version: [3.7]
     env:
       ETH_PRIVATE_KEY: ${{ secrets.ETH_PRIVATE_KEY }}
