@@ -3,10 +3,9 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }} 
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest]
         python-version: [3.7]
     env:
       ETH_PRIVATE_KEY: ${{ secrets.ETH_PRIVATE_KEY }}
@@ -31,18 +30,6 @@ jobs:
     - name: Build binary
       run: |
         bash scripts/build.sh 1.0.0 test-branch
-    - name: Install Docker on macOS
-      if: matrix.os == 'macOS-latest'
-      run: |
-        sudo kextcache --clear-staging
-        brew cask install virtualbox || true
-        sudo installer -allowUntrusted -pkg /Volumes/VirtualBox/VirtualBox.pkg -target /
-        brew cask install  --force virtualbox
-        brew install docker docker-machine
-        curl -Lo ~/.docker/machine/cache/boot2docker.iso https://github.com/boot2docker/boot2docker/releases/download/v1.9.1/boot2docker.iso
-        docker-machine create --driver virtualbox default
-        eval "$(docker-machine env dev)"
-        docker ps
     - name: Prepare tests
       run: |
         bash ./scripts/prerare_tests.sh
