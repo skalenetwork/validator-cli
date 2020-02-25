@@ -12,7 +12,7 @@ docker run -d --network host --name ganache trufflesuite/ganache-cli:v6.8.1-beta
 
 docker run \
     -v $DIR/contracts_data:/usr/src/manager/data \
-    --network host -it \
+    --network host \
     skalenetwork/skale-manager:$MANAGER_BRANCH-latest \
     npx truffle migrate --network test
 
