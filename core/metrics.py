@@ -4,11 +4,12 @@ from utils.filter import SkaleFilter
 import sys
 
 BLOCK_CHUNK_SIZE = 1000
-FILTER_PERIOD = 12
 
 
 def get_nodes_for_validator(val_id):
-    return ['20', '12', '18', '13', '15']  # TODO: Return test array. Implement later
+    skale = init_skale_from_config()
+    validator_service = skale.get_contract_by_name('validator_service')
+    return validator_service.contract.functions.getValidatorNodeIndexes(val_id).call()
 
 
 def get_start_date(node_id):
