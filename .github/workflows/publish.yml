@@ -34,7 +34,8 @@ jobs:
         pip install wheel
     - name: Build library
       run: |
-        echo GITHUB_WORKSPACE: $GITHUB_WORKSPACE
+        echo "::set-env name=PROJECT_DIR::$GITHUB_WORKSPACE"
+        echo PROJECT_DIR: $PROJECT_DIR
         export BRANCH=${GITHUB_REF##*/}
         echo "Branch $BRANCH"
         export VERSION=$(bash ./scripts/calculate_version.sh)
