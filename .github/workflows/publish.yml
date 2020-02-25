@@ -11,21 +11,21 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest # ${{ matrix.os }} 
+    runs-on: ${{ matrix.os }} 
     # if: github.event.pull_request.merged
-    # strategy:
-    #   matrix:
-    #     os: [macos-latest, ubuntu-latest]
-    #     python-version: [3.7]
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        python-version: [3.7]
     env:
       ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
       SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.7 # ${{ matrix.python-version }}
+    - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
-        python-version: 3.7 # ${{ matrix.python-version }}
+        python-version: ${{ matrix.python-version }}
     - name: Install python dependencies
       run: |
         python -m pip install --upgrade pip
@@ -35,7 +35,7 @@ jobs:
     - name: Build library
       run: |
         echo "::set-env name=PROJECT_DIR::$GITHUB_WORKSPACE"
-        echo GITHUB_WORKSPACE: $GITHUB_WORKSPACE
+        echo PROJECT_DIR: $GITHUB_WORKSPACE
         export BRANCH=${GITHUB_REF##*/}
         echo "Branch $BRANCH"
         export VERSION=$(bash ./scripts/calculate_version.sh)
@@ -61,13 +61,13 @@ jobs:
         release_name: ${{ env.VERSION }}
         draft: false
         prerelease: true
-    - name: Add binary to release
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/${{ env.EXECUTABLE_NAME }}
-        asset_name: ${{ env.EXECUTABLE_NAME }}
-        asset_content_type: application/octet-stream
+    # - name: Add binary to release
+    #   id: upload-release-asset 
+    #   uses: actions/upload-release-asset@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+    #     asset_path: ./dist/${{ env.EXECUTABLE_NAME }}
+    #     asset_name: ${{ env.EXECUTABLE_NAME }}
+    #     asset_content_type: application/octet-stream
