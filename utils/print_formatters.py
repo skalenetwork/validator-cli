@@ -113,3 +113,64 @@ def print_linked_addresses(addresses):
             address_info['nodes'],
         ])
     print(Formatter().table(headers, rows))
+
+
+def print_node_metrics(rows, total):
+    headers = [
+        'Date',
+        'Bounty',
+        'Downtime',
+        'Latency'
+    ]
+    table = texttable.Texttable(max_width=get_tty_width())
+    table.set_cols_align(["l", "r", "r", "r"])
+    table.set_cols_dtype(["t", "a", "i", "f"])
+    table.set_precision(1)
+    table.add_rows([headers] + rows)
+    table.set_deco(table.HEADER)
+    table.set_chars(['-', '|', '+', '-'])
+    print('\n')
+    print(table.draw())
+    print_total_info(total)
+
+
+def print_validator_metrics(rows, total):
+    headers = [
+        'Date',
+        'Node ID',
+        'Bounty',
+        'Downtime',
+        'Latency'
+    ]
+    table = texttable.Texttable(max_width=get_tty_width())
+    table.set_cols_align(["l", "r", "r", "r", "r"])
+    table.set_cols_dtype(["t", "i", "f", "i", "f"])
+    table.set_precision(1)
+    table.add_rows([headers] + rows)
+    table.set_deco(table.HEADER)
+    table.set_chars(['-', '|', '+', '-'])
+    print('\n')
+    print(table.draw())
+    print_total_info(total)
+
+
+def print_bounties(nodes, bounties):
+    headers = ['Date', 'All nodes']
+    node_headers = [f'Node ID = {node}' for node in nodes]
+    headers.extend(node_headers)
+    table = texttable.Texttable(max_width=get_tty_width())
+    format_string = ['t']
+    format_string.extend(['f' for h in range(len(headers) - 1)])
+    table.set_cols_dtype(format_string)
+    table.set_cols_align(['r' for h in headers])
+    table.set_precision(3)
+    table.add_rows([headers] + bounties)
+    table.set_deco(table.HEADER)
+    table.set_chars(['-', '|', '+', '-'])
+    print('\n')
+    print(table.draw())
+
+
+def print_total_info(total):
+    total_string = f'Total bounty per the given period: {total:.3f} SKL'
+    print('\n', total_string)
