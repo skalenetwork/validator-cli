@@ -43,7 +43,7 @@ def init_skale_w_wallet(endpoint, wallet_type, pk_file=None, spin=True):
         wallet = LedgerWallet(web3)
     else:
         with open(pk_file, 'r') as f:
-            pk = str(f.read()).replace('\n', '')
+            pk = str(f.read()).strip()
         wallet = Web3Wallet(pk, web3)
     return init_skale(endpoint, wallet, spin)
 

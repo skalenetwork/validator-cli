@@ -84,7 +84,7 @@ def init(endpoint, contracts_url, wallet):
     safe_mk_dirs(SKALE_VAL_CONFIG_FOLDER)
     download_file(contracts_url, SKALE_VAL_ABI_FILE)
     config = {
-        'endpoint': endpoint,
+        'endpoint': endpoint.strip(),
         'wallet': wallet
     }
     write_json(SKALE_VAL_CONFIG_FILE, config)
