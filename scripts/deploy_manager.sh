@@ -14,10 +14,6 @@ docker run -d --network testnet -p 8545:8545 -p 8546:8546 \
     --name ganache trufflesuite/ganache-cli:v6.8.1-beta.0 \
     --account="0x${ETH_PRIVATE_KEY},100000000000000000000000000" -l 80000000
 
-
-echo ETH_PRIVATE_KEY: $ETH_PRIVATE_KEY
-echo DOCKER_NETWORK_ENDPOINT: $DOCKER_NETWORK_ENDPOINT
-
 docker run \
     -v $DIR/contracts_data:/usr/src/manager/data \
     --network testnet \
