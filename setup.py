@@ -43,7 +43,7 @@ extras_require = {
         "isort>=4.2.15,<4.3.22",
     ],
     'dev': [
-        "PyInstaller==3.5",
+        "PyInstaller==3.6",
         "pytest==5.3.5",
         "pytest-cov==2.8.1",
         "twine==3.1.1",
