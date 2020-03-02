@@ -50,10 +50,9 @@ def test_ls(runner, skale):
 
     validators = skale.validator_service.ls()
     registration_time = datetime.datetime.fromtimestamp(validators[0]['registration_time'])
-
-    assert "\x1b[KName   Id                    Address                     Description   Fee rate (%)    Registration time    Minimum delegation (SKL)" in output_list  # noqa
-    assert "------------------------------------------------------------------------------------------------------------------------------------" in output_list  # noqa
-    assert f'test   1    {skale.wallet.address}   test          10             {registration_time}   1000                    ' in output_list  # noqa
+    assert "\x1b[KName   Id                    Address                     Description   Fee rate (%)    Registration time    Minimum delegation (SKL)   Validator status" in output_list  # noqa
+    assert "-------------------------------------------------------------------------------------------------------------------------------------------------------" in output_list  # noqa
+    assert f'test   1    {skale.wallet.address}   test          10             {registration_time}   1000                       Trusted         ' in output_list  # noqa
     assert result.exit_code == 0
 
 
