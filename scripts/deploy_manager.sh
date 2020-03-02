@@ -8,6 +8,7 @@ set -e
 export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 export DOCKER_NETWORK_ENDPOINT=http://ganache:8545
 
+docker rm -f ganache || true
 docker network create testnet || true
 
 docker run -d --network testnet -p 8545:8545 -p 8546:8546 \

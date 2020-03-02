@@ -93,9 +93,9 @@ def _ls(all):
 
 
 @validator.command('delegations', help=TEXTS['delegations']['help'])
-@click.argument('address')
-def _delegations(address):
-    delegations(address)
+@click.argument('validator_id')
+def _delegations(validator_id):
+    delegations(validator_id)
 
 
 @validator.command('accept-delegation', help=TEXTS['accept_delegation']['help'])
