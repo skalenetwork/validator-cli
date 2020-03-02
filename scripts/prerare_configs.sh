@@ -12,8 +12,6 @@ CLI_ABI_CONFIG=$CLI_CONFIG_FOLDER/config.json
 TEST_PK_FILE=$DIR/../tests/test-pk.txt
 
 mkdir -p $CLI_CONFIG_FOLDER
-
-bash $DIR/deploy_manager.sh
 cp $DIR/../test_abi.json $CLI_ABI_FILE
 
 ENDPOINT='http://localhost:8545'
