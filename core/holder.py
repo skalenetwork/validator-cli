@@ -29,7 +29,7 @@ def delegations(address):
     skale = init_skale_from_config()
     if not skale:
         return
-    delegations_list = skale.delegation_service.get_all_delegations_by_holder(address)
+    delegations_list = skale.delegation_controller.get_all_delegations_by_holder(address)
     print(f'Delegations for address {address}:\n')
     print_delegations(delegations_list)
 
@@ -39,7 +39,7 @@ def delegate(validator_id, amount, delegation_period, info, pk_file):
     if not skale:
         return
     with yaspin(text='Sending delegation request', color=SPIN_COLOR) as sp:
-        tx_res = skale.delegation_service.delegate(
+        tx_res = skale.delegation_controller.delegate(
             validator_id=validator_id,
             amount=amount,
             delegation_period=delegation_period,
@@ -57,7 +57,7 @@ def cancel_pending_delegation(delegation_id: int, pk_file: str) -> None:
     if not skale:
         return
     with yaspin(text='Canceling delegation request', color=SPIN_COLOR) as sp:
-        tx_res = skale.delegation_service.cancel_pending_delegation(
+        tx_res = skale.delegation_controller.cancel_pending_delegation(
             delegation_id=delegation_id
         )
         receipt = wait_receipt(skale.web3, tx_res.hash)
