@@ -44,9 +44,12 @@ def register(name: str, description: str, commission_rate: int, min_delegation: 
         sp.write("✔ New validator registered")
 
 
-def validators_list():
+def validators_list(all):
     skale = init_skale_from_config()
-    validators = skale.validator_service.ls()
+    if not all:
+        validators = skale.validator_service.ls(trusted_only=True)
+    else:
+        validators = skale.validator_service.ls()
     print_validators(validators)
 
 

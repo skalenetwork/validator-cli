@@ -53,11 +53,13 @@ def print_validators(validators):
         'Description',
         'Fee rate (%)',
         'Registration time',
-        'Minimum delegation (SKL)'
+        'Minimum delegation (SKL)',
+        'Validator status'
     ]
     rows = []
     for validator in validators:
         date = datetime.datetime.fromtimestamp(validator['registration_time'])
+        status = 'Trusted' if validator['trusted'] else 'Registered'
         rows.append([
             validator['name'],
             validator['id'],
@@ -65,7 +67,8 @@ def print_validators(validators):
             validator['description'],
             validator['fee_rate'],
             date,
-            validator['minimum_delegation_amount']
+            validator['minimum_delegation_amount'],
+            status
         ])
     print(Formatter().table(headers, rows))
 

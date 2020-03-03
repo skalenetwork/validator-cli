@@ -16,19 +16,10 @@ from tests.constants import (
 )
 
 
-def _generate_new_pk_file(skale):
-    eth_amount = 0.1
-    wallet = generate_wallet(skale.web3)
-    send_ether(skale.web3, skale.wallet, wallet.address, eth_amount)
-    with open(SECOND_TEST_PK_FILE, "w") as text_file:
-        print(wallet._private_key, file=text_file)
-
-
-def test_register(runner, skale):
+def create_new_validator(skale, runner):
     _generate_new_pk_file(skale)
-    n_of_validators_before = skale.validator_service.number_of_validators()
 
-    result = runner.invoke(
+    return runner.invoke(
         _register,
         [
             '-n', D_VALIDATOR_NAME,
@@ -39,6 +30,19 @@ def test_register(runner, skale):
             '--yes'
         ]
     )
+
+
+def _generate_new_pk_file(skale):
+    eth_amount = 0.1
+    wallet = generate_wallet(skale.web3)
+    send_ether(skale.web3, skale.wallet, wallet.address, eth_amount)
+    with open(SECOND_TEST_PK_FILE, "w") as text_file:
+        print(wallet._private_key, file=text_file)
+
+
+def test_register(runner, skale):
+    n_of_validators_before = skale.validator_service.number_of_validators()
+    result = create_new_validator(skale, runner)
 
     n_of_validators_after = skale.validator_service.number_of_validators()
     assert n_of_validators_after == n_of_validators_before + 1
@@ -52,9 +56,26 @@ def test_ls(runner, skale):
     validators = skale.validator_service.ls()
     registration_time = datetime.datetime.fromtimestamp(validators[0]['registration_time'])
 
-    assert "\x1b[KName   Id                    Address                     Description   Fee rate (%)    Registration time    Minimum delegation (SKL)" in output_list  # noqa
-    assert "------------------------------------------------------------------------------------------------------------------------------------" in output_list  # noqa
-    assert f'test   1    {skale.wallet.address}   test          10             {registration_time}   1000                    ' in output_list  # noqa
+    assert "\x1b[KName   Id                    Address                     Description   Fee rate (%)    Registration time    Minimum delegation (SKL)   Validator status" in output_list  # noqa
+    assert "-------------------------------------------------------------------------------------------------------------------------------------------------------" in output_list  # noqa
+    assert f'test   1    {skale.wallet.address}   test          10             {registration_time}   1000                       Trusted         ' in output_list  # noqa
+    assert result.exit_code == 0
+
+
+def test_ls_all(runner, skale):
+    if skale.validator_service.number_of_validators() < 2:
+        create_new_validator(skale, runner)
+
+    result = runner.invoke(_ls, args="--all")
+    output_list = result.output.splitlines()
+
+    validators = skale.validator_service.ls()
+    registration_time = list(map(lambda x: datetime.datetime.fromtimestamp(x['registration_time']),
+                                 validators))
+    assert "\x1b[KName   Id                    Address                     Description   Fee rate (%)    Registration time    Minimum delegation (SKL)   Validator status" in output_list  # noqa
+    assert "-------------------------------------------------------------------------------------------------------------------------------------------------------" in output_list  # noqa
+    assert f'test   1    {validators[0]["validator_address"]}   test          10             {registration_time[0]}   1000                       Trusted         ' in output_list  # noqa
+    assert f'test   2    {validators[1]["validator_address"]}   test          10             {registration_time[1]}   1000                       Registered      ' in output_list  # noqa
     assert result.exit_code == 0
 
 
