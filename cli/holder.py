@@ -83,8 +83,9 @@ def _delegate(validator_id, amount, delegation_period, info, pk_file):
 
 @holder.command('delegations', help=TEXTS['delegations']['help'])
 @click.argument('address')
-def _delegations(address):
-    delegations(address)
+@click.option('--wei', '-w', is_flag=True, help=TEXTS['delegations']['wei']['help'])
+def _delegations(address, wei):
+    delegations(address, wei)
 
 
 @holder.command('cancel-delegation', help=TEXTS['cancel_delegation']['help'])

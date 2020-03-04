@@ -25,13 +25,13 @@ from utils.print_formatters import print_delegations
 from utils.constants import SPIN_COLOR
 
 
-def delegations(address):
+def delegations(address, wei):
     skale = init_skale_from_config()
     if not skale:
         return
     delegations_list = skale.delegation_controller.get_all_delegations_by_holder(address)
     print(f'Delegations for address {address}:\n')
-    print_delegations(delegations_list)
+    print_delegations(delegations_list, wei)
 
 
 def delegate(validator_id, amount, delegation_period, info, pk_file):
