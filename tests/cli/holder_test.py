@@ -31,7 +31,7 @@ def test_delegate(runner, skale):
     assert result.exit_code == 0
 
 
-def test_delegations(runner, skale):
+def test_delegations_skl(runner, skale):
     result = runner.invoke(
         _delegations,
         [skale.wallet.address]
@@ -42,6 +42,21 @@ def test_delegations(runner, skale):
 
     assert f'\x1b[KDelegations for address {skale.wallet.address}:' in output_list
     assert 'Id               Delegator Address                 Status     Validator Id   Amount (SKL)   Delegation period (months)       Created At        Info' in output_list  # noqa
+    assert f'0    {skale.wallet.address}   DELEGATED   1              1e-14          3                            {created_time}   test' in output_list  # noqa
+    assert result.exit_code == 0
+
+
+def test_delegations_wei(runner, skale):
+    result = runner.invoke(
+        _delegations,
+        [skale.wallet.address, '--wei']
+    )
+    output_list = result.output.splitlines()
+    delegation = skale.delegation_controller.get_delegation(0)
+    created_time = datetime.datetime.fromtimestamp(delegation['created'])
+
+    assert f'\x1b[KDelegations for address {skale.wallet.address}:' in output_list
+    assert 'Id               Delegator Address                 Status     Validator Id   Amount (wei)   Delegation period (months)       Created At        Info' in output_list  # noqa
     assert f'0    {skale.wallet.address}   DELEGATED   1              10000          3                            {created_time}   test' in output_list  # noqa
     assert result.exit_code == 0
 
