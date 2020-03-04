@@ -36,6 +36,8 @@ validator:
     help: Info about the validator
   delegations:
     help: List delegations for a validator
+    wei:
+      help: Show amount in wei
   accept_delegation:
     help: Accept pending delegation request by delegation ID
     confirm: |-

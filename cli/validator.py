@@ -94,7 +94,8 @@ def _ls(all):
 
 @validator.command('delegations', help=TEXTS['delegations']['help'])
 @click.argument('validator_id')
-def _delegations(validator_id):
+@click.option('--wei', '-w', is_flag=True, help=TEXTS['delegations']['wei']['help'])
+def _delegations(validator_id, wei):
     delegations(validator_id)
 
 
