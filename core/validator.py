@@ -53,13 +53,13 @@ def validators_list(all):
     print_validators(validators)
 
 
-def delegations(validator_id):
+def delegations(validator_id, wei):
     skale = init_skale_from_config()
     if not skale:
         return
     delegations_list = skale.delegation_controller.get_all_delegations_by_validator(validator_id)
     print(f'Delegations for validator ID {validator_id}:\n')
-    print_delegations(delegations_list)
+    print_delegations(delegations_list, wei)
 
 
 def accept_pending_delegation(delegation_id, pk_file: str) -> None:

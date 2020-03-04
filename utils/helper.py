@@ -69,3 +69,7 @@ def get_config():
 def abort_if_false(ctx, param, value):
     if not value:
         ctx.abort()
+
+
+def to_skl(digits):  # convert to SKL
+    return digits / (10 ** 18)

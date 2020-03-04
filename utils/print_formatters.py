@@ -20,6 +20,7 @@
 import os
 import datetime
 import texttable
+from utils.helper import to_skl
 
 
 def get_tty_width():
@@ -73,13 +74,14 @@ def print_validators(validators):
     print(Formatter().table(headers, rows))
 
 
-def print_delegations(delegations: list) -> None:
+def print_delegations(delegations: list, wei: bool) -> None:
+    amount_header = 'Amount (wei)' if wei else 'Amount (SKL)'
     headers = [
         'Id',
         'Delegator Address',
         'Status',
         'Validator Id',
-        'Amount (SKL)',
+        amount_header,
         'Delegation period (months)',
         'Created At',
         'Info'
@@ -87,12 +89,13 @@ def print_delegations(delegations: list) -> None:
     rows = []
     for delegation in delegations:
         date = datetime.datetime.fromtimestamp(delegation['created'])
+        amount = delegation['amount'] if wei else to_skl(delegation['amount'])
         rows.append([
             delegation['id'],
             delegation['address'],
             delegation['status'],
             delegation['validator_id'],
-            delegation['amount'],
+            amount,
             delegation['delegation_period'],
             date,
             delegation['info']
