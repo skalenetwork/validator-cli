@@ -22,6 +22,7 @@ import json
 import urllib
 import logging
 
+from web3 import Web3
 from utils.constants import SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE
 
 logger = logging.getLogger(__name__)
@@ -71,5 +72,5 @@ def abort_if_false(ctx, param, value):
         ctx.abort()
 
 
-def to_skl(digits):  # convert to SKL
-    return digits / (10 ** 18)
+def to_skl(wei):  # convert to SKL
+    return Web3.fromWei(wei, 'ether')
