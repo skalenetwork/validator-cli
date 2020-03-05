@@ -89,7 +89,7 @@ def test_delegations_skl(runner, skale):
     created_time = datetime.datetime.fromtimestamp(delegation['created'])
     assert f'\x1b[KDelegations for validator ID {D_VALIDATOR_ID}:' in output_list
     assert 'Id               Delegator Address                 Status     Validator Id   Amount (SKL)   Delegation period (months)       Created At        Info' in output_list  # noqa
-    assert f'0    {skale.wallet.address}   DELEGATED   1              1e-14          3                            {created_time}   test' in output_list  # noqa
+    assert f'0    {skale.wallet.address}   DELEGATED   1              1E-14          3                            {created_time}   test' in output_list  # noqa
     assert result.exit_code == 0
 
 
