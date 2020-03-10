@@ -39,13 +39,14 @@ def find_block_for_tx_stamp(skale, tx_stamp, lo=0, hi=None):
 
 
 def progress_bar(count, total, status='', bar_len=60):
-    done_len = int(round(bar_len * count / float(total)))
+    if total > 0:
+        done_len = int(round(bar_len * count / float(total)))
 
-    percents = round(100.0 * count / float(total), 1)
-    bar = '=' * done_len + '-' * (bar_len - done_len)
+        percents = round(100.0 * count / float(total), 1)
+        bar = '=' * done_len + '-' * (bar_len - done_len)
 
-    sys.stdout.write('[%s] %s%s %s\r' % (bar, percents, '%', status))
-    sys.stdout.flush()
+        sys.stdout.write('[%s] %s%s %s\r' % (bar, percents, '%', status))
+        sys.stdout.flush()
 
 
 def get_start_end_block_numbers(skale, node_ids, start_date=None, end_date=None):
