@@ -167,7 +167,7 @@ def test_link_address(runner, skale):
 
 def test_unlink_address(runner, skale):
     wallet = generate_wallet(skale.web3)
-    skale.delegation_service.link_node_address(
+    skale.validator_service.link_node_address(
         node_address=wallet.address,
         wait_for=True
     )

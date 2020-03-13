@@ -32,7 +32,7 @@ def register(name: str, description: str, commission_rate: int, min_delegation: 
     if not skale:
         return
     with yaspin(text='Registering new validator', color=SPIN_COLOR) as sp:
-        tx_res = skale.delegation_service.register_validator(
+        tx_res = skale.validator_service.register_validator(
             name=name,
             description=description,
             fee_rate=commission_rate,
@@ -81,7 +81,7 @@ def link_node_address(node_address: str, pk_file: str) -> None:
     if not skale:
         return
     with yaspin(text='Linking node address', color=SPIN_COLOR) as sp:
-        tx_res = skale.delegation_service.link_node_address(
+        tx_res = skale.validator_service.link_node_address(
             node_address=node_address
         )
         if not check_tx_result(tx_res.hash, skale.web3):
@@ -95,7 +95,7 @@ def unlink_node_address(node_address: str, pk_file: str) -> None:
     if not skale:
         return
     with yaspin(text='Unlinking node address', color=SPIN_COLOR) as sp:
-        tx_res = skale.delegation_service.unlink_node_address(
+        tx_res = skale.validator_service.unlink_node_address(
             node_address=node_address
         )
         if not check_tx_result(tx_res.hash, skale.web3):
