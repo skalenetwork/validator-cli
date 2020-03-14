@@ -35,7 +35,7 @@ jobs:
         bash ./scripts/deploy_manager.sh
     - name: Prepare configs
       run: |
-        bash ./scripts/prerare_configs.sh
+        bash ./scripts/prepare_configs.sh
     - name: Run tests
       run: |
         bash ./scripts/run_tests.sh

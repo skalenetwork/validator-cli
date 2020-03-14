@@ -36,6 +36,8 @@ validator:
     help: Info about the validator
   delegations:
     help: List delegations for a validator
+    wei:
+      help: Show delegation amount in wei
   accept_delegation:
     help: Accept pending delegation request by delegation ID
     confirm: |-
@@ -80,6 +82,8 @@ holder:
       Are you sure you want to delegate your tokens?
   delegations:
     help: List of delegations for address
+    wei:
+      help: Show delegation amount in wei
   cancel_delegation:
     help: Cancel pending delegation request
 msg:
