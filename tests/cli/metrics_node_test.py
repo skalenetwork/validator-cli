@@ -5,10 +5,19 @@ from datetime import datetime
 from cli.metrics import node
 from core.metrics import get_metrics_from_events
 from tests.constants import NODE_ID, SERVICE_ROW_COUNT
+from tests.prepare_data import set_test_msr
 from utils.texts import Texts
 
 G_TEXTS = Texts()
 NO_DATA_MSG = G_TEXTS['msg']['no_data']
+
+
+def setup_module(module):
+    set_test_msr(0)
+
+
+def teardown_module(module):
+    set_test_msr()
 
 
 def yy_mm_dd_to_date(date_str):

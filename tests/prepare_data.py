@@ -7,7 +7,9 @@ import time
 from skale.utils.contracts_provision.main import setup_validator
 from skale.utils.helper import init_default_logger
 
-from tests.constants import NODE_ID, TEST_DELTA, TEST_EPOCH, TEST_NODE_NAME, TEST_PK_FILE
+from tests.constants import (NODE_ID, TEST_DELTA, TEST_EPOCH, TEST_NODE_NAME, TEST_PK_FILE,
+                             D_VALIDATOR_MIN_DEL
+                             )
 from utils.web3_utils import init_skale_w_wallet_from_config
 
 
@@ -59,10 +61,20 @@ def get_bounties(skale):
     skale.manager.get_bounty(NODE_ID, wait_for=True)
 
 
+def set_test_msr(msr=D_VALIDATOR_MIN_DEL):
+    skale = init_skale_w_wallet_from_config(pk_file=TEST_PK_FILE)
+    skale.constants_holder._set_msr(
+        new_msr=msr,
+        wait_for=True
+    )
+
+
 if __name__ == "__main__":
     init_default_logger()
     skale = init_skale_w_wallet_from_config(pk_file=TEST_PK_FILE)
     setup_validator(skale)
     accelerate_skale_manager(skale)
+    set_test_msr(0)
     create_nodes(skale, 2)
     get_bounties(skale)
+    set_test_msr()
