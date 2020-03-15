@@ -204,7 +204,7 @@ def test_linked_addresses(runner, skale):
     ))
 
     assert f'\x1b[KLinked addresses for {skale.wallet.address}:' in output_list
-    assert f'{skale.wallet.address}   Primary   {wallet_balance}   0    ' in output_list
+    assert f'{skale.wallet.address}   Primary   {wallet_balance}   2    ' in output_list
 
 
 def test_info(runner, skale):
