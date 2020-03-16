@@ -10,6 +10,7 @@ from utils.texts import Texts
 
 G_TEXTS = Texts()
 NO_DATA_MSG = G_TEXTS['msg']['no_data']
+NEG_ID_MSG = G_TEXTS['metrics']['node']['index']['valid_msg']
 
 
 def setup_module(module):
@@ -23,6 +24,12 @@ def teardown_module(module):
 def yy_mm_dd_to_date(date_str):
     format_str = '%Y-%m-%d'
     return datetime.strptime(date_str, format_str)
+
+
+def test_neg_id(runner):
+    result = runner.invoke(node, ['-id', str(-1)])
+    output_list = result.output.splitlines()
+    assert NEG_ID_MSG == output_list[-1]
 
 
 def test_metrics(runner):
@@ -105,7 +112,8 @@ def test_metrics_since_till_limited_not_empty(runner):
                                                     start_date=yy_mm_dd_to_date(start_date),
                                                     end_date=yy_mm_dd_to_date(end_date))
     row_count = len(metrics) + SERVICE_ROW_COUNT
-    result = runner.invoke(node, ['-id', str(NODE_ID), '-l', str(1), '-t', end_date])
+    result = runner.invoke(node, ['-id', str(NODE_ID), '-l', str(1),
+                                  '-s', start_date, '-t', end_date])
     output_list = result.output.splitlines()[-row_count:]
 
     assert '       Date           Bounty   Downtime   Latency' == output_list[0]
