@@ -17,11 +17,6 @@ def get_start_date(node_id):
     return skale.nodes_data.get(node_id)['start_date']
 
 
-def get_last_reward_date(node_id):
-    skale = init_skale_from_config()
-    return skale.nodes_data.get(node_id)['last_reward_date']
-
-
 def find_block_for_tx_stamp(skale, tx_stamp, lo=0, hi=None):
     if hi is None:
         hi = skale.web3.eth.blockNumber
