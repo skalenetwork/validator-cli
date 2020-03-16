@@ -12,7 +12,7 @@ from cli.validator import (_register, _ls, _delegations, _accept_delegation, _li
 from tests.constants import (
     D_VALIDATOR_NAME, D_VALIDATOR_DESC, D_VALIDATOR_FEE, D_VALIDATOR_ID,
     D_VALIDATOR_MIN_DEL, SECOND_TEST_PK_FILE, D_DELEGATION_AMOUNT, D_DELEGATION_PERIOD,
-    D_DELEGATION_INFO, TEST_PK_FILE
+    D_DELEGATION_INFO, TEST_PK_FILE, TEST_NODES_COUNT
 )
 
 
@@ -204,7 +204,7 @@ def test_linked_addresses(runner, skale):
     ))
 
     assert f'\x1b[KLinked addresses for {skale.wallet.address}:' in output_list
-    assert f'{skale.wallet.address}   Primary   {wallet_balance}   2    ' in output_list
+    assert f'{skale.wallet.address}   Primary   {wallet_balance}   {TEST_NODES_COUNT}    ' in output_list  # noqa
 
 
 def test_info(runner, skale):
