@@ -110,3 +110,10 @@ venv.bak/
 
 # info.py file generated automatically during package build
 cli/info.py
+
+# test files
+unique.json
+test-abi.json
+test-pk.txt
+second-test-pk.txt
+test_abi.json

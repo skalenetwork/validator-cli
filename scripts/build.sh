@@ -37,7 +37,7 @@ echo "BRANCH = '$BRANCH'" >> $DIST_INFO_FILEPATH
 echo "OS = '$OS'" >> $DIST_INFO_FILEPATH
 echo "VERSION = '$VERSION'" >> $DIST_INFO_FILEPATH
 
-EXECUTABLE_NAME=skale-$VERSION-$OS
+EXECUTABLE_NAME=sk-val-$VERSION-$OS
 
 pyinstaller --onefile main.spec --hidden-import=eth_hash.backends.pysha3
 

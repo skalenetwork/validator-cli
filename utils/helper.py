@@ -1,8 +1,8 @@
 #   -*- coding: utf-8 -*-
 #
-#   This file is part of skale-node-cli
+#   This file is part of validator-cli
 #
-#   Copyright (C) 2019 SKALE Labs
+#   Copyright (C) 2020 SKALE Labs
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,7 @@ import json
 import urllib
 import logging
 
-from cli.utils.constants import SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE
+from utils.constants import SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +59,11 @@ def read_config():
     config = read_json(SKALE_VAL_CONFIG_FILE)
     config['abi'] = read_json(SKALE_VAL_ABI_FILE)
     return config
+
+
+def get_config():
+    if config_exists():
+        return read_config()
 
 
 def abort_if_false(ctx, param, value):

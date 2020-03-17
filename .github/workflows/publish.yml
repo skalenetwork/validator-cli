@@ -1,0 +1,62 @@
+name: Build and publish
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+      - develop
+      - beta
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }} 
+    if: github.event.pull_request.merged
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        python-version: [3.7]
+    env:
+      ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+      SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+        pip install -e .[dev]
+        pip install wheel
+    - name: Build library
+      run: |
+        echo "::set-env name=PROJECT_DIR::$GITHUB_WORKSPACE"
+        echo PROJECT_DIR: $GITHUB_WORKSPACE
+        export BRANCH=${GITHUB_REF##*/}
+        echo "Branch $BRANCH"
+        export VERSION=$(bash ./scripts/calculate_version.sh)
+        echo "::set-env name=VERSION::$VERSION"
+        echo "Version $VERSION"
+        bash ./scripts/build.sh $VERSION $BRANCH
+        export OS=`uname -s`-`uname -m`
+        export EXECUTABLE_NAME=sk-val-$VERSION-$OS
+        echo "::set-env name=BRANCH::$BRANCH"
+        echo "::set-env name=EXECUTABLE_NAME::$EXECUTABLE_NAME"
+    - name: Upload to DO
+      run: |
+        bash ./scripts/upload_to_do.sh
+    - name: Checkout code
+      uses: actions/checkout@master
+    - name: Create Release
+      if: matrix.os == 'ubuntu-latest'
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.VERSION }}
+        release_name: ${{ env.VERSION }}
+        draft: false
+        prerelease: true

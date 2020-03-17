@@ -1,8 +1,8 @@
 #   -*- coding: utf-8 -*-
 #
-#   This file is part of skale-node-cli
+#   This file is part of validator-cli
 #
-#   Copyright (C) 2019 SKALE Labs
+#   Copyright (C) 2020 SKALE Labs
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -19,18 +19,27 @@
 
 import sys
 import logging
+import inspect
 import traceback
 
 import click
 
 from cli import __version__
+from cli.info import BUILD_DATETIME, COMMIT, BRANCH, OS, VERSION
 from cli.validator import validator_cli
-from cli.utils.validations import UrlType
-from cli.utils.helper import safe_mk_dirs, write_json, download_file
-from cli.utils.constants import SKALE_VAL_CONFIG_FOLDER, SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE
+from cli.metrics import metrics_cli
+from cli.bounty import bounty_cli
+from cli.holder import holder_cli
+from utils.validations import UrlType
+from utils.texts import Texts
+from utils.helper import safe_mk_dirs, write_json, download_file
+from utils.constants import (SKALE_VAL_CONFIG_FOLDER, SKALE_VAL_CONFIG_FILE,
+                             SKALE_VAL_ABI_FILE, LONG_LINE, WALLET_TYPES)
+
 
 logger = logging.getLogger(__name__)
 URL_TYPE = UrlType()
+TEXTS = Texts()
 
 
 @click.group()
@@ -38,23 +47,48 @@ def cli():
     pass
 
 
-@cli.command('init', help="Set Ethereum endpoint and contracts URL")
+@cli.command('info', help=TEXTS['info']['help'])
+def info():
+    print(inspect.cleandoc(f'''
+            {LONG_LINE}
+            Version: {__version__}
+            Full version: {VERSION}
+            Build time: {BUILD_DATETIME}
+            Build OS: {OS}
+            Commit: {COMMIT}
+            Git branch: {BRANCH}
+            {LONG_LINE}
+        '''))
+
+
+@cli.command('init', help=TEXTS['init']['help'])
 @click.option(
     '--endpoint', '-e',
     type=URL_TYPE,
-    help='Endpoint of the Ethereum network',
-    prompt='Please enter endpoint of the Ethereum network'
+    help=TEXTS['init']['endpoint']['help'],
+    prompt=TEXTS['init']['endpoint']['prompt']
 )
 @click.option(
     '--contracts-url', '-c',
     type=URL_TYPE,
-    help='Download URL for the SKALE Manager ABIs and addresses',
-    prompt='Please enter URL for the SKALE Manager ABIs and addresses'
+    help=TEXTS['init']['contracts_url']['help'],
+    prompt=TEXTS['init']['contracts_url']['prompt']
 )
-def init(endpoint, contracts_url):
+@click.option(
+    '--wallet', '-w',
+    type=click.Choice(WALLET_TYPES),
+    help=TEXTS['init']['wallet']['help'],
+    prompt=TEXTS['init']['wallet']['prompt']
+)
+def init(endpoint, contracts_url, wallet):
     safe_mk_dirs(SKALE_VAL_CONFIG_FOLDER)
     download_file(contracts_url, SKALE_VAL_ABI_FILE)
-    write_json(SKALE_VAL_CONFIG_FILE, {'endpoint': endpoint})
+    config = {
+        'endpoint': endpoint.strip(),
+        'wallet': wallet
+    }
+    write_json(SKALE_VAL_CONFIG_FILE, config)
+    print(TEXTS['init']['done'])
 
 
 def handle_exception(exc_type, exc_value, exc_traceback):
@@ -69,10 +103,11 @@ sys.excepthook = handle_exception
 
 if __name__ == '__main__':
     logger.info(f'cmd: {" ".join(str(x) for x in sys.argv)}, v.{__version__}')
-    cmd_collection = click.CommandCollection(sources=[cli, validator_cli])
+    cmd_collection = click.CommandCollection(sources=[cli, validator_cli, holder_cli,
+                                                      metrics_cli, bounty_cli])
     try:
         cmd_collection()
     except Exception as err:
-        print(f'Command execution falied with {err}. Recheck your inputs')
+        print(f'Command execution failed with {err}. Recheck your inputs')
         traceback.print_exc()
         logger.error(err)

@@ -1,8 +1,8 @@
 #   -*- coding: utf-8 -*-
 #
-#   This file is part of skale-node-cli
+#   This file is part of validator-cli
 #
-#   Copyright (C) 2019 SKALE Labs
+#   Copyright (C) 2020 SKALE Labs
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -18,19 +18,21 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import click
+from web3 import Web3
 
-from yaspin import yaspin
-from skale.utils.web3_utils import wait_receipt, check_receipt
-
-from cli.utils.helper import read_config, config_exists, abort_if_false
-from cli.utils.validations import EthAddressType, PercentageType, UrlType
-from cli.utils.web3_utils import init_skale
-from cli.utils.constants import LONG_LINE, SKALE_VAL_ABI_FILE
+from core.validator import (register, validators_list, delegations, accept_pending_delegation,
+                            link_node_address, unlink_node_address, linked_addresses, info)
+from utils.helper import abort_if_false
+from utils.validations import EthAddressType, PercentageType, UrlType
+from utils.texts import Texts
 
 
 ETH_ADDRESS_TYPE = EthAddressType()
 PERCENTAGE_TYPE = PercentageType()
 URL_TYPE = UrlType()
+
+G_TEXTS = Texts()
+TEXTS = G_TEXTS['validator']
 
 
 @click.group()
@@ -38,61 +40,120 @@ def validator_cli():
     pass
 
 
-@validator_cli.command('register', help="Register new SKALE validator")
+@validator_cli.group('validator', help="Validator commands")
+def validator():
+    pass
+
+
+@validator.command('register', help=TEXTS['register']['help'])
 @click.option(
     '--name', '-n',
     type=str,
-    help='Validator name',
-    prompt='Please enter validator name'
+    help=TEXTS['register']['name']['help'],
+    prompt=TEXTS['register']['name']['prompt']
 )
-# @click.option(
-#     '--address', '-a',
-#     type=ETH_ADDRESS_TYPE,
-#     help='Validator address',
-#     prompt='Please enter validator address'
-# )
 @click.option(
     '--description', '-d',
     type=str,
-    help='Validator description',
-    prompt='Please enter validator description'
+    help=TEXTS['register']['description']['help'],
+    prompt=TEXTS['register']['description']['prompt']
 )
 @click.option(
     '--commission-rate', '-c',
     type=PERCENTAGE_TYPE,
-    help='Commission rate (percentage)',
-    prompt='Please enter validator commission rate (in percents)'
+    help=TEXTS['register']['commission_rate']['help'],
+    prompt=TEXTS['register']['commission_rate']['prompt']
 )
 @click.option(
     '--min-delegation',
     type=int,
-    help='Validator minimum delegation amount',
-    prompt='Please enter minimum delegation amount'
+    help=TEXTS['register']['min_delegation']['help'],
+    prompt=TEXTS['register']['min_delegation']['prompt']
 )
 @click.option(
-    '--private-key', '-p',
-    help='Validator\'s private key',
-    prompt='Enter validator\'s private key'
+    '--pk-file',
+    help=G_TEXTS['pk_file']['help']
+)
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False, prompt=TEXTS['register']['confirm'])
+def _register(name, description, commission_rate, min_delegation, pk_file):
+    register(
+        name=name,
+        description=description,
+        commission_rate=int(commission_rate),
+        min_delegation=int(min_delegation),
+        pk_file=pk_file
+    )
+
+
+@validator.command('ls', help=TEXTS['ls']['help'])
+def _ls():
+    validators_list()
+
+
+@validator.command('delegations', help=TEXTS['delegations']['help'])
+@click.argument('address')
+def _delegations(address):
+    delegations(address)
+
+
+@validator.command('accept-delegation', help=TEXTS['accept_delegation']['help'])
+@click.option(
+    '--delegation-id',
+    type=int,
+    help=TEXTS['accept_delegation']['delegation_id']['help'],
+    prompt=TEXTS['accept_delegation']['delegation_id']['prompt']
+)
+@click.option(
+    '--pk-file',
+    help=G_TEXTS['pk_file']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
-              prompt=f'{LONG_LINE}\nAre you sure you want to register a new validator account? \
-                  \nPlease, re-check all values above before confirming.')
-def register(name, description, commission_rate, min_delegation, private_key):
-    if config_exists():
-        config = read_config()
-    else:
-        print('You should run < init > first')
-        return
-    skale = init_skale(config['endpoint'], SKALE_VAL_ABI_FILE, private_key)
-    with yaspin(text="Loading", color="yellow") as sp:
-        sp.text = 'Registering new validator'
-        tx_res = skale.delegation_service.register_validator(
-            name=name,
-            description=description,
-            fee_rate=int(commission_rate),
-            min_delegation_amount=int(min_delegation)
-        )
-        receipt = wait_receipt(skale.web3, tx_res.hash)
-        if check_receipt(receipt):
-            sp.write("✔ New validator registered")
+              prompt=TEXTS['accept_delegation']['confirm'])
+def _accept_delegation(delegation_id, pk_file):
+    accept_pending_delegation(
+        delegation_id=int(delegation_id),
+        pk_file=pk_file
+    )
+
+
+@validator.command('link-address', help=TEXTS['link_address']['help'])
+@click.argument('node_address')
+@click.option(
+    '--pk-file',
+    help=G_TEXTS['pk_file']['help']
+)
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=TEXTS['link_address']['confirm'])
+def _link_address(node_address, pk_file):
+    node_address = Web3.toChecksumAddress(node_address)
+    link_node_address(node_address, pk_file)
+
+
+@validator.command('unlink-address', help=TEXTS['unlink_address']['help'])
+@click.argument('node_address')
+@click.option(
+    '--pk-file',
+    help=G_TEXTS['pk_file']['help']
+)
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=TEXTS['unlink_address']['confirm'])
+def _unlink_address(node_address, pk_file):
+    unlink_node_address(node_address, pk_file)
+
+
+@validator.command('linked-addresses', help=TEXTS['linked_addresses']['help'])
+@click.argument('address')
+def _linked_addresses(address):
+    linked_addresses(address)
+
+
+@validator.command('info', help=TEXTS['info']['help'])
+@click.argument('validator_id')
+def _info(validator_id):
+    info(
+        validator_id=int(validator_id)
+    )

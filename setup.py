@@ -1,8 +1,8 @@
 #   -*- coding: utf-8 -*-
 #
-#   This file is part of skale-node-cli
+#   This file is part of validator-cli
 #
-#   Copyright (C) 2019 SKALE Labs
+#   Copyright (C) 2020 SKALE Labs
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -39,15 +39,16 @@ def find_version(*file_paths):
 
 extras_require = {
     'linter': [
-        "flake8==3.4.1",
+        "flake8==3.7.9",
         "isort>=4.2.15,<4.3.22",
     ],
     'dev': [
-        "PyInstaller==3.5",
-        "pytest==5.2.1",
+        "PyInstaller==3.6",
+        "pytest==5.3.5",
         "pytest-cov==2.8.1",
-        "twine==2.0.0",
-        "mock==3.0.5"
+        "twine==3.1.1",
+        "mock==4.0.1",
+        "boto3==1.12.5"
     ]
 }
 
@@ -69,9 +70,10 @@ setup(
     url='https://github.com/skalenetwork/validators-cli',
     install_requires=[
         "click==7.0",
-        "skale-py==2.1dev12",
+        "skale.py==3.0.dev6",
         "terminaltables==3.1.0",
         "yaspin==0.16.0",
+        "texttable==1.6.2",
     ],
     python_requires='>=3.6,<4',
     extras_require=extras_require,
@@ -81,7 +83,7 @@ setup(
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
+        'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
         'Natural Language :: English',
         'Programming Language :: Python :: 3.6',
     ],
