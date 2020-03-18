@@ -68,10 +68,13 @@ def validator(index, since, till, limit):
     node_ids = get_nodes_for_validator(index)
     print(TEXTS['validator']['index']['wait_msg'])
     bounties, total = get_bounty_from_events(node_ids, since, till, limit)
-    sums = ['Total per period:']
-    for i in range(1, len(bounties[0])):
-        sums.append(sum([bounty[i] for bounty in bounties]))
-    spaces = [''] * len(bounties[0])
-    bounties.append(spaces)
-    bounties.append(sums)
-    print_bounties(node_ids, bounties)
+    if bounties:
+        sums = ['Total per period:']
+        for i in range(1, len(bounties[0])):
+            sums.append(sum([bounty[i] for bounty in bounties]))
+        spaces = [''] * len(bounties[0])
+        bounties.append(spaces)
+        bounties.append(sums)
+        print_bounties(node_ids, bounties)
+    else:
+        print('\n' + MSGS['no_data'])
