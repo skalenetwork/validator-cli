@@ -87,14 +87,16 @@ def _register(name, description, commission_rate, min_delegation, pk_file):
 
 
 @validator.command('ls', help=TEXTS['ls']['help'])
-def _ls():
-    validators_list()
+@click.option('--all', is_flag=True)
+def _ls(all):
+    validators_list(all)
 
 
 @validator.command('delegations', help=TEXTS['delegations']['help'])
-@click.argument('address')
-def _delegations(address):
-    delegations(address)
+@click.argument('validator_id')
+@click.option('--wei', '-w', is_flag=True, help=TEXTS['delegations']['wei']['help'])
+def _delegations(validator_id, wei):
+    delegations(validator_id, wei)
 
 
 @validator.command('accept-delegation', help=TEXTS['accept_delegation']['help'])

@@ -90,15 +90,15 @@ sk-val validator ls
 
 #### Delegations
 
-List of delegations for address
+List of delegations for validator ID
 
 ```bash
-sk-val validator delegations [ADDRESS]
+sk-val validator delegations [VALIDATOR_ID]
 ```
 
 Required params:
 
-1) Address - Ethereum address of the validator
+1) VALIDATOR_ID - ID of the validator
 
 #### Accept pending delegation
 

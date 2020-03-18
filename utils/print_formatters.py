@@ -20,6 +20,7 @@
 import os
 import datetime
 import texttable
+from utils.helper import to_skl
 
 
 def get_tty_width():
@@ -53,11 +54,13 @@ def print_validators(validators):
         'Description',
         'Fee rate (%)',
         'Registration time',
-        'Minimum delegation (SKL)'
+        'Minimum delegation (SKL)',
+        'Validator status'
     ]
     rows = []
     for validator in validators:
         date = datetime.datetime.fromtimestamp(validator['registration_time'])
+        status = 'Trusted' if validator['trusted'] else 'Registered'
         rows.append([
             validator['name'],
             validator['id'],
@@ -65,18 +68,20 @@ def print_validators(validators):
             validator['description'],
             validator['fee_rate'],
             date,
-            validator['minimum_delegation_amount']
+            validator['minimum_delegation_amount'],
+            status
         ])
     print(Formatter().table(headers, rows))
 
 
-def print_delegations(delegations: list) -> None:
+def print_delegations(delegations: list, wei: bool) -> None:
+    amount_header = 'Amount (wei)' if wei else 'Amount (SKL)'
     headers = [
         'Id',
         'Delegator Address',
         'Status',
         'Validator Id',
-        'Amount (SKL)',
+        amount_header,
         'Delegation period (months)',
         'Created At',
         'Info'
@@ -84,12 +89,13 @@ def print_delegations(delegations: list) -> None:
     rows = []
     for delegation in delegations:
         date = datetime.datetime.fromtimestamp(delegation['created'])
+        amount = delegation['amount'] if wei else to_skl(delegation['amount'])
         rows.append([
             delegation['id'],
             delegation['address'],
             delegation['status'],
             delegation['validator_id'],
-            delegation['amount'],
+            amount,
             delegation['delegation_period'],
             date,
             delegation['info']

@@ -32,7 +32,7 @@ def register(name: str, description: str, commission_rate: int, min_delegation: 
     if not skale:
         return
     with yaspin(text='Registering new validator', color=SPIN_COLOR) as sp:
-        tx_res = skale.delegation_service.register_validator(
+        tx_res = skale.validator_service.register_validator(
             name=name,
             description=description,
             fee_rate=commission_rate,
@@ -44,19 +44,22 @@ def register(name: str, description: str, commission_rate: int, min_delegation: 
         sp.write("✔ New validator registered")
 
 
-def validators_list():
+def validators_list(all):
     skale = init_skale_from_config()
-    validators = skale.validator_service.ls()
+    if not all:
+        validators = skale.validator_service.ls(trusted_only=True)
+    else:
+        validators = skale.validator_service.ls()
     print_validators(validators)
 
 
-def delegations(address):
+def delegations(validator_id, wei):
     skale = init_skale_from_config()
     if not skale:
         return
-    delegations_list = skale.delegation_service.get_all_delegations_by_validator(address)
-    print(f'Delegations for address {address}:\n')
-    print_delegations(delegations_list)
+    delegations_list = skale.delegation_controller.get_all_delegations_by_validator(validator_id)
+    print(f'Delegations for validator ID {validator_id}:\n')
+    print_delegations(delegations_list, wei)
 
 
 def accept_pending_delegation(delegation_id, pk_file: str) -> None:
@@ -64,7 +67,7 @@ def accept_pending_delegation(delegation_id, pk_file: str) -> None:
     if not skale:
         return
     with yaspin(text='Accepting delegation request', color=SPIN_COLOR) as sp:
-        tx_res = skale.delegation_service.accept_pending_delegation(
+        tx_res = skale.delegation_controller.accept_pending_delegation(
             delegation_id=delegation_id
         )
         if not check_tx_result(tx_res.hash, skale.web3):
@@ -78,7 +81,7 @@ def link_node_address(node_address: str, pk_file: str) -> None:
     if not skale:
         return
     with yaspin(text='Linking node address', color=SPIN_COLOR) as sp:
-        tx_res = skale.delegation_service.link_node_address(
+        tx_res = skale.validator_service.link_node_address(
             node_address=node_address
         )
         if not check_tx_result(tx_res.hash, skale.web3):
@@ -92,7 +95,7 @@ def unlink_node_address(node_address: str, pk_file: str) -> None:
     if not skale:
         return
     with yaspin(text='Unlinking node address', color=SPIN_COLOR) as sp:
-        tx_res = skale.delegation_service.unlink_node_address(
+        tx_res = skale.validator_service.unlink_node_address(
             node_address=node_address
         )
         if not check_tx_result(tx_res.hash, skale.web3):
@@ -128,9 +131,6 @@ def info(validator_id):
     if not skale:
         return
     validator_info = skale.validator_service.get(validator_id)
-    delegated_amount = skale.delegation_service.get_delegated_amount(validator_id)
-    earned_bounty_amount = skale.delegation_service.get_earned_bounty_amount(
-        validator_info['validator_address'])
     msr = skale.constants_holder.msr()
     table = SingleTable([
         ['Validator ID', validator_id],
@@ -138,8 +138,6 @@ def info(validator_id):
         ['Address', validator_info['validator_address']],
         ['Fee rate (%)', validator_info['fee_rate']],
         ['Minimum delegation amount (SKL)', validator_info['minimum_delegation_amount']],
-        ['Delegated tokens', delegated_amount],
-        ['Earned bounty', earned_bounty_amount],
         ['MSR', msr]
     ])
     print(table.table)

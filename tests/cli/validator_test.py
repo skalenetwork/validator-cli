@@ -2,9 +2,10 @@
 
 import datetime
 
-from skale.dataclasses.delegation_status import DelegationStatus
 from skale.wallets.web3_wallet import generate_wallet
 from skale.utils.account_tools import send_ether
+from skale.utils.contracts_provision.main import _skip_evm_time
+from skale.utils.contracts_provision import MONTH_IN_SECONDS
 
 from cli.validator import (_register, _ls, _delegations, _accept_delegation, _link_address,
                            _unlink_address, _linked_addresses, _info)
@@ -13,6 +14,22 @@ from tests.constants import (
     D_VALIDATOR_MIN_DEL, SECOND_TEST_PK_FILE, D_DELEGATION_AMOUNT, D_DELEGATION_PERIOD,
     D_DELEGATION_INFO, TEST_PK_FILE
 )
+
+
+def create_new_validator(skale, runner):
+    _generate_new_pk_file(skale)
+
+    return runner.invoke(
+        _register,
+        [
+            '-n', D_VALIDATOR_NAME,
+            '-d', D_VALIDATOR_DESC,
+            '-c', D_VALIDATOR_FEE,
+            '--min-delegation', D_VALIDATOR_MIN_DEL,
+            '--pk-file', SECOND_TEST_PK_FILE,
+            '--yes'
+        ]
+    )
 
 
 def _generate_new_pk_file(skale):
@@ -24,20 +41,8 @@ def _generate_new_pk_file(skale):
 
 
 def test_register(runner, skale):
-    _generate_new_pk_file(skale)
     n_of_validators_before = skale.validator_service.number_of_validators()
-
-    result = runner.invoke(
-        _register,
-        [
-            '-n', D_VALIDATOR_NAME,
-            '-d', D_VALIDATOR_DESC,
-            '-c', D_VALIDATOR_FEE,
-            '--min-delegation', D_VALIDATOR_MIN_DEL,
-            '--pk-file', SECOND_TEST_PK_FILE,
-            '--yes'
-        ]
-    )
+    result = create_new_validator(skale, runner)
 
     n_of_validators_after = skale.validator_service.number_of_validators()
     assert n_of_validators_after == n_of_validators_before + 1
@@ -51,41 +56,70 @@ def test_ls(runner, skale):
     validators = skale.validator_service.ls()
     registration_time = datetime.datetime.fromtimestamp(validators[0]['registration_time'])
 
-    assert "\x1b[KName   Id                    Address                     Description   Fee rate (%)    Registration time    Minimum delegation (SKL)" in output_list  # noqa
-    assert "------------------------------------------------------------------------------------------------------------------------------------" in output_list  # noqa
-    assert f'test   1    {skale.wallet.address}   test          10             {registration_time}   1000                    ' in output_list  # noqa
+    assert "\x1b[KName   Id                    Address                     Description   Fee rate (%)    Registration time    Minimum delegation (SKL)   Validator status" in output_list  # noqa
+    assert "-------------------------------------------------------------------------------------------------------------------------------------------------------" in output_list  # noqa
+    assert f'test   1    {skale.wallet.address}   test          10             {registration_time}   1000                       Trusted         ' in output_list  # noqa
     assert result.exit_code == 0
 
 
-def test_delegations(runner, skale):
+def test_ls_all(runner, skale):
+    if skale.validator_service.number_of_validators() < 2:
+        create_new_validator(skale, runner)
+
+    result = runner.invoke(_ls, args="--all")
+    output_list = result.output.splitlines()
+
+    validators = skale.validator_service.ls()
+    registration_time = list(map(lambda x: datetime.datetime.fromtimestamp(x['registration_time']),
+                                 validators))
+    assert "\x1b[KName   Id                    Address                     Description   Fee rate (%)    Registration time    Minimum delegation (SKL)   Validator status" in output_list  # noqa
+    assert "-------------------------------------------------------------------------------------------------------------------------------------------------------" in output_list  # noqa
+    assert f'test   1    {validators[0]["validator_address"]}   test          10             {registration_time[0]}   1000                       Trusted         ' in output_list  # noqa
+    assert f'test   2    {validators[1]["validator_address"]}   test          10             {registration_time[1]}   1000                       Registered      ' in output_list  # noqa
+    assert result.exit_code == 0
+
+
+def test_delegations_skl(runner, skale):
     result = runner.invoke(
         _delegations,
-        [skale.wallet.address]
+        [str(D_VALIDATOR_ID)]
     )
     output_list = result.output.splitlines()
     delegation = skale.delegation_controller.get_delegation(0)
     created_time = datetime.datetime.fromtimestamp(delegation['created'])
-
-    assert f'\x1b[KDelegations for address {skale.wallet.address}:' in output_list
+    assert f'\x1b[KDelegations for validator ID {D_VALIDATOR_ID}:' in output_list
     assert 'Id               Delegator Address                 Status     Validator Id   Amount (SKL)   Delegation period (months)       Created At        Info' in output_list  # noqa
+    assert f'0    {skale.wallet.address}   DELEGATED   1              1E-14          3                            {created_time}   test' in output_list  # noqa
+    assert result.exit_code == 0
+
+
+def test_delegations_wei(runner, skale):
+    result = runner.invoke(
+        _delegations,
+        [str(D_VALIDATOR_ID), '--wei']
+    )
+    output_list = result.output.splitlines()
+    delegation = skale.delegation_controller.get_delegation(0)
+    created_time = datetime.datetime.fromtimestamp(delegation['created'])
+    assert f'\x1b[KDelegations for validator ID {D_VALIDATOR_ID}:' in output_list
+    assert 'Id               Delegator Address                 Status     Validator Id   Amount (wei)   Delegation period (months)       Created At        Info' in output_list  # noqa
     assert f'0    {skale.wallet.address}   DELEGATED   1              10000          3                            {created_time}   test' in output_list  # noqa
     assert result.exit_code == 0
 
 
 def test_accept_delegation(runner, skale):
-    skale.delegation_service.delegate(
+    skale.delegation_controller.delegate(
         validator_id=D_VALIDATOR_ID,
         amount=D_DELEGATION_AMOUNT,
         delegation_period=D_DELEGATION_PERIOD,
         info=D_DELEGATION_INFO,
         wait_for=True
     )
-    delegations = skale.delegation_service.get_delegations(
-        skale.wallet.address,
-        DelegationStatus.PROPOSED,
-        'validator'
+    delegations = skale.delegation_controller.get_all_delegations_by_validator(
+        validator_id=D_VALIDATOR_ID
     )
     delegation_id = delegations[-1]['id']
+    assert delegations[-1]['status'] == 'PROPOSED'
 
     result = runner.invoke(
         _accept_delegation,
@@ -95,13 +129,14 @@ def test_accept_delegation(runner, skale):
             '--yes'
         ]
     )
-    delegations = skale.delegation_service.get_delegations(
-        skale.wallet.address,
-        DelegationStatus.ACCEPTED,
-        'validator'
+
+    delegations = skale.delegation_controller.get_all_delegations_by_validator(
+        validator_id=D_VALIDATOR_ID
     )
     assert delegations[-1]['id'] == delegation_id
+    assert delegations[-1]['status'] == 'ACCEPTED'
     assert result.exit_code == 0
+    _skip_evm_time(skale.web3, MONTH_IN_SECONDS)
 
 
 def test_link_address(runner, skale):
@@ -132,7 +167,7 @@ def test_link_address(runner, skale):
 
 def test_unlink_address(runner, skale):
     wallet = generate_wallet(skale.web3)
-    skale.delegation_service.link_node_address(
+    skale.validator_service.link_node_address(
         node_address=wallet.address,
         wait_for=True
     )
@@ -181,5 +216,4 @@ def test_info(runner, skale):
     assert f'\x1b(0x\x1b(B Address                         \x1b(0x\x1b(B {skale.wallet.address} \x1b(0x\x1b(B' in output_list  # noqa
     assert '\x1b(0x\x1b(B Fee rate (%)                    \x1b(0x\x1b(B 10                                         \x1b(0x\x1b(B' in output_list  # noqa
     assert '\x1b(0x\x1b(B Minimum delegation amount (SKL) \x1b(0x\x1b(B 1000                                       \x1b(0x\x1b(B' in output_list  # noqa
-    assert '\x1b(0x\x1b(B Earned bounty                   \x1b(0x\x1b(B 0                                          \x1b(0x\x1b(B' in output_list  # noqa
     assert '\x1b(0x\x1b(B MSR                             \x1b(0x\x1b(B 1000                                       \x1b(0x\x1b(B' in output_list  # noqa
