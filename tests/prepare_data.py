@@ -4,24 +4,22 @@ import random
 import string
 import time
 
-from skale.utils.contracts_provision.main import setup_validator
+from skale.utils.contracts_provision.main import (link_address_to_validator,
+                                                  setup_validator)
 from skale.utils.helper import init_default_logger
 
 from tests.constants import (NODE_ID, TEST_DELTA, TEST_EPOCH, TEST_NODE_NAME, TEST_PK_FILE,
-                             D_VALIDATOR_MIN_DEL, TEST_NODES_COUNT
-                             )
+                             D_VALIDATOR_MIN_DEL, TEST_NODES_COUNT)
 from utils.web3_utils import init_skale_w_wallet_from_config
 
 
 def accelerate_skale_manager(skale):
-
     reward_period = skale.constants_holder.get_reward_period()
     delta_period = skale.constants_holder.get_delta_period()
     print(f'Existing times for SM: {reward_period}, {delta_period}')
 
     tx_res = skale.constants_holder.set_periods(TEST_EPOCH, TEST_DELTA, wait_for=True)
-    assert tx_res.receipt['status'] == 1
-    print(tx_res.receipt)
+    tx_res.raise_for_status()
     reward_period = skale.constants_holder.get_reward_period()
     delta_period = skale.constants_holder.get_delta_period()
     print(f'New times for SM: {reward_period}, {delta_period}')
@@ -50,30 +48,36 @@ def create_nodes(skale, nodes_count):
     node_names = [TEST_NODE_NAME + str(i) for i in range(nodes_count)]
     for name in node_names:
         ip, public_ip, port, _ = generate_random_node_data()
-        skale.manager.create_node(ip, port, name, public_ip, wait_for=True)
+        tx_res = skale.manager.create_node(ip, port, name, public_ip, wait_for=True)
+        tx_res.raise_for_status()
 
 
 def get_bounties(skale):
     time.sleep(TEST_EPOCH + 5)
-    skale.manager.get_bounty(NODE_ID, wait_for=True)
-    skale.manager.get_bounty(NODE_ID + 1, wait_for=True)
+    tx_res = skale.manager.get_bounty(NODE_ID, wait_for=True)
+    tx_res.raise_for_status()
+    tx_res = skale.manager.get_bounty(NODE_ID + 1, wait_for=True)
+    tx_res.raise_for_status()
     time.sleep(TEST_EPOCH + 5)
-    skale.manager.get_bounty(NODE_ID, wait_for=True)
+    tx_res = skale.manager.get_bounty(NODE_ID, wait_for=True)
+    tx_res.raise_for_status()
 
 
 def set_test_msr(msr=D_VALIDATOR_MIN_DEL):
     skale = init_skale_w_wallet_from_config(pk_file=TEST_PK_FILE)
-    skale.constants_holder._set_msr(
+    tx_res = skale.constants_holder._set_msr(
         new_msr=msr,
         wait_for=True
     )
+    tx_res.raise_for_status()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     init_default_logger()
     skale = init_skale_w_wallet_from_config(pk_file=TEST_PK_FILE)
     setup_validator(skale)
     accelerate_skale_manager(skale)
+    link_address_to_validator(skale)
     set_test_msr(0)
     create_nodes(skale, TEST_NODES_COUNT)
     get_bounties(skale)
