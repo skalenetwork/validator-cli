@@ -26,7 +26,7 @@ validator:
       prompt: Please enter validator description
     commission_rate:
       help: Commission rate (percentage)
-      prompt: Please enter validator commission rate (e.g. enter 0.05 for 5%)
+      prompt: Please enter validator commission rate in % 
     min_delegation:
       help: Validator minimum delegation amount
       prompt: Please enter minimum delegation amount in SKALE tokens
