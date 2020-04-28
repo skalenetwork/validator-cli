@@ -122,6 +122,7 @@ def _accept_delegation(delegation_id, pk_file):
 
 @validator.command('link-address', help=TEXTS['link_address']['help'])
 @click.argument('node_address')
+@click.argument('signature')
 @click.option(
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
@@ -129,9 +130,9 @@ def _accept_delegation(delegation_id, pk_file):
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=TEXTS['link_address']['confirm'])
-def _link_address(node_address, pk_file):
+def _link_address(node_address, signature, pk_file):
     node_address = Web3.toChecksumAddress(node_address)
-    link_node_address(node_address, pk_file)
+    link_node_address(node_address, signature, pk_file)
 
 
 @validator.command('unlink-address', help=TEXTS['unlink_address']['help'])

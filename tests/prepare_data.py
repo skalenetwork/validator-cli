@@ -4,8 +4,7 @@ import random
 import string
 import time
 
-from skale.utils.contracts_provision.main import (link_address_to_validator,
-                                                  setup_validator)
+from skale.utils.contracts_provision.main import setup_validator, cleanup_nodes_schains
 from skale.utils.helper import init_default_logger
 
 from tests.constants import (NODE_ID, TEST_DELTA, TEST_EPOCH, TEST_NODE_NAME, TEST_PK_FILE,
@@ -75,9 +74,9 @@ def set_test_msr(msr=D_VALIDATOR_MIN_DEL):
 if __name__ == '__main__':
     init_default_logger()
     skale = init_skale_w_wallet_from_config(pk_file=TEST_PK_FILE)
+    cleanup_nodes_schains(skale)
     setup_validator(skale)
     accelerate_skale_manager(skale)
-    link_address_to_validator(skale)
     set_test_msr(0)
     create_nodes(skale, TEST_NODES_COUNT)
     get_bounties(skale)

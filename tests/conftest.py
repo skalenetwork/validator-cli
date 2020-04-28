@@ -16,3 +16,7 @@ def skale():
 @pytest.fixture
 def runner():
     return CliRunner()
+
+
+def str_contains(string, values):
+    return all(x in string for x in values)
