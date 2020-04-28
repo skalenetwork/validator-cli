@@ -5,6 +5,7 @@ from skale.utils.contracts_provision.main import _skip_evm_time
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
 
 from cli.holder import _delegate, _delegations, _cancel_delegation
+from tests.conftest import str_contains
 from tests.constants import (TEST_PK_FILE, D_VALIDATOR_ID, D_DELEGATION_AMOUNT,
                              D_DELEGATION_PERIOD, D_DELEGATION_INFO)
 
@@ -40,9 +41,14 @@ def test_delegations_skl(runner, skale):
     delegation = skale.delegation_controller.get_delegation(0)
     created_time = datetime.datetime.fromtimestamp(delegation['created'])
 
-    assert f'\x1b[KDelegations for address {skale.wallet.address}:' in output_list
-    assert 'Id               Delegator Address                 Status    Validator Id   Amount (SKL)   Delegation period (months)       Created At        Info' in output_list  # noqa
-    assert f'0    {skale.wallet.address}   ACCEPTED   1              1E-14          3                            {created_time}   test' in output_list  # noqa
+    assert output_list[0] == f'Delegations for address {skale.wallet.address}:'
+    assert str_contains(output_list[2], [
+        'Id', 'Delegator Address', 'Status', 'Validator Id', 'Amount (SKL)',
+        'Delegation period (months)', 'Created At', 'Info'
+    ])
+    assert str_contains(output_list[4], [
+        skale.wallet.address, str(created_time), delegation['info']
+    ])
     assert result.exit_code == 0
 
 
@@ -55,9 +61,14 @@ def test_delegations_wei(runner, skale):
     delegation = skale.delegation_controller.get_delegation(0)
     created_time = datetime.datetime.fromtimestamp(delegation['created'])
 
-    assert f'\x1b[KDelegations for address {skale.wallet.address}:' in output_list
-    assert 'Id               Delegator Address                 Status    Validator Id   Amount (wei)   Delegation period (months)       Created At        Info' in output_list  # noqa
-    assert f'0    {skale.wallet.address}   ACCEPTED   1              10000          3                            {created_time}   test' in output_list  # noqa
+    assert output_list[0] == f'Delegations for address {skale.wallet.address}:'
+    assert str_contains(output_list[2], [
+        'Id', 'Delegator Address', 'Status', 'Validator Id', 'Amount (wei)',
+        'Delegation period (months)', 'Created At', 'Info'
+    ])
+    assert str_contains(output_list[4], [
+        skale.wallet.address, str(created_time), delegation['info'], '30000000'
+    ])
     assert result.exit_code == 0
 
 

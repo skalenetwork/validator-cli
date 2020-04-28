@@ -76,13 +76,14 @@ def accept_pending_delegation(delegation_id, pk_file: str) -> None:
         sp.write(f'✔ Delegation request with ID {delegation_id} accepted')
 
 
-def link_node_address(node_address: str, pk_file: str) -> None:
+def link_node_address(node_address: str, signature: str, pk_file: str) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
     with yaspin(text='Linking node address', color=SPIN_COLOR) as sp:
         tx_res = skale.validator_service.link_node_address(
-            node_address=node_address
+            node_address=node_address,
+            signature=signature
         )
         if not check_tx_result(tx_res.hash, skale.web3):
             sp.write(f'Transaction failed: {tx_res.hash}')
