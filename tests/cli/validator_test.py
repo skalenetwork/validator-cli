@@ -8,7 +8,8 @@ from skale.utils.contracts_provision.main import _skip_evm_time
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
 
 from cli.validator import (_register, _ls, _delegations, _accept_delegation, _link_address,
-                           _unlink_address, _linked_addresses, _info)
+                           _unlink_address, _linked_addresses, _info, _withdraw_bounty,
+                           _withdraw_fee)
 from tests.constants import (
     D_VALIDATOR_NAME, D_VALIDATOR_DESC, D_VALIDATOR_FEE, D_VALIDATOR_ID,
     D_VALIDATOR_MIN_DEL, SECOND_TEST_PK_FILE, D_DELEGATION_AMOUNT, D_DELEGATION_PERIOD,
@@ -234,3 +235,38 @@ def test_info(runner, skale):
     assert '\x1b(0x\x1b(B Fee rate (%)                    \x1b(0x\x1b(B 10                                         \x1b(0x\x1b(B' in output_list  # noqa
     assert '\x1b(0x\x1b(B Minimum delegation amount (SKL) \x1b(0x\x1b(B 1000000                                    \x1b(0x\x1b(B' in output_list  # noqa
     assert '\x1b(0x\x1b(B MSR                             \x1b(0x\x1b(B 1000                                       \x1b(0x\x1b(B' in output_list  # noqa
+
+
+def test_withdraw_bounty(runner, skale):
+    _skip_evm_time(skale.web3, MONTH_IN_SECONDS * 3)
+    recipient_address = skale.wallet.address
+    result = runner.invoke(
+        _withdraw_bounty,
+        [
+            str(D_VALIDATOR_ID),
+            recipient_address,
+            '--pk-file', TEST_PK_FILE,
+            '--yes'
+        ]
+    )
+    output_list = result.output.splitlines()
+    expected_output = f'\x1b[K✔ Bounty successfully transferred to {skale.wallet.address}'
+    assert expected_output in output_list
+    assert result.exit_code == 0
+
+
+def test_withdraw_fee(runner, skale):
+    _skip_evm_time(skale.web3, MONTH_IN_SECONDS * 3)
+    recipient_address = skale.wallet.address
+    result = runner.invoke(
+        _withdraw_fee,
+        [
+            recipient_address,
+            '--pk-file', TEST_PK_FILE,
+            '--yes'
+        ]
+    )
+    output_list = result.output.splitlines()
+    expected_output = f'\x1b[K✔ Earned fees successfully transferred to {skale.wallet.address}'
+    assert expected_output in output_list
+    assert result.exit_code == 0

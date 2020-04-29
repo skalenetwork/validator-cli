@@ -20,6 +20,7 @@
 from yaspin import yaspin
 from skale.utils.web3_utils import wait_receipt, check_receipt
 
+from utils.helper import to_skl
 from utils.web3_utils import init_skale_from_config, init_skale_w_wallet_from_config
 from utils.print_formatters import print_delegations
 from utils.constants import SPIN_COLOR
@@ -65,3 +66,27 @@ def cancel_pending_delegation(delegation_id: int, pk_file: str) -> None:
             sp.write(f'Transaction failed, check receipt: {tx_res.hash}')
             return
         sp.write("✔ Delegation request canceled")
+
+
+def undelegate(delegation_id: int, pk_file: str) -> None:
+    skale = init_skale_w_wallet_from_config(pk_file)
+    if not skale:
+        return
+    with yaspin(text='Requesting undelegation', color=SPIN_COLOR) as sp:
+        tx_res = skale.delegation_controller.request_undelegation(
+            delegation_id=delegation_id
+        )
+        receipt = wait_receipt(skale.web3, tx_res.hash)
+        if not check_receipt(receipt, raise_error=False):
+            sp.write(f'Transaction failed, check receipt: {tx_res.hash}')
+            return
+        sp.write("✔ Successfully undelegated")
+
+
+def locked(address, wei):
+    skale = init_skale_from_config()
+    if not skale:
+        return
+    locked_amount_wei = skale.token_state.get_and_update_locked_amount(address)
+    amount = locked_amount_wei if wei else to_skl(locked_amount_wei)
+    print(f'Locked amount for address {address}:\n{amount}')
