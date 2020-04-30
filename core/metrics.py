@@ -50,7 +50,7 @@ def get_start_end_block_numbers(skale, node_ids, start_date=None, end_date=None)
     else:
         start_block_number = find_block_for_tx_stamp(skale, start_date)
 
-    if start_date is None:
+    if end_date is None:
         last_block_number = skale.web3.eth.blockNumber
     else:
         last_block_number = find_block_for_tx_stamp(skale, end_date)
