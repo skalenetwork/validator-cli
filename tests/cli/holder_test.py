@@ -143,7 +143,7 @@ def test_locked(runner, skale):
         [skale.wallet.address]
     )
     output_list = result.output.splitlines()
-    expected_output = f'\x1b[KLocked amount for address {skale.wallet.address}:'
+    expected_output = f'Locked amount for address {skale.wallet.address}:'
     assert expected_output in output_list
     assert output_list[-1] == '3E-11'
     assert result.exit_code == 0
