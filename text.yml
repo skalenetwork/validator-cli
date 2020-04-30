@@ -105,11 +105,11 @@ msg:
   limit:
     help: Number of records to show
   since:
-    help: Show requested data since timestamp (e.g. 2020-01-20), incl. given date
+    help: Show requested data since a given date inclusively (e.g. 2020-01-20)
   till:
-    help: Show requested data before timestamp (e.g. 2020-01-21), not incl. given date
+    help: Show requested data before a given date not inclusively (e.g. 2020-01-21)
   wei:
-    help: Show bounty in wei
+    help: Show bounty amount in wei
 
   no_data: No data found for a given period
 
@@ -120,7 +120,9 @@ pk_file:
 bounty:
   help: Validator bounty commands
   validator:
-    help: List of aggregated bounties for a validator with a given id
+    help: "List of monthly aggregated bounties for all nodes of a validator with a given id (daily aggregated for testnet).\n\n
+          Collecting data from blockchain can take a long time.
+          It is recommended to use optional arguments (-s, -t, -l) for limiting output by time or a row count"
     index:
       help: Validator ID
       prompt: Enter validator ID
@@ -131,7 +133,9 @@ bounty:
 metrics:
   help: Node metrics commands
   node:
-    help: List of bounties and metrics for a node with a given id
+    help: "List of bounties and metrics for a node with a given id.\n\n
+          Collecting data from blockchain can take a long time.
+          It is recommended to use optional arguments (-s, -t, -l) for limiting output by time or a row count"
     index:
       help: Node ID
       prompt: Enter node ID
@@ -139,7 +143,9 @@ metrics:
       id_error_msg: "Error: Node ID doesn't exist"
       wait_msg: Please wait - collecting metrics data from blockchain...
   validator:
-    help: List of bounties and metrics for a validator with a given id
+    help: "List of metrics and bounties for all nodes of a validator with a given id.\n\n
+          Collecting data from blockchain can take a long time.
+          It is recommended to use optional arguments (-s, -t, -l) for limiting output by time or a row count"
     index:
       help: Validator ID
       prompt: Enter validator ID
