@@ -46,7 +46,7 @@ def progress_bar(count, total, status='', bar_len=60):
 
 def get_start_end_block_numbers(skale, node_ids, start_date=None, end_date=None):
     if start_date is None:
-        start_block_number = datetime.utcfromtimestamp(get_start_block(node_ids[0]))
+        start_block_number = get_start_block(node_ids[0])
     else:
         start_block_number = find_block_for_tx_stamp(skale, start_date)
 
