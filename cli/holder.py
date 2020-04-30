@@ -21,7 +21,7 @@ import click
 
 from utils.texts import Texts
 from utils.helper import abort_if_false
-from core.holder import delegate, delegations, cancel_pending_delegation
+from core.holder import delegate, delegations, cancel_pending_delegation, undelegate, locked
 from utils.constants import DELEGATION_PERIOD_OPTIONS
 
 
@@ -99,3 +99,23 @@ def _cancel_delegation(delegation_id, pk_file):
         delegation_id=int(delegation_id),
         pk_file=pk_file
     )
+
+
+@holder.command('undelegate', help=TEXTS['undelegate']['help'])
+@click.argument('delegation_id')
+@click.option(
+    '--pk-file',
+    help=G_TEXTS['pk_file']['help']
+)
+def _undelegate(delegation_id, pk_file):
+    undelegate(
+        delegation_id=int(delegation_id),
+        pk_file=pk_file
+    )
+
+
+@holder.command('locked', help=TEXTS['locked']['help'])
+@click.argument('address')
+@click.option('--wei', '-w', is_flag=True, help=TEXTS['locked']['wei']['help'])
+def _locked(address, wei):
+    locked(address, wei)

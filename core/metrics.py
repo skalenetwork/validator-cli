@@ -12,14 +12,9 @@ def get_nodes_for_validator(val_id):
     return validator_service.contract.functions.getValidatorNodeIndexes(val_id).call()
 
 
-def get_start_date(node_id):
+def get_start_block(node_id):
     skale = init_skale_from_config()
-    return skale.nodes_data.get(node_id)['start_date']
-
-
-def get_last_reward_date(node_id):
-    skale = init_skale_from_config()
-    return skale.nodes_data.get(node_id)['last_reward_date']
+    return skale.nodes_data.get(node_id)['start_block']
 
 
 def find_block_for_tx_stamp(skale, tx_stamp, lo=0, hi=None):
@@ -39,20 +34,21 @@ def find_block_for_tx_stamp(skale, tx_stamp, lo=0, hi=None):
 
 
 def progress_bar(count, total, status='', bar_len=60):
-    done_len = int(round(bar_len * count / float(total)))
+    if total > 0:
+        done_len = int(round(bar_len * count / float(total)))
 
-    percents = round(100.0 * count / float(total), 1)
-    bar = '=' * done_len + '-' * (bar_len - done_len)
+        percents = round(100.0 * count / float(total), 1)
+        bar = '=' * done_len + '-' * (bar_len - done_len)
 
-    sys.stdout.write('[%s] %s%s %s\r' % (bar, percents, '%', status))
-    sys.stdout.flush()
+        sys.stdout.write('[%s] %s%s %s\r' % (bar, percents, '%', status))
+        sys.stdout.flush()
 
 
-def get_start_end_block_numbers(skale, node_ids, start_date=None, end_date=None):
-    if start_date is None:
-        start_date = datetime.utcfromtimestamp(get_start_date(node_ids[0]))
+def get_start_end_block_numbers(skale, node_ids, start_block=None, end_date=None):
+    if start_block is None:
+        start_block = datetime.utcfromtimestamp(get_start_block(node_ids[0]))
 
-    start_block_number = find_block_for_tx_stamp(skale, start_date)
+    start_block_number = find_block_for_tx_stamp(skale, start_block)
     cur_block_number = skale.web3.eth.blockNumber
     last_block_number = find_block_for_tx_stamp(skale, end_date) if end_date is not None \
         else cur_block_number
@@ -67,14 +63,14 @@ def format_limit(limit):
         return int(limit)
 
 
-def get_metrics_from_events(node_ids, start_date=None, end_date=None,
+def get_metrics_from_events(node_ids, start_block=None, end_date=None,
                             limit=None, is_validator=False):
     skale = init_skale_from_config()
     metrics_rows = []
     total_bounty = 0
     limit = format_limit(limit)
     start_block_number, last_block_number = get_start_end_block_numbers(skale, node_ids,
-                                                                        start_date, end_date)
+                                                                        start_block, end_date)
     start_chunk_block_number = start_block_number
     blocks_total = last_block_number - start_block_number
     while len(metrics_rows) < limit:
@@ -115,14 +111,14 @@ def get_metrics_from_events(node_ids, start_date=None, end_date=None,
     return metrics_rows, total_bounty
 
 
-def get_bounty_from_events(node_ids, start_date=None, end_date=None, limit=None) -> tuple:
+def get_bounty_from_events(node_ids, start_block=None, end_date=None, limit=None) -> tuple:
     skale = init_skale_from_config()
     bounty_rows = []
     total_bounty = 0
     cur_month_record = {}
     limit = format_limit(limit)
     start_block_number, last_block_number = get_start_end_block_numbers(skale, node_ids,
-                                                                        start_date, end_date)
+                                                                        start_block, end_date)
     start_chunk_block_number = start_block_number
     blocks_total = last_block_number - start_block_number
 
