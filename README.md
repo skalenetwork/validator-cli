@@ -186,6 +186,42 @@ Output info:
 7) Earned bounty
 8) MSR
 
+#### Withdraw bounty
+
+Withdraw earned bounty to specified address
+
+```bash
+sk-val validator withdraw-bounty [VALIDATOR_ID] [RECIPIENT_ADDRESS] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) VALIDATOR_ID - ID of the validator
+2) RECIPIENT_ADDRESS - Address to transfer bounty
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
+
+
+#### Withdraw fee
+
+Withdraw earned fee to specified address
+
+```bash
+sk-val validator withdraw-fee [RECIPIENT_ADDRESS] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) RECIPIENT_ADDRESS - Address to transfer bounty
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
+
 ### Holder commands
 
 #### Delegate
@@ -215,9 +251,13 @@ List of delegations for address
 sk-val holder delegations [ADDRESS]
 ```
 
-Required params:
+Required arguments:
 
-1) Address - Ethereum address of the token holder
+1) ADDRESS - Ethereum address of the token holder
+
+Options:
+
+- `--wei/-w` - Show tokens amount in wei
 
 #### Cancel pending delegation
 
@@ -233,7 +273,39 @@ Required params:
 
 Optional arguments:
 
--   `--pk-file` - Path to file with private key (only for `software` wallet type)
+- `--pk-file` - Path to file with private key (only for `software` wallet type)
+
+#### Request undelegation
+
+Request undelegation in the end of delegation period
+
+```bash
+sk-val holder undelegate [DELEGATION_ID]
+```
+
+Required params:
+
+1) Delegation ID - ID of the delegation
+
+Optional arguments:
+
+- `--pk-file` - Path to file with private key (only for `software` wallet type)
+
+#### Locked
+
+Show amount of locked tokens for address
+
+```bash
+sk-val holder locked [ADDRESS]
+```
+
+Required arguments:
+
+1) ADDRESS - Ethereum address of the token holder
+
+Options:
+
+- `--wei/-w` - Show tokens amount in wei
 
 ## Development
 

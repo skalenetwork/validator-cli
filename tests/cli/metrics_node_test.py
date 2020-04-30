@@ -60,11 +60,11 @@ def test_metrics_limited(runner):
 
 
 def test_metrics_since_limited_not_empty(runner):
-    start_date = '2000-01-01'
+    start_block = '2000-01-01'
     metrics, total_bounty = get_metrics_from_events([NODE_ID], limit=1,
-                                                    start_date=yy_mm_dd_to_date(start_date))
+                                                    start_block=yy_mm_dd_to_date(start_block))
     row_count = len(metrics) + SERVICE_ROW_COUNT
-    result = runner.invoke(node, ['-id', str(NODE_ID), '-l', str(1), '-s', start_date])
+    result = runner.invoke(node, ['-id', str(NODE_ID), '-l', str(1), '-s', start_block])
     output_list = result.output.splitlines()[-row_count:]
 
     assert '       Date           Bounty   Downtime   Latency' == output_list[0]
@@ -75,8 +75,8 @@ def test_metrics_since_limited_not_empty(runner):
 
 
 def test_metrics_since_limited_empty(runner):
-    start_date = '2100-01-01'
-    result = runner.invoke(node, ['-id', str(NODE_ID), '-l', str(1), '-s', start_date])
+    start_block = '2100-01-01'
+    result = runner.invoke(node, ['-id', str(NODE_ID), '-l', str(1), '-s', start_block])
     output_list = result.output.splitlines()
 
     assert NO_DATA_MSG == output_list[-1]
@@ -106,14 +106,14 @@ def test_metrics_till_limited_empty(runner):
 
 
 def test_metrics_since_till_limited_not_empty(runner):
-    start_date = '2000-01-01'
+    start_block = '2000-01-01'
     end_date = '2100-01-01'
     metrics, total_bounty = get_metrics_from_events([NODE_ID], limit=1,
-                                                    start_date=yy_mm_dd_to_date(start_date),
+                                                    start_block=yy_mm_dd_to_date(start_block),
                                                     end_date=yy_mm_dd_to_date(end_date))
     row_count = len(metrics) + SERVICE_ROW_COUNT
     result = runner.invoke(node, ['-id', str(NODE_ID), '-l', str(1),
-                                  '-s', start_date, '-t', end_date])
+                                  '-s', start_block, '-t', end_date])
     output_list = result.output.splitlines()[-row_count:]
 
     assert '       Date           Bounty   Downtime   Latency' == output_list[0]
@@ -124,9 +124,9 @@ def test_metrics_since_till_limited_not_empty(runner):
 
 
 def test_metrics_since_till_limited_empty(runner):
-    start_date = '2100-01-01'
+    start_block = '2100-01-01'
     end_date = '2100-02-01'
     result = runner.invoke(node, ['-id', str(NODE_ID), '-l', str(1),
-                                  '-s', start_date, '-t', end_date])
+                                  '-s', start_block, '-t', end_date])
     output_list = result.output.splitlines()
     assert NO_DATA_MSG == output_list[-1]

@@ -4,7 +4,7 @@ import datetime
 from skale.utils.contracts_provision.main import _skip_evm_time
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
 
-from cli.holder import _delegate, _delegations, _cancel_delegation
+from cli.holder import _delegate, _delegations, _cancel_delegation, _undelegate, _locked
 from tests.conftest import str_contains
 from tests.constants import (TEST_PK_FILE, D_VALIDATOR_ID, D_DELEGATION_AMOUNT,
                              D_DELEGATION_PERIOD, D_DELEGATION_INFO)
@@ -101,3 +101,50 @@ def test_cancel_delegation(runner, skale):
     assert delegations[-1]['status'] == 'CANCELED'
     assert result.exit_code == 0
     _skip_evm_time(skale.web3, MONTH_IN_SECONDS)
+
+
+def test_undelegate(runner, skale):
+    skale.delegation_controller.delegate(
+        validator_id=D_VALIDATOR_ID,
+        amount=D_DELEGATION_AMOUNT,
+        delegation_period=D_DELEGATION_PERIOD,
+        info=D_DELEGATION_INFO,
+        wait_for=True
+    )
+    delegations = skale.delegation_controller.get_all_delegations_by_validator(
+        validator_id=D_VALIDATOR_ID
+    )
+    delegation_id = delegations[-1]['id']
+    skale.delegation_controller.accept_pending_delegation(
+        delegation_id,
+        wait_for=True
+    )
+    _skip_evm_time(skale.web3, MONTH_IN_SECONDS * (D_DELEGATION_PERIOD + 1))
+
+    result = runner.invoke(
+        _undelegate,
+        [
+            str(delegation_id),
+            '--pk-file', TEST_PK_FILE
+        ]
+    )
+
+    delegations = skale.delegation_controller.get_all_delegations_by_validator(
+        validator_id=D_VALIDATOR_ID
+    )
+    assert delegations[-1]['id'] == delegation_id
+    assert delegations[-1]['status'] == 'UNDELEGATION_REQUESTED'
+    assert result.exit_code == 0
+
+
+def test_locked(runner, skale):
+    result = runner.invoke(
+        _locked,
+        [skale.wallet.address, '--wei']
+    )
+    output_list = result.output.splitlines()
+    locked_amount_wei = skale.token_state.get_and_update_locked_amount(skale.wallet.address)
+    expected_output = f'Locked amount for address {skale.wallet.address}:'
+    assert expected_output in output_list
+    assert output_list[-1] == str(locked_amount_wei)
+    assert result.exit_code == 0
