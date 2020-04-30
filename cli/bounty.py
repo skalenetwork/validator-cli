@@ -19,10 +19,11 @@
 
 import click
 
-from core.metrics import get_bounty_from_events, get_nodes_for_validator
+from core.metrics import (
+    get_bounty_from_events, get_nodes_for_validator, check_if_validator_is_registered)
 from utils.print_formatters import print_bounties
 from utils.texts import Texts
-
+from utils.web3_utils import init_skale_from_config
 
 G_TEXTS = Texts()
 TEXTS = G_TEXTS['bounty']
@@ -68,11 +69,15 @@ def bounty():
 )
 def validator(index, since, till, limit, wei):
     if index < 0:
-        print(TEXTS['validator']['index']['valid_msg'])
+        print(TEXTS['validator']['index']['valid_id_msg'])
         return
-    node_ids = get_nodes_for_validator(index)
+    skale = init_skale_from_config()
+    if not check_if_validator_is_registered(skale, index):
+        print(TEXTS['validator']['index']['id_error_msg'])
+        return
+    node_ids = get_nodes_for_validator(skale, index)
     print(TEXTS['validator']['index']['wait_msg'])
-    bounties, total = get_bounty_from_events(node_ids, since, till, limit, wei)
+    bounties, total = get_bounty_from_events(skale, node_ids, since, till, limit, wei)
     if bounties:
         sums = ['Total per period:']
         for i in range(1, len(bounties[0])):

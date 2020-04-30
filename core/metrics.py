@@ -4,26 +4,28 @@ from datetime import datetime
 from web3 import Web3
 
 from utils.filter import SkaleFilter
-from utils.web3_utils import init_skale_from_config
 
 BLOCK_CHUNK_SIZE = 1000
 
 
 def check_if_node_is_registered(skale, node_id):
-    if node_id not in skale.nodes_data.get_active_node_ids():
-        err_msg = f'There is no Node with ID = {node_id} in SKALE manager'
-        logger.error(err_msg)
-    return True
+    if node_id in skale.nodes_data.get_active_node_ids():
+        return True
+    else:
+        return False
 
 
-def get_nodes_for_validator(val_id):
-    skale = init_skale_from_config()
+def check_if_validator_is_registered(skale, val_id):
+    validator_service = skale.get_contract_by_name('validator_service')
+    return validator_service.contract.functions.validatorExists(val_id).call()
+
+
+def get_nodes_for_validator(skale, val_id):
     validator_service = skale.get_contract_by_name('validator_service')
     return validator_service.contract.functions.getValidatorNodeIndexes(val_id).call()
 
 
-def get_start_block(node_id):
-    skale = init_skale_from_config()
+def get_start_block(skale, node_id):
     return skale.nodes_data.get(node_id)['start_block']
 
 
@@ -56,7 +58,7 @@ def progress_bar(count, total, status='', bar_len=60):
 
 def get_start_end_block_numbers(skale, node_ids, start_date=None, end_date=None):
     if start_date is None:
-        start_block_number = get_start_block(node_ids[0])
+        start_block_number = get_start_block(skale, node_ids[0])
     else:
         start_block_number = find_block_for_tx_stamp(skale, start_date)
 
@@ -75,9 +77,8 @@ def format_limit(limit):
         return int(limit)
 
 
-def get_metrics_from_events(node_ids, start_date=None, end_date=None,
+def get_metrics_from_events(skale, node_ids, start_date=None, end_date=None,
                             limit=None, wei=None, is_validator=False):
-    skale = init_skale_from_config()
     metrics_rows = []
     total_bounty = 0
     limit = format_limit(limit)
@@ -126,8 +127,8 @@ def get_metrics_from_events(node_ids, start_date=None, end_date=None,
     return metrics_rows, total_bounty
 
 
-def get_bounty_from_events(node_ids, start_date=None, end_date=None, limit=None, wei=None) -> tuple:
-    skale = init_skale_from_config()
+def get_bounty_from_events(skale, node_ids, start_date=None, end_date=None,
+                           limit=None, wei=None) -> tuple:
     bounty_rows = []
     total_bounty = 0
     cur_month_record = {}

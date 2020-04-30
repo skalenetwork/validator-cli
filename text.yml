@@ -124,7 +124,8 @@ bounty:
     index:
       help: Validator ID
       prompt: Enter validator ID
-      valid_msg: Error - Validator ID should be greater than 0
+      valid_id_msg: "Error: Validator ID should be greater than 0"
+      id_error_msg: "Error: Validator ID doesn't exist"
       wait_msg: Please wait - collecting bounty data from blockchain...
 
 metrics:
@@ -134,13 +135,15 @@ metrics:
     index:
       help: Node ID
       prompt: Enter node ID
-      valid_msg: Error - Node ID should be greater than 0
+      valid_id_msg: "Error: Node ID should be greater than 0"
+      id_error_msg: "Error: Node ID doesn't exist"
       wait_msg: Please wait - collecting metrics data from blockchain...
   validator:
     help: List of bounties and metrics for a validator with a given id
     index:
       help: Validator ID
       prompt: Enter validator ID
-      valid_msg: Error - Validator ID should be greater than 0
+      valid_id_msg: "Error: Validator ID should be greater than 0"
+      id_error_msg: "Error: Validator ID doesn't exist"
       wait_msg: Please wait - collecting metrics data from blockchain...
 
