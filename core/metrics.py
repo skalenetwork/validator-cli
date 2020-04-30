@@ -1,7 +1,10 @@
-from datetime import datetime
-from utils.web3_utils import init_skale_from_config
-from utils.filter import SkaleFilter
 import sys
+from datetime import datetime
+
+from web3 import Web3
+
+from utils.filter import SkaleFilter
+from utils.web3_utils import init_skale_from_config
 
 BLOCK_CHUNK_SIZE = 1000
 
@@ -182,8 +185,8 @@ def get_bounty_from_events(node_ids, start_date=None, end_date=None, limit=None,
     return bounty_rows, total_bounty
 
 
-def to_skl(digits):  # convert to SKL
-    return digits / (10 ** 18)
+def to_skl(wei):  # convert to SKL
+    return Web3.fromWei(wei, 'ether')
 
 
 def bounty_to_ordered_row(cur_month_record, node_ids, wei):
