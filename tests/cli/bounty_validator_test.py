@@ -10,7 +10,7 @@ from utils.texts import Texts
 
 G_TEXTS = Texts()
 NO_DATA_MSG = G_TEXTS['msg']['no_data']
-NEG_ID_MSG = G_TEXTS['bounty']['validator']['index']['valid_msg']
+NEG_ID_MSG = G_TEXTS['bounty']['validator']['index']['valid_id_msg']
 
 
 def setup_module(module):
@@ -32,10 +32,10 @@ def test_neg_id(runner):
     assert NEG_ID_MSG == output_list[-1]
 
 
-def test_bounty(runner):
+def test_bounty(skale, runner):
     result = runner.invoke(validator, ['-id', str(D_VALIDATOR_ID)])
-    node_ids = get_nodes_for_validator(D_VALIDATOR_ID)
-    metrics, total_bounty = get_bounty_from_events(node_ids)
+    node_ids = get_nodes_for_validator(skale, D_VALIDATOR_ID)
+    metrics, total_bounty = get_bounty_from_events(skale, node_ids)
     row_count = len(metrics) + SERVICE_ROW_COUNT
     output_list = result.output.splitlines()[-row_count:]
     assert '      Date          All nodes   Node ID = 0   Node ID = 1' == output_list[0]
@@ -43,11 +43,11 @@ def test_bounty(runner):
     assert f'    {metrics[0][0]}     {metrics[0][1]:.3f}       {metrics[0][2]:.3f}       {metrics[0][3]:.3f}' == output_list[2]  # noqa
 
 
-def test_metrics_since_till_limited_not_empty(runner):
+def test_metrics_since_till_limited_not_empty(skale, runner):
     start_date = '2000-01-01'
     end_date = '2100-01-01'
-    node_ids = get_nodes_for_validator(D_VALIDATOR_ID)
-    metrics, total_bounty = get_bounty_from_events(node_ids, limit=1,
+    node_ids = get_nodes_for_validator(skale, D_VALIDATOR_ID)
+    metrics, total_bounty = get_bounty_from_events(skale, node_ids, limit=1,
                                                    start_date=yy_mm_dd_to_date(start_date),
                                                    end_date=yy_mm_dd_to_date(end_date))
     row_count = len(metrics) + SERVICE_ROW_COUNT
