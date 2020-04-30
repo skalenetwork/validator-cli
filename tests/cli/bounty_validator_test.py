@@ -44,15 +44,15 @@ def test_bounty(runner):
 
 
 def test_metrics_since_till_limited_not_empty(runner):
-    start_block = '2000-01-01'
+    start_date = '2000-01-01'
     end_date = '2100-01-01'
     node_ids = get_nodes_for_validator(D_VALIDATOR_ID)
     metrics, total_bounty = get_bounty_from_events(node_ids, limit=1,
-                                                   start_block=yy_mm_dd_to_date(start_block),
+                                                   start_date=yy_mm_dd_to_date(start_date),
                                                    end_date=yy_mm_dd_to_date(end_date))
     row_count = len(metrics) + SERVICE_ROW_COUNT
     result = runner.invoke(validator, ['-id', str(D_VALIDATOR_ID), '-l', str(1),
-                                       '-s', start_block, '-t', end_date])
+                                       '-s', start_date, '-t', end_date])
     output_list = result.output.splitlines()[-row_count:]
     assert '      Date          All nodes   Node ID = 0   Node ID = 1' == output_list[0]
     assert '---------------------------------------------------------' == output_list[1]
@@ -60,9 +60,9 @@ def test_metrics_since_till_limited_not_empty(runner):
 
 
 def test_metrics_since_till_limited_empty(runner):
-    start_block = '2100-01-01'
+    start_date = '2100-01-01'
     end_date = '2100-02-01'
     result = runner.invoke(validator, ['-id', str(D_VALIDATOR_ID), '-l', str(1),
-                                       '-s', start_block, '-t', end_date])
+                                       '-s', start_date, '-t', end_date])
     output_list = result.output.splitlines()
     assert NO_DATA_MSG == output_list[-1]
