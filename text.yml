@@ -108,6 +108,9 @@ msg:
     help: Show requested data since timestamp (e.g. 2020-01-20), incl. given date
   till:
     help: Show requested data before timestamp (e.g. 2020-01-21), not incl. given date
+  wei:
+    help: Show bounty in wei
+
   no_data: No data found for a given period
 
 

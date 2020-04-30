@@ -60,14 +60,19 @@ def metrics():
     type=int,
     help=MSGS['limit']['help']
 )
-def node(index, since, till, limit):
+@click.option(
+    '--wei', '-w',
+    is_flag=True,
+    help=MSGS['wei']['help']
+)
+def node(index, since, till, limit, wei):
     if index < 0:
         print(TEXTS['node']['index']['valid_msg'])
         return
     print(TEXTS['validator']['index']['wait_msg'])
-    metrics, total_bounty = get_metrics_from_events([int(index)], since, till, limit)
+    metrics, total_bounty = get_metrics_from_events([int(index)], since, till, limit, wei)
     if metrics:
-        print_node_metrics(metrics, total_bounty)
+        print_node_metrics(metrics, total_bounty, wei)
     else:
         print('\n' + MSGS['no_data'])
 
@@ -94,15 +99,20 @@ def node(index, since, till, limit):
     type=int,
     help=MSGS['limit']['help']
 )
-def validator(index, since, till, limit):
+@click.option(
+    '--wei', '-w',
+    is_flag=True,
+    help=MSGS['wei']['help']
+)
+def validator(index, since, till, limit, wei):
     if index < 0:
         print(TEXTS['validator']['index']['valid_msg'])
         return
     nodes_ids = get_nodes_for_validator(index)
     print(TEXTS['validator']['index']['wait_msg'])
-    metrics, total_bounty = get_metrics_from_events(nodes_ids, since, till, limit,
+    metrics, total_bounty = get_metrics_from_events(nodes_ids, since, till, limit, wei,
                                                     is_validator=True)
     if metrics:
-        print_validator_metrics(metrics, total_bounty)
+        print_validator_metrics(metrics, total_bounty, wei)
     else:
         print('\n' + MSGS['no_data'])

@@ -121,7 +121,7 @@ def print_linked_addresses(addresses):
     print(Formatter().table(headers, rows))
 
 
-def print_node_metrics(rows, total):
+def print_node_metrics(rows, total, wei):
     headers = [
         'Date',
         'Bounty',
@@ -130,17 +130,20 @@ def print_node_metrics(rows, total):
     ]
     table = texttable.Texttable(max_width=get_tty_width())
     table.set_cols_align(["l", "r", "r", "r"])
-    table.set_cols_dtype(["t", "a", "i", "f"])
+    if wei:
+        table.set_cols_dtype(["t", "i", "i", "f"])
+    else:
+        table.set_cols_dtype(["t", "a", "i", "f"])
     table.set_precision(1)
     table.add_rows([headers] + rows)
     table.set_deco(table.HEADER)
     table.set_chars(['-', '|', '+', '-'])
     print('\n')
     print(table.draw())
-    print_total_info(total)
+    print_total_info(total, wei)
 
 
-def print_validator_metrics(rows, total):
+def print_validator_metrics(rows, total, wei):
     headers = [
         'Date',
         'Node ID',
@@ -150,23 +153,29 @@ def print_validator_metrics(rows, total):
     ]
     table = texttable.Texttable(max_width=get_tty_width())
     table.set_cols_align(["l", "r", "r", "r", "r"])
-    table.set_cols_dtype(["t", "i", "f", "i", "f"])
+    if wei:
+        table.set_cols_dtype(["t", "i", "i", "i", "f"])
+    else:
+        table.set_cols_dtype(["t", "i", "f", "i", "f"])
     table.set_precision(1)
     table.add_rows([headers] + rows)
     table.set_deco(table.HEADER)
     table.set_chars(['-', '|', '+', '-'])
     print('\n')
     print(table.draw())
-    print_total_info(total)
+    print_total_info(total, wei)
 
 
-def print_bounties(nodes, bounties):
+def print_bounties(nodes, bounties, wei):
     headers = ['Date', 'All nodes']
     node_headers = [f'Node ID = {node}' for node in nodes]
     headers.extend(node_headers)
     table = texttable.Texttable(max_width=get_tty_width())
     format_string = ['t']
-    format_string.extend(['f' for h in range(len(headers) - 1)])
+    if wei:
+        format_string.extend(['i' for h in range(len(headers) - 1)])
+    else:
+        format_string.extend(['f' for h in range(len(headers) - 1)])
     table.set_cols_dtype(format_string)
     table.set_cols_align(['r' for h in headers])
     table.set_precision(3)
@@ -177,6 +186,9 @@ def print_bounties(nodes, bounties):
     print(table.draw())
 
 
-def print_total_info(total):
-    total_string = f'Total bounty per the given period: {total:.3f} SKL'
+def print_total_info(total, wei):
+    if wei:
+        total_string = f'Total bounty per the given period: {total:} wei'
+    else:
+        total_string = f'Total bounty per the given period: {total:.3f} SKL'
     print('\n', total_string)
