@@ -140,10 +140,11 @@ def test_undelegate(runner, skale):
 def test_locked(runner, skale):
     result = runner.invoke(
         _locked,
-        [skale.wallet.address]
+        [skale.wallet.address, '--wei']
     )
     output_list = result.output.splitlines()
+    locked_amount_wei = skale.token_state.get_and_update_locked_amount(skale.wallet.address)
     expected_output = f'Locked amount for address {skale.wallet.address}:'
     assert expected_output in output_list
-    assert output_list[-1] == '3E-11'
+    assert output_list[-1] == str(locked_amount_wei)
     assert result.exit_code == 0
