@@ -307,6 +307,91 @@ Options:
 
 - `--wei/-w` - Show tokens amount in wei
 
+### Metrics commands
+
+#### Node
+
+Shows a list of metrics and bounties for a node with a given id
+
+```bash
+sk-val metrics node
+```
+
+Required arguments:
+
+-   `--index/-id` - Node ID
+
+Collecting data from blockchain can take a long time. It is recommended to use optional arguments for limiting output by time or a row count
+
+Optional arguments:
+
+-   `--since/-s` - Show requested data since a given date inclusively (e.g. 2020-01-20)
+-   `--till/-t` - Show requested data before a given date not inclusively (e.g. 2020-01-21)
+-   `--limit/-l` - Number of records to show
+-   `--wei/-w` - Show bounty amount in wei
+
+Usage example:
+
+```bash
+sk-val metrics node -id 1 --since 2020-04-30 --till 2020-05-01 -l 10 -w
+```
+
+#### Validator
+
+Shows a list of metrics and bounties for all nodes of a validator with a given id
+
+```bash
+sk-val metrics validator
+```
+
+Required arguments:
+
+-   `--index/-id` - Validator ID
+
+Collecting data from blockchain can take a long time. It is recommended to use optional arguments for limiting output by time or a row count
+
+Optional arguments:
+
+-   `--since/-s` - Show requested data since a given date inclusively (e.g. 2020-01-20)
+-   `--till/-t` - Show requested data before a given date not inclusively (e.g. 2020-01-21)
+-   `--limit/-l` - Number of records to show
+-   `--wei/-w` - Show bounty amount in wei
+
+Usage example:
+
+```bash
+sk-val metrics validator -id 1 --since 2020-04-30 --till 2020-05-01 -l 10 -w
+```
+
+### Bounty commands
+
+#### Validator
+
+Shows a list of monthly aggregated bounties for all nodes of a validator with a given id (daily aggregated for testnet)
+
+```bash
+sk-val bounty validator
+```
+
+Required arguments:
+
+-   `--index/-id` - Validator ID
+
+Collecting data from blockchain can take a long time. It is recommended to use optional arguments for limiting output by time or a row count
+
+Optional arguments:
+
+-   `--since/-s` - Show requested data since a given date inclusively (e.g. 2020-01-20)
+-   `--till/-t` - Show requested data before a given date not inclusively (e.g. 2020-01-21)
+-   `--limit/-l` - Number of records to show
+-   `--wei/-w` - Show bounty amount in wei
+
+Usage example:
+
+```bash
+sk-val bounty validator -id 1 --since 2020-04-30 --till 2020-05-01 -l 10 -w
+```
+
 ## Development
 
 ### Setup repo
