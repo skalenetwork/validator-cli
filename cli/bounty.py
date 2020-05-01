@@ -80,7 +80,7 @@ def validator(index, since, till, limit, wei):
         print(MSGS['no_nodes'])
         return
     print(TEXTS['validator']['index']['wait_msg'])
-    bounties, total = get_bounty_from_events(skale, node_ids, since, till, limit, wei)
+    bounties = get_bounty_from_events(skale, node_ids, since, till, limit, wei)
     if bounties:
         sums = ['Total per period:']
         for i in range(1, len(bounties[0])):
