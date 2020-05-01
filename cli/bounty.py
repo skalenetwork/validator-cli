@@ -76,6 +76,9 @@ def validator(index, since, till, limit, wei):
         print(TEXTS['validator']['index']['id_error_msg'])
         return
     node_ids = get_nodes_for_validator(skale, index)
+    if len(node_ids) == 0:
+        print(MSGS['no_nodes'])
+        return
     print(TEXTS['validator']['index']['wait_msg'])
     bounties, total = get_bounty_from_events(skale, node_ids, since, till, limit, wei)
     if bounties:

@@ -119,9 +119,12 @@ def validator(index, since, till, limit, wei):
     if not check_if_validator_is_registered(skale, index):
         print(TEXTS['validator']['index']['id_error_msg'])
         return
-    nodes_ids = get_nodes_for_validator(skale, index)
+    node_ids = get_nodes_for_validator(skale, index)
+    if len(node_ids) == 0:
+        print(MSGS['no_nodes'])
+        return
     print(TEXTS['validator']['index']['wait_msg'])
-    metrics, total_bounty = get_metrics_from_events(skale, nodes_ids, since, till, limit, wei,
+    metrics, total_bounty = get_metrics_from_events(skale, node_ids, since, till, limit, wei,
                                                     is_validator=True)
     if metrics:
         print_validator_metrics(metrics, total_bounty, wei)

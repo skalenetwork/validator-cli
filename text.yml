@@ -110,7 +110,7 @@ msg:
     help: Show requested data before a given date not inclusively (e.g. 2020-01-21)
   wei:
     help: Show bounty amount in wei
-
+  no_nodes: There's no registered nodes for a given validator
   no_data: No data found for a given period
 
 
