@@ -18,7 +18,7 @@ def test_init_fail():
         init,
         ['-e', 'abc']
     )
-    assert result.output == 'Usage: init [OPTIONS]\nTry "init --help" for help.\n\nError: Invalid value for "--endpoint" / "-e": Expected valid url. Got abc\n' # noqa
+    assert result.output == 'Usage: init [OPTIONS]\nTry \'init --help\' for help.\n\nError: Invalid value for \'--endpoint\' / \'-e\': Expected valid url. Got abc\n' # noqa
 
 
 def test_init():
