@@ -40,7 +40,7 @@ def test_bounty(skale, runner):
     output_list = result.output.splitlines()[-row_count:]
     assert '      Date          All nodes   Node ID = 0   Node ID = 1' == output_list[0]
     assert '---------------------------------------------------------' == output_list[1]
-    assert f'      {metrics[0][0]}     {metrics[0][1]:.3f}       {metrics[0][2]:.3f}         {metrics[0][3]:.3f}' == output_list[2]  # noqa
+    assert f'      {metrics[0][0]}     {metrics[0][1]:.3f}       {metrics[0][2]:.3f}       {metrics[0][3]:.3f}' == output_list[2]  # noqa
 
 
 def test_metrics_since_till_limited_not_empty(skale, runner):
@@ -58,7 +58,7 @@ def test_metrics_since_till_limited_not_empty(skale, runner):
     print(output_list[2])
     assert '      Date          All nodes   Node ID = 0   Node ID = 1' == output_list[0]
     assert '---------------------------------------------------------' == output_list[1]
-    assert f'      {metrics[0][0]}     {metrics[0][1]:.3f}       {metrics[0][2]:.3f}         {metrics[0][3]:.3f}' == output_list[2]  # noqa
+    assert f'      {metrics[0][0]}     {metrics[0][1]:.3f}       {metrics[0][2]:.3f}       {metrics[0][3]:.3f}' == output_list[2]  # noqa
 
 
 def test_metrics_since_till_limited_empty(runner):
