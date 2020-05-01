@@ -309,7 +309,7 @@ Options:
 
 ### Metrics commands
 
-#### Node
+#### Node metrics
 
 Shows a list of metrics and bounties for a given node ID
 
@@ -336,7 +336,7 @@ Usage example:
 sk-val metrics node -id 1 --since 2020-04-30 --till 2020-05-01 -l 10 -w
 ```
 
-#### Validator
+#### Validator metrics
 
 Shows a list of metrics and bounties for all nodes for a given validator ID
 
