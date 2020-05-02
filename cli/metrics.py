@@ -21,7 +21,8 @@ import click
 
 from core.metrics import (
     check_if_node_is_registered, check_if_validator_is_registered, get_metrics_from_events,
-    get_nodes_for_validator)
+    get_nodes_for_validator
+)
 from utils.print_formatters import print_node_metrics, print_validator_metrics
 from utils.texts import Texts
 from utils.web3_utils import init_skale_from_config

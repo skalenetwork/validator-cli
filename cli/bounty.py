@@ -20,7 +20,8 @@
 import click
 
 from core.metrics import (
-    get_bounty_from_events, get_nodes_for_validator, check_if_validator_is_registered)
+    get_bounty_from_events, get_nodes_for_validator, check_if_validator_is_registered
+)
 from utils.print_formatters import print_bounties
 from utils.texts import Texts
 from utils.web3_utils import init_skale_from_config
