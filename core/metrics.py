@@ -128,7 +128,7 @@ def get_metrics_from_events(skale, node_ids, start_date=None, end_date=None,
 
 
 def get_bounty_from_events(skale, node_ids, start_date=None, end_date=None,
-                           limit=None, wei=None) -> tuple:
+                           limit=None, wei=None) -> list:
     bounty_rows = []
     total_bounty = 0
     cur_month_record = {}
@@ -183,7 +183,7 @@ def get_bounty_from_events(skale, node_ids, start_date=None, end_date=None,
         bounty_row = bounty_to_ordered_row(cur_month_record, node_ids, wei)
         total_bounty += bounty_row[1]
         bounty_rows.append(bounty_row)
-    return bounty_rows, total_bounty
+    return bounty_rows
 
 
 def to_skl(wei):  # convert to SKL

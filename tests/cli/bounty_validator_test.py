@@ -35,7 +35,7 @@ def test_neg_id(runner):
 def test_bounty(skale, runner):
     result = runner.invoke(validator, ['-id', str(D_VALIDATOR_ID)])
     node_ids = get_nodes_for_validator(skale, D_VALIDATOR_ID)
-    metrics, total_bounty = get_bounty_from_events(skale, node_ids)
+    metrics = get_bounty_from_events(skale, node_ids)
     row_count = len(metrics) + SERVICE_ROW_COUNT
     output_list = result.output.splitlines()[-row_count:]
     assert '      Date          All nodes   Node ID = 0   Node ID = 1' == output_list[0]
@@ -47,9 +47,9 @@ def test_metrics_since_till_limited_not_empty(skale, runner):
     start_date = '2000-01-01'
     end_date = '2100-01-01'
     node_ids = get_nodes_for_validator(skale, D_VALIDATOR_ID)
-    metrics, total_bounty = get_bounty_from_events(skale, node_ids, limit=1,
-                                                   start_date=yy_mm_dd_to_date(start_date),
-                                                   end_date=yy_mm_dd_to_date(end_date))
+    metrics = get_bounty_from_events(skale, node_ids, limit=1,
+                                     start_date=yy_mm_dd_to_date(start_date),
+                                     end_date=yy_mm_dd_to_date(end_date))
     row_count = len(metrics) + SERVICE_ROW_COUNT
     result = runner.invoke(validator, ['-id', str(D_VALIDATOR_ID), '-l', str(1),
                                        '-s', start_date, '-t', end_date])
