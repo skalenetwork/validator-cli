@@ -173,12 +173,12 @@ def print_bounties(nodes, bounties, wei):
     table = texttable.Texttable(max_width=get_tty_width())
     format_string = ['t']
     if wei:
-        format_string.extend(['i' for h in range(len(headers) - 1)])
+        format_string.extend(['t' for h in range(len(headers) - 1)])
     else:
         format_string.extend(['f' for h in range(len(headers) - 1)])
+        table.set_precision(3)
     table.set_cols_dtype(format_string)
     table.set_cols_align(['r' for h in headers])
-    table.set_precision(3)
     table.add_rows([headers] + bounties)
     table.set_deco(table.HEADER)
     table.set_chars(['-', '|', '+', '-'])
