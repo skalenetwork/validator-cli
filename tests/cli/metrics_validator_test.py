@@ -11,6 +11,7 @@ from utils.texts import Texts
 G_TEXTS = Texts()
 NO_DATA_MSG = G_TEXTS['msg']['no_data']
 NEG_ID_MSG = G_TEXTS['metrics']['validator']['index']['valid_id_msg']
+NOT_EXIST_VAL_ID_MSG = G_TEXTS['metrics']['validator']['index']['id_error_msg']
 
 
 def setup_module(module):
@@ -31,6 +32,12 @@ def test_neg_id(runner):
     output_list = result.output.splitlines()
 
     assert NEG_ID_MSG == output_list[-1]
+
+
+def test_not_existing_id(runner):
+    result = runner.invoke(validator, ['-id', str(10)])
+    output_list = result.output.splitlines()
+    assert NOT_EXIST_VAL_ID_MSG == output_list[-1]
 
 
 def test_metrics(skale, runner):
