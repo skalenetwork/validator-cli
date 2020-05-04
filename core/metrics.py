@@ -1,18 +1,14 @@
 import sys
 from datetime import datetime
 
-from web3 import Web3
-
 from utils.filter import SkaleFilter
+from utils.helper import to_skl
 
 BLOCK_CHUNK_SIZE = 1000
 
 
 def check_if_node_is_registered(skale, node_id):
-    if node_id in skale.nodes_data.get_active_node_ids():
-        return True
-    else:
-        return False
+    return node_id in skale.nodes_data.get_active_node_ids()
 
 
 def check_if_validator_is_registered(skale, val_id):
@@ -184,10 +180,6 @@ def get_bounty_from_events(skale, node_ids, start_date=None, end_date=None,
         total_bounty += bounty_row[1]
         bounty_rows.append(bounty_row)
     return bounty_rows
-
-
-def to_skl(wei):  # convert to SKL
-    return Web3.fromWei(wei, 'ether')
 
 
 def bounty_to_ordered_row(cur_month_record, node_ids, wei):
