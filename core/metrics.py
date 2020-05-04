@@ -1,19 +1,27 @@
-from datetime import datetime
-from utils.web3_utils import init_skale_from_config
-from utils.filter import SkaleFilter
 import sys
+from datetime import datetime
+
+from utils.filter import SkaleFilter
+from utils.helper import to_skl
 
 BLOCK_CHUNK_SIZE = 1000
 
 
-def get_nodes_for_validator(val_id):
-    skale = init_skale_from_config()
+def check_if_node_is_registered(skale, node_id):
+    return node_id in skale.nodes_data.get_active_node_ids()
+
+
+def check_if_validator_is_registered(skale, val_id):
+    validator_service = skale.get_contract_by_name('validator_service')
+    return validator_service.contract.functions.validatorExists(val_id).call()
+
+
+def get_nodes_for_validator(skale, val_id):
     validator_service = skale.get_contract_by_name('validator_service')
     return validator_service.contract.functions.getValidatorNodeIndexes(val_id).call()
 
 
-def get_start_block(node_id):
-    skale = init_skale_from_config()
+def get_start_block(skale, node_id):
     return skale.nodes_data.get(node_id)['start_block']
 
 
@@ -44,14 +52,16 @@ def progress_bar(count, total, status='', bar_len=60):
         sys.stdout.flush()
 
 
-def get_start_end_block_numbers(skale, node_ids, start_block=None, end_date=None):
-    if start_block is None:
-        start_block = datetime.utcfromtimestamp(get_start_block(node_ids[0]))
+def get_start_end_block_numbers(skale, node_ids, start_date=None, end_date=None):
+    if start_date is None:
+        start_block_number = get_start_block(skale, node_ids[0])
+    else:
+        start_block_number = find_block_for_tx_stamp(skale, start_date)
 
-    start_block_number = find_block_for_tx_stamp(skale, start_block)
-    cur_block_number = skale.web3.eth.blockNumber
-    last_block_number = find_block_for_tx_stamp(skale, end_date) if end_date is not None \
-        else cur_block_number
+    if end_date is None:
+        last_block_number = skale.web3.eth.blockNumber
+    else:
+        last_block_number = find_block_for_tx_stamp(skale, end_date)
 
     return start_block_number, last_block_number
 
@@ -63,14 +73,13 @@ def format_limit(limit):
         return int(limit)
 
 
-def get_metrics_from_events(node_ids, start_block=None, end_date=None,
-                            limit=None, is_validator=False):
-    skale = init_skale_from_config()
+def get_metrics_from_events(skale, node_ids, start_date=None, end_date=None,
+                            limit=None, wei=None, is_validator=False):
     metrics_rows = []
     total_bounty = 0
     limit = format_limit(limit)
     start_block_number, last_block_number = get_start_end_block_numbers(skale, node_ids,
-                                                                        start_block, end_date)
+                                                                        start_date, end_date)
     start_chunk_block_number = start_block_number
     blocks_total = last_block_number - start_block_number
     while len(metrics_rows) < limit:
@@ -92,8 +101,11 @@ def get_metrics_from_events(node_ids, start_block=None, end_date=None,
             tx_block_number = log['blockNumber']
             block_data = skale.web3.eth.getBlock(tx_block_number)
             block_timestamp = datetime.utcfromtimestamp(block_data['timestamp'])
+            bounty = args['bounty']
+            if not wei:
+                bounty = to_skl(bounty)
             metrics_row = [str(block_timestamp),
-                           to_skl(args['bounty']),
+                           bounty,
                            args['averageDowntime'],
                            round(args['averageLatency'] / 1000, 1)]
             if is_validator:
@@ -111,14 +123,14 @@ def get_metrics_from_events(node_ids, start_block=None, end_date=None,
     return metrics_rows, total_bounty
 
 
-def get_bounty_from_events(node_ids, start_block=None, end_date=None, limit=None) -> tuple:
-    skale = init_skale_from_config()
+def get_bounty_from_events(skale, node_ids, start_date=None, end_date=None,
+                           limit=None, wei=None) -> list:
     bounty_rows = []
     total_bounty = 0
     cur_month_record = {}
     limit = format_limit(limit)
     start_block_number, last_block_number = get_start_end_block_numbers(skale, node_ids,
-                                                                        start_block, end_date)
+                                                                        start_date, end_date)
     start_chunk_block_number = start_block_number
     blocks_total = last_block_number - start_block_number
 
@@ -153,7 +165,7 @@ def get_bounty_from_events(node_ids, start_block=None, end_date=None, limit=None
                     cur_month_record[cur_year_month][node_id] = bounty
             else:
                 if bool(cur_month_record):  # if prepared dict is not empty
-                    bounty_row = bounty_to_ordered_row(cur_month_record, node_ids)
+                    bounty_row = bounty_to_ordered_row(cur_month_record, node_ids, wei)
                     total_bounty += bounty_row[1]
                     bounty_rows.append(bounty_row)
                 cur_month_record = {cur_year_month: {node_id: bounty}}
@@ -164,17 +176,13 @@ def get_bounty_from_events(node_ids, start_block=None, end_date=None, limit=None
             break
     progress_bar(blocks_total, blocks_total)
     if bool(cur_month_record) and len(bounty_rows) < limit:
-        bounty_row = bounty_to_ordered_row(cur_month_record, node_ids)
+        bounty_row = bounty_to_ordered_row(cur_month_record, node_ids, wei)
         total_bounty += bounty_row[1]
         bounty_rows.append(bounty_row)
-    return bounty_rows, total_bounty
+    return bounty_rows
 
 
-def to_skl(digits):  # convert to SKL
-    return digits / (10 ** 18)
-
-
-def bounty_to_ordered_row(cur_month_record, node_ids):
+def bounty_to_ordered_row(cur_month_record, node_ids, wei):
     sum = 0
     bounty_row = []
     key_date = next(iter(cur_month_record))
@@ -183,7 +191,8 @@ def bounty_to_ordered_row(cur_month_record, node_ids):
     for node_id in node_ids:
         cur_bounty = cur_month_record[key_date].get(node_id, 0)
         if cur_bounty:
-            cur_bounty = to_skl(cur_bounty)
+            if not wei:
+                cur_bounty = to_skl(cur_bounty)
             sum += cur_bounty
         bounty_row.append(cur_bounty)
     bounty_row.insert(1, sum)

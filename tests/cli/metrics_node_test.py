@@ -10,7 +10,8 @@ from utils.texts import Texts
 
 G_TEXTS = Texts()
 NO_DATA_MSG = G_TEXTS['msg']['no_data']
-NEG_ID_MSG = G_TEXTS['metrics']['node']['index']['valid_msg']
+NEG_ID_MSG = G_TEXTS['metrics']['node']['index']['valid_id_msg']
+NOT_EXIST_NODE_ID_MSG = G_TEXTS['metrics']['node']['index']['id_error_msg']
 
 
 def setup_module(module):
@@ -32,8 +33,14 @@ def test_neg_id(runner):
     assert NEG_ID_MSG == output_list[-1]
 
 
-def test_metrics(runner):
-    metrics, total_bounty = get_metrics_from_events([NODE_ID])
+def test_not_existing_id(runner):
+    result = runner.invoke(node, ['-id', str(10)])
+    output_list = result.output.splitlines()
+    assert NOT_EXIST_NODE_ID_MSG == output_list[-1]
+
+
+def test_metrics(skale, runner):
+    metrics, total_bounty = get_metrics_from_events(skale, [NODE_ID])
     row_count = len(metrics) + SERVICE_ROW_COUNT
     result = runner.invoke(node, ['-id', str(NODE_ID)])
     output_list = result.output.splitlines()[-row_count:]
@@ -46,8 +53,8 @@ def test_metrics(runner):
     assert f' Total bounty per the given period: {total_bounty:.3f} SKL' == output_list[-1]  # noqa
 
 
-def test_metrics_limited(runner):
-    metrics, total_bounty = get_metrics_from_events([NODE_ID], limit=1)
+def test_metrics_limited(skale, runner):
+    metrics, total_bounty = get_metrics_from_events(skale, [NODE_ID], limit=1)
     row_count = len(metrics) + SERVICE_ROW_COUNT
     result = runner.invoke(node, ['-id', str(NODE_ID), '-l', str(1)])
     output_list = result.output.splitlines()[-row_count:]
@@ -59,12 +66,12 @@ def test_metrics_limited(runner):
     assert f' Total bounty per the given period: {total_bounty:.3f} SKL' == output_list[-1]  # noqa
 
 
-def test_metrics_since_limited_not_empty(runner):
-    start_block = '2000-01-01'
-    metrics, total_bounty = get_metrics_from_events([NODE_ID], limit=1,
-                                                    start_block=yy_mm_dd_to_date(start_block))
+def test_metrics_since_limited_not_empty(skale, runner):
+    start_date = '2000-01-01'
+    metrics, total_bounty = get_metrics_from_events(skale, [NODE_ID], limit=1,
+                                                    start_date=yy_mm_dd_to_date(start_date))
     row_count = len(metrics) + SERVICE_ROW_COUNT
-    result = runner.invoke(node, ['-id', str(NODE_ID), '-l', str(1), '-s', start_block])
+    result = runner.invoke(node, ['-id', str(NODE_ID), '-l', str(1), '-s', start_date])
     output_list = result.output.splitlines()[-row_count:]
 
     assert '       Date           Bounty   Downtime   Latency' == output_list[0]
@@ -75,16 +82,16 @@ def test_metrics_since_limited_not_empty(runner):
 
 
 def test_metrics_since_limited_empty(runner):
-    start_block = '2100-01-01'
-    result = runner.invoke(node, ['-id', str(NODE_ID), '-l', str(1), '-s', start_block])
+    start_date = '2100-01-01'
+    result = runner.invoke(node, ['-id', str(NODE_ID), '-l', str(1), '-s', start_date])
     output_list = result.output.splitlines()
 
     assert NO_DATA_MSG == output_list[-1]
 
 
-def test_metrics_till_limited_not_empty(runner):
+def test_metrics_till_limited_not_empty(skale, runner):
     end_date = '2100-01-01'
-    metrics, total_bounty = get_metrics_from_events([NODE_ID], limit=1,
+    metrics, total_bounty = get_metrics_from_events(skale, [NODE_ID], limit=1,
                                                     end_date=yy_mm_dd_to_date(end_date))
     row_count = len(metrics) + SERVICE_ROW_COUNT
     result = runner.invoke(node, ['-id', str(NODE_ID), '-l', str(1), '-t', end_date])
@@ -105,15 +112,15 @@ def test_metrics_till_limited_empty(runner):
     assert NO_DATA_MSG == output_list[-1]
 
 
-def test_metrics_since_till_limited_not_empty(runner):
-    start_block = '2000-01-01'
+def test_metrics_since_till_limited_not_empty(skale, runner):
+    start_date = '2000-01-01'
     end_date = '2100-01-01'
-    metrics, total_bounty = get_metrics_from_events([NODE_ID], limit=1,
-                                                    start_block=yy_mm_dd_to_date(start_block),
+    metrics, total_bounty = get_metrics_from_events(skale, [NODE_ID], limit=1,
+                                                    start_date=yy_mm_dd_to_date(start_date),
                                                     end_date=yy_mm_dd_to_date(end_date))
     row_count = len(metrics) + SERVICE_ROW_COUNT
     result = runner.invoke(node, ['-id', str(NODE_ID), '-l', str(1),
-                                  '-s', start_block, '-t', end_date])
+                                  '-s', start_date, '-t', end_date])
     output_list = result.output.splitlines()[-row_count:]
 
     assert '       Date           Bounty   Downtime   Latency' == output_list[0]
@@ -124,9 +131,9 @@ def test_metrics_since_till_limited_not_empty(runner):
 
 
 def test_metrics_since_till_limited_empty(runner):
-    start_block = '2100-01-01'
+    start_date = '2100-01-01'
     end_date = '2100-02-01'
     result = runner.invoke(node, ['-id', str(NODE_ID), '-l', str(1),
-                                  '-s', start_block, '-t', end_date])
+                                  '-s', start_date, '-t', end_date])
     output_list = result.output.splitlines()
     assert NO_DATA_MSG == output_list[-1]

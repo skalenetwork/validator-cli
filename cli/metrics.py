@@ -19,9 +19,13 @@
 
 import click
 
-from core.metrics import get_metrics_from_events, get_nodes_for_validator
+from core.metrics import (
+    check_if_node_is_registered, check_if_validator_is_registered, get_metrics_from_events,
+    get_nodes_for_validator
+)
 from utils.print_formatters import print_node_metrics, print_validator_metrics
 from utils.texts import Texts
+from utils.web3_utils import init_skale_from_config
 
 G_TEXTS = Texts()
 TEXTS = G_TEXTS['metrics']
@@ -60,14 +64,23 @@ def metrics():
     type=int,
     help=MSGS['limit']['help']
 )
-def node(index, since, till, limit):
+@click.option(
+    '--wei', '-w',
+    is_flag=True,
+    help=MSGS['wei']['help']
+)
+def node(index, since, till, limit, wei):
     if index < 0:
-        print(TEXTS['node']['index']['valid_msg'])
+        print(TEXTS['node']['index']['valid_id_msg'])
         return
-    print(TEXTS['validator']['index']['wait_msg'])
-    metrics, total_bounty = get_metrics_from_events([int(index)], since, till, limit)
+    skale = init_skale_from_config()
+    if not check_if_node_is_registered(skale, index):
+        print(TEXTS['node']['index']['id_error_msg'])
+        return
+    print(TEXTS['node']['index']['wait_msg'])
+    metrics, total_bounty = get_metrics_from_events(skale, [int(index)], since, till, limit, wei)
     if metrics:
-        print_node_metrics(metrics, total_bounty)
+        print_node_metrics(metrics, total_bounty, wei)
     else:
         print('\n' + MSGS['no_data'])
 
@@ -94,15 +107,27 @@ def node(index, since, till, limit):
     type=int,
     help=MSGS['limit']['help']
 )
-def validator(index, since, till, limit):
+@click.option(
+    '--wei', '-w',
+    is_flag=True,
+    help=MSGS['wei']['help']
+)
+def validator(index, since, till, limit, wei):
     if index < 0:
-        print(TEXTS['validator']['index']['valid_msg'])
+        print(TEXTS['validator']['index']['valid_id_msg'])
         return
-    nodes_ids = get_nodes_for_validator(index)
+    skale = init_skale_from_config()
+    if not check_if_validator_is_registered(skale, index):
+        print(TEXTS['validator']['index']['id_error_msg'])
+        return
+    node_ids = get_nodes_for_validator(skale, index)
+    if len(node_ids) == 0:
+        print(MSGS['no_nodes'])
+        return
     print(TEXTS['validator']['index']['wait_msg'])
-    metrics, total_bounty = get_metrics_from_events(nodes_ids, since, till, limit,
+    metrics, total_bounty = get_metrics_from_events(skale, node_ids, since, till, limit, wei,
                                                     is_validator=True)
     if metrics:
-        print_validator_metrics(metrics, total_bounty)
+        print_validator_metrics(metrics, total_bounty, wei)
     else:
         print('\n' + MSGS['no_data'])

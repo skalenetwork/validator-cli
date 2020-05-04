@@ -1,6 +1,7 @@
 # SKALE Validator CLI
 
-[![Build Status](https://travis-ci.com/skalenetwork/validator-cli.svg?token=tLesVRTSHvWZxoyqXdoA&branch=develop)](https://travis-ci.com/skalenetwork/validator-cli)
+![Build and publish](https://github.com/skalenetwork/validator-cli/workflows/Build%20and%20publish/badge.svg)
+![Test](https://github.com/skalenetwork/validator-cli/workflows/Test/badge.svg)
 [![Discord](https://img.shields.io/discord/534485763354787851.svg)](https://discord.gg/vvUtWJB)
 
 ## Table of Contents
@@ -204,7 +205,6 @@ Optional arguments:
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
 -   `--yes` - Confirmation flag
 
-
 #### Withdraw fee
 
 Withdraw earned fee to specified address
@@ -257,7 +257,7 @@ Required arguments:
 
 Options:
 
-- `--wei/-w` - Show tokens amount in wei
+-   `--wei/-w` - Show tokens amount in wei
 
 #### Cancel pending delegation
 
@@ -273,7 +273,7 @@ Required params:
 
 Optional arguments:
 
-- `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
 
 #### Request undelegation
 
@@ -289,7 +289,7 @@ Required params:
 
 Optional arguments:
 
-- `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
 
 #### Locked
 
@@ -305,7 +305,92 @@ Required arguments:
 
 Options:
 
-- `--wei/-w` - Show tokens amount in wei
+-   `--wei/-w` - Show tokens amount in wei
+
+### Metrics commands
+
+#### Node metrics
+
+Shows a list of metrics and bounties for a given node ID
+
+```bash
+sk-val metrics node
+```
+
+Required arguments:
+
+-   `--index/-id` - Node ID
+
+Collecting metrics from the SKALE Manager may take a long time. It is therefore recommended to use optional arguments to limit output by filtering by time period or limiting the number of records to show.
+
+Optional arguments:
+
+-   `--since/-s` - Show requested data since a given date inclusively (e.g. 2020-01-20)
+-   `--till/-t` - Show requested data before a given date not inclusively (e.g. 2020-01-21)
+-   `--limit/-l` - Number of records to show
+-   `--wei/-w` - Show bounty amount in wei
+
+Usage example:
+
+```bash
+sk-val metrics node -id 1 --since 2020-04-30 --till 2020-05-01 -l 10 -w
+```
+
+#### Validator metrics
+
+Shows a list of metrics and bounties for all nodes for a given validator ID
+
+```bash
+sk-val metrics validator
+```
+
+Required arguments:
+
+-   `--index/-id` - Validator ID
+
+Collecting metrics from the SKALE Manager may take a long time. It is therefore recommended to use optional arguments to limit output by filtering by time period or limiting the number of records to show.
+
+Optional arguments:
+
+-   `--since/-s` - Show requested data since a given date inclusively (e.g. 2020-01-20)
+-   `--till/-t` - Show requested data before a given date not inclusively (e.g. 2020-01-21)
+-   `--limit/-l` - Number of records to show
+-   `--wei/-w` - Show bounty amount in wei
+
+Usage example:
+
+```bash
+sk-val metrics validator -id 1 --since 2020-04-30 --till 2020-05-01 -l 10 -w
+```
+
+### Bounty commands
+
+#### Validator
+
+Shows a list of monthly aggregated bounties for all nodes of a given validator ID (Note: testnets are aggregated daily)
+
+```bash
+sk-val bounty validator
+```
+
+Required arguments:
+
+-   `--index/-id` - Validator ID
+
+Collecting metrics from the SKALE Manager may take a long time. It is therefore recommended to use optional arguments to limit output by filtering by time period or limiting the number of records to show.
+
+Optional arguments:
+
+-   `--since/-s` - Show requested data since a given date inclusively (e.g. 2020-01-20)
+-   `--till/-t` - Show requested data before a given date not inclusively (e.g. 2020-01-21)
+-   `--limit/-l` - Number of records to show
+-   `--wei/-w` - Show bounty amount in wei
+
+Usage example:
+
+```bash
+sk-val bounty validator -id 1 --since 2020-04-30 --till 2020-05-01 -l 10 -w
+```
 
 ## Development
 
