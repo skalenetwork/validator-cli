@@ -241,12 +241,14 @@ def test_info(runner, skale):
     result = runner.invoke(_info, [str(D_VALIDATOR_ID)])
     output_list = result.output.splitlines()
 
+    print(output_list)
+
     assert '\x1b(0x\x1b(B Validator ID                    \x1b(0x\x1b(B 1                                          \x1b(0x\x1b(B' in output_list  # noqa
     assert '\x1b(0x\x1b(B Name                            \x1b(0x\x1b(B test                                       \x1b(0x\x1b(B' in output_list  # noqa
     assert f'\x1b(0x\x1b(B Address                         \x1b(0x\x1b(B {skale.wallet.address} \x1b(0x\x1b(B' in output_list  # noqa
     assert '\x1b(0x\x1b(B Fee rate (%)                    \x1b(0x\x1b(B 10                                         \x1b(0x\x1b(B' in output_list  # noqa
     assert '\x1b(0x\x1b(B Minimum delegation amount (SKL) \x1b(0x\x1b(B 1000000                                    \x1b(0x\x1b(B' in output_list  # noqa
-    assert '\x1b(0x\x1b(B MSR                             \x1b(0x\x1b(B 1000                                       \x1b(0x\x1b(B' in output_list  # noqa
+    assert '\x1b(0x\x1b(B Accepting delegation requests   \x1b(0x\x1b(B Yes                                        \x1b(0x\x1b(B' in output_list  # noqa
 
 
 def test_withdraw_bounty(runner, skale):
