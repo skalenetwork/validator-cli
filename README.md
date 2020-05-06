@@ -185,7 +185,7 @@ Output info:
 5) Minimum delegation amount (SKL)
 6) Delegated tokens
 7) Earned bounty
-8) MSR
+8) Accepting new delegation requests
 
 #### Withdraw bounty
 
