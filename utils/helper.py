@@ -72,5 +72,13 @@ def abort_if_false(ctx, param, value):
         ctx.abort()
 
 
-def to_skl(wei):  # convert to SKL
+def to_skl(wei):  # todo: replace with from_wei()
     return Web3.fromWei(wei, 'ether')
+
+
+def from_wei(val):
+    return Web3.fromWei(val, 'ether')
+
+
+def to_wei(val):
+    return Web3.toWei(val, 'ether')

@@ -5,9 +5,13 @@ from skale.utils.contracts_provision.main import _skip_evm_time
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
 
 from cli.holder import _delegate, _delegations, _cancel_delegation, _undelegate, _locked
+from utils.helper import to_wei
 from tests.conftest import str_contains
 from tests.constants import (TEST_PK_FILE, D_VALIDATOR_ID, D_DELEGATION_AMOUNT,
                              D_DELEGATION_PERIOD, D_DELEGATION_INFO)
+
+
+DELEGATION_AMOUNT_SKL = 1000
 
 
 def _get_number_of_delegations(skale):
@@ -16,17 +20,31 @@ def _get_number_of_delegations(skale):
 
 def test_delegate(runner, skale):
     num_of_delegations_before = _get_number_of_delegations(skale)
+    delegated_amount_before = skale.delegation_controller.get_delegated_amount(skale.wallet.address)
     result = runner.invoke(
         _delegate,
         [
             '--validator-id', D_VALIDATOR_ID,
-            '--amount', D_DELEGATION_AMOUNT,
+            '--amount', DELEGATION_AMOUNT_SKL,
             '--delegation-period', str(D_DELEGATION_PERIOD),
             '--info', D_DELEGATION_INFO,
             '--pk-file', TEST_PK_FILE,
             '--yes'
         ]
     )
+    delegations = skale.delegation_controller.get_all_delegations_by_validator(
+        validator_id=D_VALIDATOR_ID
+    )
+    delegation_id = delegations[-1]['id']
+    skale.delegation_controller.accept_pending_delegation(
+        delegation_id,
+        wait_for=True
+    )
+    _skip_evm_time(skale.web3, MONTH_IN_SECONDS * (D_DELEGATION_PERIOD + 1))
+
+    delegated_amount_after = skale.delegation_controller.get_delegated_amount(skale.wallet.address)
+    assert delegated_amount_after == delegated_amount_before + to_wei(DELEGATION_AMOUNT_SKL)
+
     num_of_delegations_after = _get_number_of_delegations(skale)
     assert num_of_delegations_after == num_of_delegations_before + 1
     assert result.exit_code == 0

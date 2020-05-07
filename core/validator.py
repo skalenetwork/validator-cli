@@ -24,6 +24,7 @@ from terminaltables import SingleTable
 from utils.web3_utils import (init_skale_from_config, init_skale_w_wallet_from_config,
                               check_tx_result)
 from utils.print_formatters import print_validators, print_delegations, print_linked_addresses
+from utils.helper import to_wei, from_wei
 from utils.constants import SPIN_COLOR
 
 
@@ -32,11 +33,12 @@ def register(name: str, description: str, commission_rate: int, min_delegation: 
     if not skale:
         return
     with yaspin(text='Registering new validator', color=SPIN_COLOR) as sp:
+        min_delegation_wei = to_wei(min_delegation)
         tx_res = skale.validator_service.register_validator(
             name=name,
             description=description,
             fee_rate=commission_rate,
-            min_delegation_amount=min_delegation
+            min_delegation_amount=min_delegation_wei
         )
         if not check_tx_result(tx_res.hash, skale.web3):
             sp.write(f'Transaction failed: {tx_res.hash}')
@@ -44,13 +46,13 @@ def register(name: str, description: str, commission_rate: int, min_delegation: 
         sp.write("✔ New validator registered")
 
 
-def validators_list(all):
+def validators_list(wei, all):
     skale = init_skale_from_config()
     if not all:
         validators = skale.validator_service.ls(trusted_only=True)
     else:
         validators = skale.validator_service.ls()
-    print_validators(validators)
+    print_validators(validators, wei)
 
 
 def delegations(validator_id, wei):
@@ -134,12 +136,13 @@ def info(validator_id):
     validator_info = skale.validator_service.get(validator_id)
     is_accepting_new_requests = skale.validator_service.is_accepting_new_requests(validator_id)
     accepting_delegation_requests = 'Yes' if is_accepting_new_requests else 'No'
+    minimum_delegation_amount = from_wei(validator_info['minimum_delegation_amount'])
     table = SingleTable([
         ['Validator ID', validator_id],
         ['Name', validator_info['name']],
         ['Address', validator_info['validator_address']],
         ['Fee rate (%)', validator_info['fee_rate']],
-        ['Minimum delegation amount (SKL)', validator_info['minimum_delegation_amount']],
+        ['Minimum delegation amount (SKL)', minimum_delegation_amount],
         ['Accepting delegation requests', accepting_delegation_requests]
     ])
     print(table.table)

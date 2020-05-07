@@ -76,7 +76,7 @@ def test_ls_all(runner, skale):
                                  validators))
     assert "Name   Id                    Address                     Description   Fee rate (%)    Registration time    Minimum delegation (SKL)   Validator status" in output_list  # noqa
     assert "-------------------------------------------------------------------------------------------------------------------------------------------------------" in output_list  # noqa
-    assert f'test   1    {validators[0]["validator_address"]}   test          10             {registration_time[0]}   1000000                    Trusted         ' in output_list  # noqa
+    assert f'test   1    {validators[0]["validator_address"]}   test          10             {registration_time[0]}   1E-12                      Trusted         ' in output_list  # noqa
     assert f'test   2    {validators[1]["validator_address"]}   test          10             {registration_time[1]}   1000                       Registered      ' in output_list  # noqa
     assert result.exit_code == 0
 
@@ -244,7 +244,7 @@ def test_info(runner, skale):
     assert '\x1b(0x\x1b(B Name                            \x1b(0x\x1b(B test                                       \x1b(0x\x1b(B' in output_list  # noqa
     assert f'\x1b(0x\x1b(B Address                         \x1b(0x\x1b(B {skale.wallet.address} \x1b(0x\x1b(B' in output_list  # noqa
     assert '\x1b(0x\x1b(B Fee rate (%)                    \x1b(0x\x1b(B 10                                         \x1b(0x\x1b(B' in output_list  # noqa
-    assert '\x1b(0x\x1b(B Minimum delegation amount (SKL) \x1b(0x\x1b(B 1000000                                    \x1b(0x\x1b(B' in output_list  # noqa
+    assert '\x1b(0x\x1b(B Minimum delegation amount (SKL) \x1b(0x\x1b(B 1E-12                                      \x1b(0x\x1b(B' in output_list  # noqa
     assert '\x1b(0x\x1b(B Accepting delegation requests   \x1b(0x\x1b(B Yes                                        \x1b(0x\x1b(B' in output_list  # noqa
 
 
