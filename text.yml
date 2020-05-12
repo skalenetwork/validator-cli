@@ -153,3 +153,19 @@ metrics:
       id_error_msg: "Error: Validator ID doesn't exist"
       wait_msg: Please wait - collecting metrics data from blockchain...
 
+sgx:
+  help: Sgx wallet commad
+  init:
+    help: "Init sgx account by using sgx server prodvided with SGX-URL argument. \n
+         Note: sgx server must be available over the network"
+    param:
+        ssl_port: Port that is used by sgx server to establish tls connection
+    msg:
+      already_inited: The sgx wallet is already inited. Use --force to rewrite data
+      success: Sgx account created
+      warning: "WARNING: If you lost the key you will be unable to access your account again"
+
+  info: 
+    help: Show information about sgx wallet
+
+

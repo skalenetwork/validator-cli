@@ -70,10 +70,11 @@ setup(
     url='https://github.com/skalenetwork/validators-cli',
     install_requires=[
         "click==7.1.2",
-        "skale.py==3.6dev2",
+        "skale.py==3.6dev6",
         "terminaltables==3.1.0",
         "yaspin==0.16.0",
         "texttable==1.6.2",
+        "terminaltables==3.1.0"
     ],
     python_requires='>=3.6,<4',
     extras_require=extras_require,
