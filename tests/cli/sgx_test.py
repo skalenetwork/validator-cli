@@ -147,15 +147,13 @@ def test_tx_with_sgx(runner, cleanup):
         assert res.stdout == 'You should initialize sgx wallet first with <sk-val sgx init>\n'  # noqa
 
     init_sgx_account(SGX_SERVER_URL, SSL_PORT)
-    # res = run_sgx_init(runner, force=True)
-    # assert res.exit_code == 0
 
     # Get sgx address
     res = runner.invoke(info, ['--raw'])
     assert res.exit_code == 0
     sgx_info = json.loads(res.output.strip())
 
-    # Using skale with web3wallet from default config
+    # Using skale with Web3wallet from default config
     skale = init_skale_w_wallet_from_config(pk_file=TEST_PK_FILE)
     transfer_eth_to_sgx(skale, sgx_info['address'])
 
