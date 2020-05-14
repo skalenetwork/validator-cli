@@ -20,6 +20,8 @@
 import os
 import datetime
 import texttable
+from terminaltables import SingleTable
+
 from utils.helper import to_skl
 
 
@@ -192,3 +194,15 @@ def print_total_info(total, wei):
     else:
         total_string = f'Total bounty per the given period: {total:.3f} SKL'
     print('\n', total_string)
+
+
+def print_sgx_info(info):
+    table_data = [
+        ('KEY', 'VALUE'),
+        ('Server url', info['server_url']),
+        ('SSL port', info['ssl_port']),
+        ('Address', info['address']),
+        ('Key', info['key'])
+    ]
+    table = SingleTable(table_data)
+    print(table.table)

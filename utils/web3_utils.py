@@ -20,10 +20,12 @@
 import os
 from yaspin import yaspin
 from skale import Skale
-from skale.wallets import Web3Wallet, LedgerWallet
-from skale.utils.web3_utils import init_web3, wait_receipt, check_receipt
 
-from utils.constants import SKALE_VAL_ABI_FILE, SPIN_COLOR
+from skale.utils.web3_utils import init_web3, wait_receipt, check_receipt
+from skale.wallets import LedgerWallet, SgxWallet, Web3Wallet
+
+from core.sgx import get_sgx_info, sgx_inited
+from utils.constants import SGX_SSL_CERTS_PATH, SKALE_VAL_ABI_FILE, SPIN_COLOR
 from utils.helper import get_config
 
 DISABLE_SPIN = os.getenv('DISABLE_SPIN')
@@ -39,11 +41,17 @@ def init_skale(endpoint, wallet=None, disable_spin=DISABLE_SPIN):
         return skale
 
 
-def init_skale_w_wallet(endpoint, wallet_type, pk_file=None,  disable_spin=DISABLE_SPIN):
+def init_skale_w_wallet(endpoint, wallet_type, pk_file=None, disable_spin=DISABLE_SPIN):
     """Init instance of SKALE library with wallet"""
     web3 = init_web3(endpoint)
     if wallet_type == 'hardware':
         wallet = LedgerWallet(web3)
+    if wallet_type == 'sgx':
+        info = get_sgx_info()
+        wallet = SgxWallet(info['server_url'],
+                           web3,
+                           key_name=info['key'],
+                           path_to_cert=SGX_SSL_CERTS_PATH)
     else:
         with open(pk_file, 'r') as f:
             pk = str(f.read()).strip()
@@ -68,6 +76,10 @@ def init_skale_w_wallet_from_config(pk_file=None):
         print('Please specify path to the private key file to use software vallet with `--pk-file`\
             option')
         return
+    if config['wallet'] == 'sgx' and not sgx_inited():
+        print('You should initialize sgx wallet first with <sk-val sgx init>')
+        return
+
     return init_skale_w_wallet(config['endpoint'], config['wallet'], pk_file)
 
 

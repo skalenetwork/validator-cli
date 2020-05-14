@@ -30,6 +30,7 @@ from cli.validator import validator_cli
 from cli.metrics import metrics_cli
 from cli.bounty import bounty_cli
 from cli.holder import holder_cli
+from cli.sgx import sgx_cli
 from utils.validations import UrlType
 from utils.texts import Texts
 from utils.helper import safe_mk_dirs, write_json, download_file
@@ -104,7 +105,8 @@ sys.excepthook = handle_exception
 if __name__ == '__main__':
     logger.info(f'cmd: {" ".join(str(x) for x in sys.argv)}, v.{__version__}')
     cmd_collection = click.CommandCollection(sources=[cli, validator_cli, holder_cli,
-                                                      metrics_cli, bounty_cli])
+                                                      metrics_cli, bounty_cli,
+                                                      sgx_cli])
     try:
         cmd_collection()
     except Exception as err:
