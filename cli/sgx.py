@@ -44,7 +44,8 @@ def sgx():
 @sgx.command(help=TEXTS['init']['help'])
 @click.argument('sgx-url')
 @click.option('--force', '-f', is_flag=True)
-@click.option('--ssl-port', help=TEXTS['init']['param']['ssl_port'], type=int)
+@click.option('--ssl-port', help=TEXTS['init']['param']['ssl_port'], type=int,
+              default=1026)
 def init(sgx_url, force, ssl_port):
     if not force and sgx_inited():
         print(TEXTS['init']['msg']['already_inited'])

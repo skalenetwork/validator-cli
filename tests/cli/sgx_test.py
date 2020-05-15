@@ -59,7 +59,7 @@ def test_init(runner):
 def test_init_already_inited(runner):
     res = run_sgx_init(runner)
     assert res.exit_code == 0
-    assert res.output == 'The sgx wallet is already inited. Use --force to rewrite data\n'  # noqa
+    assert res.output == 'The sgx wallet is already inited. Use --force to rewrite the data\n'  # noqa
 
     res = run_sgx_init(runner, force=True)
     assert res.exit_code == 0
