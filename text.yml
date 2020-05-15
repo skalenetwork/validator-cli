@@ -161,7 +161,7 @@ sgx:
     param:
         ssl_port: Port that is used by sgx server to establish tls connection
     msg:
-      already_inited: The sgx wallet is already inited. Use --force to rewrite data
+      already_inited: The sgx wallet is already inited. Use --force to rewrite the data
       success: Sgx account created
       warning: "WARNING: If you lost the key you will be unable to access your account again"
 

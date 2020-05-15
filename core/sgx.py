@@ -1,12 +1,10 @@
 import json
-import logging
 import os
+import shutil
 
 from sgx import SgxClient
 
-from utils.constants import SGX_SSL_CERTS_PATH, SGX_INFO_PATH
-
-logger = logging.getLogger(__name__)
+from utils.constants import SGX_DATA_DIR, SGX_SSL_CERTS_PATH, SGX_INFO_PATH
 
 
 class SGXError(Exception):
@@ -14,7 +12,11 @@ class SGXError(Exception):
 
 
 def sgx_inited() -> bool:
-    return os.path.isdir(SGX_SSL_CERTS_PATH)
+    return os.path.isdir(SGX_DATA_DIR)
+
+
+def cleanup_sgx():
+    shutil.rmtree(SGX_DATA_DIR)
 
 
 def get_sgx_info() -> dict:
@@ -44,6 +46,8 @@ def generate_sgx_key(sgx_server_url, ssl_port) -> tuple:
 
 
 def init_sgx_account(sgx_server_url, ssl_port):
+    if sgx_inited():
+        cleanup_sgx()
     key_info = generate_sgx_key(sgx_server_url, ssl_port)
     save_sgx_info(key_info, sgx_server_url, ssl_port)
     return get_sgx_info()
