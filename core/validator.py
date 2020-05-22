@@ -76,13 +76,14 @@ def accept_pending_delegation(delegation_id, pk_file: str) -> None:
         sp.write(f'✔ Delegation request with ID {delegation_id} accepted')
 
 
-def link_node_address(node_address: str, pk_file: str) -> None:
+def link_node_address(node_address: str, signature: str, pk_file: str) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
     with yaspin(text='Linking node address', color=SPIN_COLOR) as sp:
         tx_res = skale.validator_service.link_node_address(
-            node_address=node_address
+            node_address=node_address,
+            signature=signature
         )
         if not check_tx_result(tx_res.hash, skale.web3):
             sp.write(f'Transaction failed: {tx_res.hash}')
@@ -141,3 +142,32 @@ def info(validator_id):
         ['MSR', msr]
     ])
     print(table.table)
+
+
+def withdraw_bounty(validator_id, recipient_address, pk_file):
+    skale = init_skale_w_wallet_from_config(pk_file)
+    if not skale:
+        return
+    with yaspin(text='Withdrawing bounty', color=SPIN_COLOR) as sp:
+        tx_res = skale.distributor.withdraw_bounty(
+            validator_id=validator_id,
+            to=recipient_address
+        )
+        if not check_tx_result(tx_res.hash, skale.web3):
+            sp.write(f'Transaction failed: {tx_res.hash}')
+            return
+        sp.write(f'✔ Bounty successfully transferred to {recipient_address}')
+
+
+def withdraw_fee(recipient_address, pk_file):
+    skale = init_skale_w_wallet_from_config(pk_file)
+    if not skale:
+        return
+    with yaspin(text='Withdrawing fee', color=SPIN_COLOR) as sp:
+        tx_res = skale.distributor.withdraw_fee(
+            to=recipient_address
+        )
+        if not check_tx_result(tx_res.hash, skale.web3):
+            sp.write(f'Transaction failed: {tx_res.hash}')
+            return
+        sp.write(f'✔ Earned fees successfully transferred to {recipient_address}')

@@ -26,7 +26,7 @@ validator:
       prompt: Please enter validator description
     commission_rate:
       help: Commission rate (percentage)
-      prompt: Please enter validator commission rate (e.g. enter 0.05 for 5%)
+      prompt: Please enter validator commission rate in % 
     min_delegation:
       help: Validator minimum delegation amount
       prompt: Please enter minimum delegation amount in SKALE tokens
@@ -62,6 +62,14 @@ validator:
       Are you sure you want to unlink this address from your validator account?
   linked_addresses:
     help: List of the linked addresses for validator address
+  withdraw_bounty:
+    help: Withdraw earned bounty to specified address
+    confirm: |-
+      Are you sure you want to withdraw bounty?
+  withdraw_fee:
+    help: Withdraw earned fee to specified address
+    confirm: |-
+      Are you sure you want to withdraw fees?
 holder:
   help: Token holder commands
   delegate:
@@ -86,6 +94,12 @@ holder:
       help: Show delegation amount in wei
   cancel_delegation:
     help: Cancel pending delegation request
+  undelegate:
+    help: Request undelegation in the end of delegation period
+  locked:
+    help: Show amount of locked tokens for address
+    wei:
+      help: Show amount in wei
 msg:
   run_init: You should run < init > first
   limit:
@@ -94,6 +108,8 @@ msg:
     help: Show requested data since timestamp (e.g. 2020-01-20), incl. given date
   till:
     help: Show requested data before timestamp (e.g. 2020-01-21), not incl. given date
+  no_data: No data found for a given period
+
 
 pk_file:
   help: Path to file with private key (only for `software` wallet type)

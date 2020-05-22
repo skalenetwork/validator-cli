@@ -17,6 +17,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import os
 from yaspin import yaspin
 from skale import Skale
 from skale.wallets import Web3Wallet, LedgerWallet
@@ -25,10 +26,12 @@ from skale.utils.web3_utils import init_web3, wait_receipt, check_receipt
 from utils.constants import SKALE_VAL_ABI_FILE, SPIN_COLOR
 from utils.helper import get_config
 
+DISABLE_SPIN = os.getenv('DISABLE_SPIN')
 
-def init_skale(endpoint, wallet=None, spin=True):
+
+def init_skale(endpoint, wallet=None, disable_spin=DISABLE_SPIN):
     """Init read-only instance of SKALE library"""
-    if not spin:
+    if disable_spin:
         return Skale(endpoint, SKALE_VAL_ABI_FILE, wallet)
     with yaspin(text="Loading", color=SPIN_COLOR) as sp:
         sp.text = 'Connecting to SKALE Manager contracts'
@@ -36,7 +39,7 @@ def init_skale(endpoint, wallet=None, spin=True):
         return skale
 
 
-def init_skale_w_wallet(endpoint, wallet_type, pk_file=None, spin=True):
+def init_skale_w_wallet(endpoint, wallet_type, pk_file=None,  disable_spin=DISABLE_SPIN):
     """Init instance of SKALE library with wallet"""
     web3 = init_web3(endpoint)
     if wallet_type == 'hardware':
@@ -45,7 +48,7 @@ def init_skale_w_wallet(endpoint, wallet_type, pk_file=None, spin=True):
         with open(pk_file, 'r') as f:
             pk = str(f.read()).strip()
         wallet = Web3Wallet(pk, web3)
-    return init_skale(endpoint, wallet, spin)
+    return init_skale(endpoint, wallet, disable_spin)
 
 
 def init_skale_from_config():

@@ -66,7 +66,10 @@ def node(index, since, till, limit):
         return
     print(TEXTS['validator']['index']['wait_msg'])
     metrics, total_bounty = get_metrics_from_events([int(index)], since, till, limit)
-    print_node_metrics(metrics, total_bounty)
+    if metrics:
+        print_node_metrics(metrics, total_bounty)
+    else:
+        print('\n' + MSGS['no_data'])
 
 
 @metrics.command(help=TEXTS['validator']['help'])
@@ -99,4 +102,7 @@ def validator(index, since, till, limit):
     print(TEXTS['validator']['index']['wait_msg'])
     metrics, total_bounty = get_metrics_from_events(nodes_ids, since, till, limit,
                                                     is_validator=True)
-    print_validator_metrics(metrics, total_bounty)
+    if metrics:
+        print_validator_metrics(metrics, total_bounty)
+    else:
+        print('\n' + MSGS['no_data'])
