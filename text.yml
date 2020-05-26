@@ -32,6 +32,8 @@ validator:
       prompt: Please enter minimum delegation amount in SKALE tokens
   ls:
     help: List of available validators
+    wei:
+      help: Show delegation amount in wei
   info:
     help: Info about the validator
   delegations:

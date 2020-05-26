@@ -110,6 +110,10 @@ List of available validators
 sk-val validator ls
 ```
 
+Options:
+
+-   `--wei/-w` - Show tokens amount in wei
+
 #### Delegations
 
 List of delegations for validator ID
@@ -204,9 +208,7 @@ Output info:
 3) Address
 4) Fee rate (%)
 5) Minimum delegation amount (SKL)
-6) Delegated tokens
-7) Earned bounty
-8) Accepting new delegation requests
+6) Accepting new delegation requests
 
 #### Withdraw bounty
 

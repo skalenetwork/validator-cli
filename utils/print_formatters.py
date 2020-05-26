@@ -20,9 +20,9 @@
 import os
 import datetime
 import texttable
-from terminaltables import SingleTable
 
-from utils.helper import to_skl
+from terminaltables import SingleTable
+from utils.helper import to_skl, from_wei
 
 
 def get_tty_width():
@@ -48,7 +48,8 @@ def format_date(date):
     return date.strftime("%b %d %Y %H:%M:%S")
 
 
-def print_validators(validators):
+def print_validators(validators, wei):
+    m_type = 'SKL - wei' if wei else 'SKL'
     headers = [
         'Name',
         'Id',
@@ -56,13 +57,16 @@ def print_validators(validators):
         'Description',
         'Fee rate (%)',
         'Registration time',
-        'Minimum delegation (SKL)',
+        f'Minimum delegation ({m_type})',
         'Validator status'
     ]
     rows = []
     for validator in validators:
         date = datetime.datetime.fromtimestamp(validator['registration_time'])
         status = 'Trusted' if validator['trusted'] else 'Registered'
+        if not wei:
+            validator['minimum_delegation_amount'] = from_wei(
+                validator['minimum_delegation_amount'])
         rows.append([
             validator['name'],
             validator['id'],
