@@ -88,9 +88,10 @@ def _register(name, description, commission_rate, min_delegation, pk_file):
 
 
 @validator.command('ls', help=TEXTS['ls']['help'])
+@click.option('--wei', '-w', is_flag=True, help=TEXTS['ls']['wei']['help'])
 @click.option('--all', is_flag=True)
-def _ls(all):
-    validators_list(all)
+def _ls(wei, all):
+    validators_list(wei, all)
 
 
 @validator.command('delegations', help=TEXTS['delegations']['help'])
