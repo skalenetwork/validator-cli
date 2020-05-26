@@ -19,6 +19,7 @@ def _get_number_of_delegations(skale):
 
 
 def test_delegate(runner, skale):
+    _skip_evm_time(skale.web3, MONTH_IN_SECONDS * (D_DELEGATION_PERIOD + 1))
     num_of_delegations_before = _get_number_of_delegations(skale)
     delegated_amount_before = skale.delegation_controller.get_delegated_amount(skale.wallet.address)
     result = runner.invoke(

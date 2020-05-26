@@ -45,13 +45,34 @@ Required arguments:
 
 -   `--endpoint/-e` - RPC endpoint of the node in the network where SKALE manager is deployed (`ws` or `wss`)
 -   `--contracts-url/-c` - - URL to SKALE Manager contracts ABI and addresses
--   `-w/--wallet` - Type of the wallet that will be used for signing transactions (software or ledger)
+-   `-w/--wallet` - Type of the wallet that will be used for signing transactions (software, sgx or hardware)
+
+If you want to use sgx wallet you need to initialize it first (see **SGX commands**)
 
 Usage example:
 
 ```bash
 sk-val init -e ws://geth.test.com:8546 -c https://test.com/manager.json --wallet-type software
 ```
+
+### SGX commands
+
+#### Init 
+ Initialize sgx wallet  
+ ```bash
+sk-val sgx init [SGX_SERVER_URL]
+```
+Optional arguments:
+-   `--force/-f` - Rewrite current sgx wallet data
+-  `--ssl-port` - Port that is used by sgx server to establish tls connection
+
+#### Info
+Print sgx wallet information
+```bash
+sk-val sgx info 
+```
+Optional arguments:
+-   `--raw` - Print info in plain json
 
 ### Validator commands
 
@@ -61,7 +82,7 @@ Register as a new SKALE validator
 
 ```bash
 sk-val validator register
-```
+``` 
 
 Required arguments:
 

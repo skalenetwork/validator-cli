@@ -134,8 +134,8 @@ def info(validator_id):
     if not skale:
         return
     validator_info = skale.validator_service.get(validator_id)
-    is_accepting_new_requests = skale.validator_service.is_accepting_new_requests(validator_id)
-    accepting_delegation_requests = 'Yes' if is_accepting_new_requests else 'No'
+    # is_accepting_new_requests = skale.validator_service.is_accepting_new_requests(validator_id)
+    # accepting_delegation_requests = 'Yes' if is_accepting_new_requests else 'No'
     minimum_delegation_amount = from_wei(validator_info['minimum_delegation_amount'])
     table = SingleTable([
         ['Validator ID', validator_id],
@@ -143,7 +143,7 @@ def info(validator_id):
         ['Address', validator_info['validator_address']],
         ['Fee rate (%)', validator_info['fee_rate']],
         ['Minimum delegation amount (SKL)', minimum_delegation_amount],
-        ['Accepting delegation requests', accepting_delegation_requests]
+        # ['Accepting delegation requests', accepting_delegation_requests]
     ])
     print(table.table)
 
