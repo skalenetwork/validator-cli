@@ -52,7 +52,7 @@ If you want to use sgx wallet you need to initialize it first (see **SGX command
 Usage example:
 
 ```bash
-sk-val init -e ws://geth.test.com:8546 -c https://test.com/manager.json --wallet-type software
+sk-val init -e ws://geth.test.com:8546 -c https://test.com/manager.json --wallet software
 ```
 
 ### SGX commands
@@ -99,7 +99,7 @@ Optional arguments:
 Usage example:
 
 ```bash
-sk-val register -n test -d "test description" -c 20 --min-delegation 1000 --pk-file ./pk.txt
+sk-val validator register -n test -d "test description" -c 20 --min-delegation 1000 --pk-file ./pk.txt
 ```
 
 #### List
