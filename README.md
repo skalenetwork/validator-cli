@@ -99,7 +99,7 @@ Optional arguments:
 Usage example:
 
 ```bash
-sk-val register -n test -d "test description" -c 20 --min-delegation 1000 --pk-file ./pk.txt
+sk-val validator register -n test -d "test description" -c 20 --min-delegation 1000 --pk-file ./pk.txt
 ```
 
 #### List
