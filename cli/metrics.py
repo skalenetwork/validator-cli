@@ -125,9 +125,13 @@ def validator(index, since, till, limit, wei):
         print(MSGS['no_nodes'])
         return
     print(TEXTS['validator']['index']['wait_msg'])
-    metrics, total_bounty = get_metrics_from_events(skale, node_ids, since, till, limit, wei,
-                                                    is_validator=True)
-    if metrics:
-        print_validator_metrics(metrics, total_bounty, wei)
+    all_metrics = []
+    for node_id in node_ids:
+        metrics, total_bounty = get_metrics_from_events(skale, node_id, since, till, limit, wei,
+                                                        is_validator=True)
+        all_metrics.extend(metrics)
+        total_bounty
+    if all_metrics:
+        print_validator_metrics(all_metrics, total_bounty, wei)
     else:
         print('\n' + MSGS['no_data'])
