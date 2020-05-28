@@ -21,7 +21,7 @@ import json
 
 import click
 
-from core.sgx import init_sgx_account, get_sgx_info, sgx_inited
+from core.sgx_tools import init_sgx_account, get_sgx_info, sgx_inited
 from utils.print_formatters import print_sgx_info
 from utils.texts import Texts
 
@@ -37,11 +37,11 @@ def sgx_cli():
 
 
 @sgx_cli.group('sgx', help=TEXTS['help'])
-def sgx():
+def sgx_wallet():
     pass
 
 
-@sgx.command(help=TEXTS['init']['help'])
+@sgx_wallet.command(help=TEXTS['init']['help'])
 @click.argument('sgx-url')
 @click.option('--force', '-f', is_flag=True)
 @click.option('--ssl-port', help=TEXTS['init']['param']['ssl_port'], type=int,
@@ -57,7 +57,7 @@ def init(sgx_url, force, ssl_port):
     print(TEXTS['init']['msg']['warning'])
 
 
-@sgx.command(help=TEXTS['info']['help'])
+@sgx_wallet.command(help=TEXTS['info']['help'])
 @click.option('--raw', is_flag=True)
 def info(raw):
     if not sgx_inited():
