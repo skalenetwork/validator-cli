@@ -8,8 +8,8 @@ from distutils.dir_util import copy_tree
 from skale.utils.account_tools import send_ether
 
 from cli.main import init as sk_val_init
-from cli.sgx import info, init
-from core.sgx import init_sgx_account
+from cli.sgx_wallet import info, init
+from core.sgx_tools import init_sgx_account
 from cli.validator import _register
 from utils.web3_utils import init_skale_w_wallet_from_config
 from utils.helper import get_config
@@ -46,16 +46,16 @@ def sgx_init_mock(*args, **kwargs):
     }
 
 
-@mock.patch('cli.sgx.sgx_inited', sgx_inited_mock_false)
-@mock.patch('cli.sgx.init_sgx_account', sgx_init_mock)
+@mock.patch('cli.sgx_wallet.sgx_inited', sgx_inited_mock_false)
+@mock.patch('cli.sgx_wallet.init_sgx_account', sgx_init_mock)
 def test_init(runner):
     res = run_sgx_init(runner)
     assert res.exit_code == 0
     assert res.output == 'Sgx account created\n\x1b(0lqqqqqqqqqqqqwqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqk\x1b(B\n\x1b(0x\x1b(B KEY        \x1b(0x\x1b(B VALUE                               \x1b(0x\x1b(B\n\x1b(0tqqqqqqqqqqqqnqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqu\x1b(B\n\x1b(0x\x1b(B Server url \x1b(0x\x1b(B https://127.0.0.1:1026              \x1b(0x\x1b(B\n\x1b(0x\x1b(B SSL port   \x1b(0x\x1b(B 1027                                \x1b(0x\x1b(B\n\x1b(0x\x1b(B Address    \x1b(0x\x1b(B 0x0AAAAAAAAAAAAAAAAAAAAAAaA         \x1b(0x\x1b(B\n\x1b(0x\x1b(B Key        \x1b(0x\x1b(B NEK:1232132132132321313312312321321 \x1b(0x\x1b(B\n\x1b(0mqqqqqqqqqqqqvqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj\x1b(B\nWARNING: If you lost the key you will be unable to access your account again\n'  # noqa
 
 
-@mock.patch('cli.sgx.sgx_inited', sgx_inited_mock_true)
-@mock.patch('cli.sgx.init_sgx_account', sgx_init_mock)
+@mock.patch('cli.sgx_wallet.sgx_inited', sgx_inited_mock_true)
+@mock.patch('cli.sgx_wallet.init_sgx_account', sgx_init_mock)
 def test_init_already_inited(runner):
     res = run_sgx_init(runner)
     assert res.exit_code == 0
@@ -75,24 +75,24 @@ def get_info_mock(*args, **kwargs):
     }
 
 
-@mock.patch('cli.sgx.get_sgx_info', get_info_mock)
-@mock.patch('cli.sgx.sgx_inited', sgx_inited_mock_false)
+@mock.patch('cli.sgx_wallet.get_sgx_info', get_info_mock)
+@mock.patch('cli.sgx_wallet.sgx_inited', sgx_inited_mock_false)
 def test_get_sgx_info_not_inited(runner):
     res = runner.invoke(info, ['--raw'])
     assert res.exit_code == 0
     assert res.output == 'SGX is not inited\n'
 
 
-@mock.patch('cli.sgx.get_sgx_info', get_info_mock)
-@mock.patch('cli.sgx.sgx_inited', sgx_inited_mock_true)
+@mock.patch('cli.sgx_wallet.get_sgx_info', get_info_mock)
+@mock.patch('cli.sgx_wallet.sgx_inited', sgx_inited_mock_true)
 def test_get_sgx_info_table(runner):
     res = runner.invoke(info)
     assert res.exit_code == 0
     assert res.output == '\x1b(0lqqqqqqqqqqqqwqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqk\x1b(B\n\x1b(0x\x1b(B KEY        \x1b(0x\x1b(B VALUE                               \x1b(0x\x1b(B\n\x1b(0tqqqqqqqqqqqqnqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqu\x1b(B\n\x1b(0x\x1b(B Server url \x1b(0x\x1b(B https://127.0.0.1:1026              \x1b(0x\x1b(B\n\x1b(0x\x1b(B SSL port   \x1b(0x\x1b(B 1027                                \x1b(0x\x1b(B\n\x1b(0x\x1b(B Address    \x1b(0x\x1b(B 0x0AAAAAAAAAAAAAAAAAAAAAAaA         \x1b(0x\x1b(B\n\x1b(0x\x1b(B Key        \x1b(0x\x1b(B NEK:1232132132132321313312312321321 \x1b(0x\x1b(B\n\x1b(0mqqqqqqqqqqqqvqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj\x1b(B\n'  # noqa
 
 
-@mock.patch('cli.sgx.get_sgx_info', get_info_mock)
-@mock.patch('cli.sgx.sgx_inited', sgx_inited_mock_true)
+@mock.patch('cli.sgx_wallet.get_sgx_info', get_info_mock)
+@mock.patch('cli.sgx_wallet.sgx_inited', sgx_inited_mock_true)
 def test_get_sgx_info_raw(runner):
     res = runner.invoke(info, ['--raw'])
     assert res.exit_code == 0

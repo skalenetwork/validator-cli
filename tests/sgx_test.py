@@ -2,7 +2,7 @@ import shutil
 
 import pytest
 
-from core.sgx import init_sgx_account, get_sgx_info, sgx_inited
+from core.sgx_tools import init_sgx_account, get_sgx_info, sgx_inited
 from tests.constants import SGX_SERVER_URL, SSL_PORT
 from utils.constants import SGX_DATA_DIR
 

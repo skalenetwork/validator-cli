@@ -24,7 +24,7 @@ from skale import Skale
 from skale.utils.web3_utils import init_web3, wait_receipt, check_receipt
 from skale.wallets import LedgerWallet, SgxWallet, Web3Wallet
 
-from core.sgx import get_sgx_info, sgx_inited
+from core.sgx_tools import get_sgx_info, sgx_inited
 from utils.constants import SGX_SSL_CERTS_PATH, SKALE_VAL_ABI_FILE, SPIN_COLOR
 from utils.helper import get_config
 
