@@ -1,6 +1,8 @@
 import sys
 from datetime import datetime
 
+from web3.logs import DISCARD
+
 from utils.filter import SkaleFilter
 from utils.helper import to_skl
 
@@ -73,8 +75,52 @@ def format_limit(limit):
         return int(limit)
 
 
-def get_metrics_from_events(skale, node_ids, start_date=None, end_date=None,
+def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
                             limit=None, wei=None, is_validator=False):
+    print(f'node id = {node_id}')
+    metrics_rows = []
+    total_bounty = 0
+    limit = format_limit(limit)
+
+    block_number = skale.monitors_data.contract.functions.getLastBountyBlock(node_id).call()
+    while True:
+        block_data = skale.web3.eth.getBlock(block_number)
+        print(f'block number = {block_number}')
+        txs = block_data["transactions"]
+        print(txs)
+        for tx in txs:
+            rec = skale.web3.eth.getTransactionReceipt(tx)
+            h_receipt = skale.manager.contract.events.BountyGot().processReceipt(
+                rec, errors=DISCARD)
+            if len(h_receipt) == 0:
+                break
+            args = h_receipt[0]['args']
+            # print(f'args: {args}')
+            print(f"\n >>>>>> previousBlockEvent: {args[f'previousBlockEvent']}")
+            block_timestamp = datetime.utcfromtimestamp(block_data['timestamp'])
+            bounty = args['bounty']
+            if not wei:
+                bounty = to_skl(bounty)
+            metrics_row = [str(block_timestamp),
+                           bounty,
+                           args['averageDowntime'],
+                           round(args['averageLatency'] / 1000, 1)]
+            print(f'metrics = {metrics_row}')
+            if is_validator:
+                metrics_row.insert(1, args['nodeIndex'])
+                total_bounty += metrics_row[2]
+            else:
+                total_bounty += metrics_row[1]
+            metrics_rows.append(metrics_row)
+
+            block_number = args['previousBlockEvent']
+        if block_number is None or block_number == 0:
+            break
+    return metrics_rows, total_bounty
+
+
+def get_metrics_from_events_old(skale, node_ids, start_date=None, end_date=None,
+                                limit=None, wei=None, is_validator=False):
     metrics_rows = []
     total_bounty = 0
     limit = format_limit(limit)

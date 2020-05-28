@@ -137,7 +137,7 @@ def print_node_metrics(rows, total, wei):
     table = texttable.Texttable(max_width=get_tty_width())
     table.set_cols_align(["l", "r", "r", "r"])
     if wei:
-        table.set_cols_dtype(["t", "i", "i", "f"])
+        table.set_cols_dtype(["t", "t", "i", "f"])
     else:
         table.set_cols_dtype(["t", "a", "i", "f"])
     table.set_precision(1)

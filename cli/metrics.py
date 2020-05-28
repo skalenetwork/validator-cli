@@ -78,7 +78,7 @@ def node(index, since, till, limit, wei):
         print(TEXTS['node']['index']['id_error_msg'])
         return
     print(TEXTS['node']['index']['wait_msg'])
-    metrics, total_bounty = get_metrics_from_events(skale, [int(index)], since, till, limit, wei)
+    metrics, total_bounty = get_metrics_from_events(skale, int(index), since, till, limit, wei)
     if metrics:
         print_node_metrics(metrics, total_bounty, wei)
     else:
