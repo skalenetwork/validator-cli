@@ -2,12 +2,15 @@
 
 from datetime import datetime
 
+import pytest
+
 from cli.metrics import validator
 from core.metrics import get_metrics_from_events, get_nodes_for_validator
 from tests.constants import D_VALIDATOR_ID, SERVICE_ROW_COUNT
 from tests.prepare_data import set_test_msr
 from utils.texts import Texts
 
+pytestmark = pytest.mark.skipif(reason="skip temporary")
 G_TEXTS = Texts()
 NO_DATA_MSG = G_TEXTS['msg']['no_data']
 NEG_ID_MSG = G_TEXTS['metrics']['validator']['index']['valid_id_msg']
