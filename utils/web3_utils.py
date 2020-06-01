@@ -46,7 +46,7 @@ def init_skale_w_wallet(endpoint, wallet_type, pk_file=None, disable_spin=DISABL
     web3 = init_web3(endpoint)
     if wallet_type == 'hardware':
         wallet = LedgerWallet(web3)
-    if wallet_type == 'sgx':
+    elif wallet_type == 'sgx':
         info = get_sgx_info()
         wallet = SgxWallet(info['server_url'],
                            web3,
