@@ -22,7 +22,7 @@ import time  # TODO: REMOVE
 
 from core.metrics import (
     check_if_node_is_registered, check_if_validator_is_registered, get_metrics_from_events,
-    get_nodes_for_validator, get_metrics_from_events_2
+    get_nodes_for_validator
 )
 from utils.print_formatters import print_node_metrics, print_validator_metrics
 from utils.texts import Texts
@@ -75,9 +75,9 @@ def node(index, since, till, limit, wei):
         print(TEXTS['node']['index']['valid_id_msg'])
         return
     skale = init_skale_from_config()
-    # if not check_if_node_is_registered(skale, index):
-    #     print(TEXTS['node']['index']['id_error_msg'])
-    #     return
+    if not check_if_node_is_registered(skale, index):
+        print(TEXTS['node']['index']['id_error_msg'])
+        return
     print(TEXTS['node']['index']['wait_msg'])
     start = time.time()
     metrics, total_bounty = get_metrics_from_events(skale, int(index), since, till, limit, wei)
@@ -132,8 +132,6 @@ def validator(index, since, till, limit, wei):
     print(TEXTS['validator']['index']['wait_msg'])
     start = time.time()  # TODO: Remove
     all_metrics = []
-
-    metrics, total_bounty = get_metrics_from_events(skale, [int(index)], since, till, limit, wei)  # TODO: Remove
 
     for node_id in node_ids:
         metrics, total_bounty = get_metrics_from_events(skale, node_id, since, till, limit, wei,

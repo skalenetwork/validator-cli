@@ -77,6 +77,7 @@ def format_limit(limit):
 
 def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
                             limit=None, wei=None, is_validator=False):
+    print(start_date, end_date)
     print(f'node id = {node_id}')
     metrics_rows = []
     total_bounty = 0
@@ -95,20 +96,24 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
                 continue
             args = h_receipt[0]['args']
             block_timestamp = datetime.utcfromtimestamp(block_data['timestamp'])
-            bounty = args['bounty']
-            if not wei:
-                bounty = to_skl(bounty)
-            metrics_row = [str(block_timestamp),
-                           bounty,
-                           args['averageDowntime'],
-                           round(args['averageLatency'] / 1000, 1)]
-            if is_validator:
-                metrics_row.insert(1, args['nodeIndex'])
-                total_bounty += metrics_row[2]
-            else:
-                total_bounty += metrics_row[1]
-            metrics_rows.append(metrics_row)
-
+            # print(start_date, end_date, block_timestamp)
+            if start_date is not None and start_date > block_timestamp:
+                return metrics_rows, total_bounty
+            if end_date is None or end_date > block_timestamp:
+                bounty = args['bounty']
+                if not wei:
+                    bounty = to_skl(bounty)
+                metrics_row = [str(block_timestamp),
+                               bounty,
+                               args['averageDowntime'],
+                               round(args['averageLatency'] / 1000, 1)]
+                if is_validator:
+                    metrics_row.insert(1, args['nodeIndex'])
+                    total_bounty += metrics_row[2]
+                else:
+                    total_bounty += metrics_row[1]
+                metrics_rows.append(metrics_row)
+                # print(f'metrics = {metrics_rows}')
             block_number = args['previousBlockEvent']
 
         # if block_number is None or block_number == 0:  # TODO: Changed because of SM bug
@@ -119,7 +124,7 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
 
 def get_metrics_from_events_2(skale, node_ids, start_date=None, end_date=None,
                                 limit=None, wei=None, is_validator=False):
-    node_ids = [node_ids]
+    # node_ids = [node_ids]
     metrics_rows = []
     total_bounty = 0
     limit = format_limit(limit)
