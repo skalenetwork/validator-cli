@@ -18,7 +18,6 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import click
-import time  # TODO: REMOVE
 import pandas as pd
 
 from core.metrics import (
@@ -80,21 +79,19 @@ def node(index, since, till, limit, wei):
         print(TEXTS['node']['index']['id_error_msg'])
         return
     print(TEXTS['node']['index']['wait_msg'])
-    start = time.time()
     metrics, total_bounty = get_metrics_from_events(skale, int(index), since, till, limit, wei)
 
     if metrics:
         columns = ['Date', 'Bounty', 'Downtime', 'Latency']
         df = pd.DataFrame(metrics, columns=columns)
-        print('-' * 10)
-        print(df.to_string(index=False))
-        print('-' * 10)
-        print_node_metrics(metrics, total_bounty, wei)
+        # print('-' * 10)
+        # print(df.to_string(index=False))
+        # print('-' * 10)
+        metrics_rows = df.values.tolist()
+        print_node_metrics(metrics_rows, total_bounty, wei)
     else:
         print('\n' + MSGS['no_data'])
-    end = time.time()
-    print(f'Check completed. Execution time = {end - start}')
-    print(len(metrics))   # TODO: Remove
+    # print(len(metrics))   # TODO: Remove
 
 
 @metrics.command(help=TEXTS['validator']['help'])
@@ -137,7 +134,6 @@ def validator(index, since, till, limit, wei):
         print(MSGS['no_nodes'])
         return
     print(TEXTS['validator']['index']['wait_msg'])
-    start = time.time()  # TODO: Remove
     all_metrics = []
 
     for node_id in node_ids:
@@ -148,12 +144,12 @@ def validator(index, since, till, limit, wei):
     if all_metrics:
         columns = ['Date', 'Bounty', 'Node ID', 'Downtime', 'Latency']
         df = pd.DataFrame(all_metrics, columns=columns)
-        print('-' * 10)
-        print(df.to_string(index=False))
-        print('-' * 10)
-        print_validator_metrics(all_metrics, total_bounty, wei)
+        df.sort_values(by=['Date'], inplace=True, ascending=False)
+        # print('-' * 10)
+        # print(df.to_string(index=False))
+        # print('-' * 10)
+        metrics_rows = df.values.tolist()
+        print_validator_metrics(metrics_rows, total_bounty, wei)
     else:
         print('\n' + MSGS['no_data'])
-    print(len(all_metrics))   # TODO: Remove
-    end = time.time()   # TODO: Remove
-    print(f'Check completed. Execution time = {end - start}')
+    # print(len(all_metrics))   # TODO: Remove
