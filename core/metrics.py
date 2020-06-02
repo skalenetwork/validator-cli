@@ -87,16 +87,13 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
         block_data = skale.web3.eth.getBlock(block_number)
         print(f'block number = {block_number}')
         txs = block_data["transactions"]
-        print(txs)
         for tx in txs:
             rec = skale.web3.eth.getTransactionReceipt(tx)
             h_receipt = skale.manager.contract.events.BountyGot().processReceipt(
                 rec, errors=DISCARD)
             if len(h_receipt) == 0:
-                break
+                continue
             args = h_receipt[0]['args']
-            # print(f'args: {args}')
-            print(f"\n >>>>>> previousBlockEvent: {args[f'previousBlockEvent']}")
             block_timestamp = datetime.utcfromtimestamp(block_data['timestamp'])
             bounty = args['bounty']
             if not wei:
@@ -105,7 +102,6 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
                            bounty,
                            args['averageDowntime'],
                            round(args['averageLatency'] / 1000, 1)]
-            print(f'metrics = {metrics_row}')
             if is_validator:
                 metrics_row.insert(1, args['nodeIndex'])
                 total_bounty += metrics_row[2]
@@ -114,13 +110,16 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
             metrics_rows.append(metrics_row)
 
             block_number = args['previousBlockEvent']
-        if block_number is None or block_number == 0:
+
+        # if block_number is None or block_number == 0:  # TODO: Changed because of SM bug
+        if block_number is None or block_number == 0 or block_number in range(6566655, 6566659):
             break
     return metrics_rows, total_bounty
 
 
-def get_metrics_from_events_old(skale, node_ids, start_date=None, end_date=None,
+def get_metrics_from_events_2(skale, node_ids, start_date=None, end_date=None,
                                 limit=None, wei=None, is_validator=False):
+    node_ids = [node_ids]
     metrics_rows = []
     total_bounty = 0
     limit = format_limit(limit)

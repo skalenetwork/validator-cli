@@ -18,10 +18,11 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import click
+import time  # TODO: REMOVE
 
 from core.metrics import (
     check_if_node_is_registered, check_if_validator_is_registered, get_metrics_from_events,
-    get_nodes_for_validator
+    get_nodes_for_validator, get_metrics_from_events_2
 )
 from utils.print_formatters import print_node_metrics, print_validator_metrics
 from utils.texts import Texts
@@ -74,15 +75,19 @@ def node(index, since, till, limit, wei):
         print(TEXTS['node']['index']['valid_id_msg'])
         return
     skale = init_skale_from_config()
-    if not check_if_node_is_registered(skale, index):
-        print(TEXTS['node']['index']['id_error_msg'])
-        return
+    # if not check_if_node_is_registered(skale, index):
+    #     print(TEXTS['node']['index']['id_error_msg'])
+    #     return
     print(TEXTS['node']['index']['wait_msg'])
+    start = time.time()
     metrics, total_bounty = get_metrics_from_events(skale, int(index), since, till, limit, wei)
     if metrics:
         print_node_metrics(metrics, total_bounty, wei)
     else:
         print('\n' + MSGS['no_data'])
+    end = time.time()
+    print(f'Check completed. Execution time = {end - start}')
+    print(len(metrics))   # TODO: Remove
 
 
 @metrics.command(help=TEXTS['validator']['help'])
@@ -125,13 +130,20 @@ def validator(index, since, till, limit, wei):
         print(MSGS['no_nodes'])
         return
     print(TEXTS['validator']['index']['wait_msg'])
+    start = time.time()  # TODO: Remove
     all_metrics = []
+
+    metrics, total_bounty = get_metrics_from_events(skale, [int(index)], since, till, limit, wei)  # TODO: Remove
+
     for node_id in node_ids:
         metrics, total_bounty = get_metrics_from_events(skale, node_id, since, till, limit, wei,
                                                         is_validator=True)
         all_metrics.extend(metrics)
-        total_bounty
+        total_bounty += total_bounty
     if all_metrics:
         print_validator_metrics(all_metrics, total_bounty, wei)
     else:
         print('\n' + MSGS['no_data'])
+    print(len(all_metrics))   # TODO: Remove
+    end = time.time()   # TODO: Remove
+    print(f'Check completed. Execution time = {end - start}')
