@@ -80,6 +80,7 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
     print(start_date, end_date)
     print(f'node id = {node_id}')
     metrics_rows = []
+
     total_bounty = 0
     limit = format_limit(limit)
 
@@ -119,57 +120,6 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
         # if block_number is None or block_number == 0:  # TODO: Changed because of SM bug
         if block_number is None or block_number == 0 or block_number in range(6566655, 6566659):
             break
-    return metrics_rows, total_bounty
-
-
-def get_metrics_from_events_2(skale, node_ids, start_date=None, end_date=None,
-                                limit=None, wei=None, is_validator=False):
-    # node_ids = [node_ids]
-    metrics_rows = []
-    total_bounty = 0
-    limit = format_limit(limit)
-    start_block_number, last_block_number = get_start_end_block_numbers(skale, node_ids,
-                                                                        start_date, end_date)
-    start_chunk_block_number = start_block_number
-    blocks_total = last_block_number - start_block_number
-    while len(metrics_rows) < limit:
-        progress_bar(start_chunk_block_number - start_block_number, blocks_total)
-
-        end_chunk_block_number = start_chunk_block_number + BLOCK_CHUNK_SIZE - 1
-        if end_chunk_block_number > last_block_number:
-            end_chunk_block_number = last_block_number
-
-        event_filter = SkaleFilter(
-            skale.manager.contract.events.BountyGot,
-            from_block=hex(start_chunk_block_number),
-            argument_filters={'nodeIndex': node_ids},
-            to_block=hex(end_chunk_block_number)
-        )
-        logs = event_filter.get_events()
-        for log in logs:
-            args = log['args']
-            tx_block_number = log['blockNumber']
-            block_data = skale.web3.eth.getBlock(tx_block_number)
-            block_timestamp = datetime.utcfromtimestamp(block_data['timestamp'])
-            bounty = args['bounty']
-            if not wei:
-                bounty = to_skl(bounty)
-            metrics_row = [str(block_timestamp),
-                           bounty,
-                           args['averageDowntime'],
-                           round(args['averageLatency'] / 1000, 1)]
-            if is_validator:
-                metrics_row.insert(1, args['nodeIndex'])
-                total_bounty += metrics_row[2]
-            else:
-                total_bounty += metrics_row[1]
-            metrics_rows.append(metrics_row)
-            if len(metrics_rows) >= limit:
-                break
-        start_chunk_block_number = start_chunk_block_number + BLOCK_CHUNK_SIZE
-        if end_chunk_block_number >= last_block_number:
-            break
-    progress_bar(blocks_total, blocks_total)
     return metrics_rows, total_bounty
 
 

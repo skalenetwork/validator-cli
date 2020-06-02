@@ -19,6 +19,7 @@
 
 import click
 import time  # TODO: REMOVE
+import pandas as pd
 
 from core.metrics import (
     check_if_node_is_registered, check_if_validator_is_registered, get_metrics_from_events,
@@ -81,7 +82,13 @@ def node(index, since, till, limit, wei):
     print(TEXTS['node']['index']['wait_msg'])
     start = time.time()
     metrics, total_bounty = get_metrics_from_events(skale, int(index), since, till, limit, wei)
+
     if metrics:
+        columns = ['Date', 'Bounty', 'Downtime', 'Latency']
+        df = pd.DataFrame(metrics, columns=columns)
+        print('-' * 10)
+        print(df.to_string(index=False))
+        print('-' * 10)
         print_node_metrics(metrics, total_bounty, wei)
     else:
         print('\n' + MSGS['no_data'])
@@ -139,6 +146,11 @@ def validator(index, since, till, limit, wei):
         all_metrics.extend(metrics)
         total_bounty += total_bounty
     if all_metrics:
+        columns = ['Date', 'Bounty', 'Node ID', 'Downtime', 'Latency']
+        df = pd.DataFrame(all_metrics, columns=columns)
+        print('-' * 10)
+        print(df.to_string(index=False))
+        print('-' * 10)
         print_validator_metrics(all_metrics, total_bounty, wei)
     else:
         print('\n' + MSGS['no_data'])
