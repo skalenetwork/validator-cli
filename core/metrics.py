@@ -3,6 +3,7 @@ from datetime import datetime
 
 from web3.logs import DISCARD
 
+import pandas as pd
 from utils.filter import SkaleFilter
 from utils.helper import to_skl
 
@@ -75,14 +76,30 @@ def format_limit(limit):
         return int(limit)
 
 
+def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei=None):
+    node_ids = get_nodes_for_validator(skale, val_id, )
+    all_metrics = []
+    total_bounty = 0
+
+    for node_id in node_ids:
+        metrics, total_bounty = get_metrics_from_events(skale, node_id, start_date, end_date, wei,
+                                                        is_validator=True)
+        all_metrics.extend(metrics)
+        total_bounty += total_bounty
+    columns = ['Date', 'Bounty', 'Node ID', 'Downtime', 'Latency']
+    df = pd.DataFrame(all_metrics, columns=columns)
+    df.sort_values(by=['Date'], inplace=True, ascending=False)
+    metrics_rows = df.values.tolist()
+    return metrics_rows, total_bounty
+
+
 def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
-                            limit=None, wei=None, is_validator=False):
+                            wei=None, is_validator=False):
     print(start_date, end_date)
     print(f'node id = {node_id}')
     metrics_rows = []
 
     total_bounty = 0
-    limit = format_limit(limit)
 
     block_number = skale.monitors_data.contract.functions.getLastBountyBlock(node_id).call()
     while True:
