@@ -73,7 +73,7 @@ def init_skale_w_wallet_from_config(pk_file=None):
         print('You should run < init > first')
         return
     if config['wallet'] == 'software' and not pk_file:
-        print('Please specify path to the private key file to use software vallet with `--pk-file`\
+        print('Please specify path to the private key file to use software wallet with `--pk-file`\
             option')
         return
     if config['wallet'] == 'sgx' and not sgx_inited():
