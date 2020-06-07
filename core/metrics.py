@@ -76,7 +76,8 @@ def format_limit(limit):
         return int(limit)
 
 
-def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei=None, to_file=False):
+def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei=None,
+                              to_file=False):
     node_ids = get_nodes_for_validator(skale, val_id, )
     all_metrics = []
     total_bounty = 0
