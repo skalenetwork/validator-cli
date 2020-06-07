@@ -154,6 +154,8 @@ metrics:
       valid_id_msg: "Error: Validator ID should be greater than 0"
       id_error_msg: "Error: Validator ID doesn't exist"
       wait_msg: Please wait - collecting metrics data from blockchain...
+    save_to_file:
+      help: Save metrics to .csv file
 
 sgx:
   help: Sgx wallet commad

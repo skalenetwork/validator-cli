@@ -76,11 +76,10 @@ def format_limit(limit):
         return int(limit)
 
 
-def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei=None):
+def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei=None, to_file=False):
     node_ids = get_nodes_for_validator(skale, val_id, )
     all_metrics = []
     total_bounty = 0
-
     for node_id in node_ids:
         metrics, total_bounty = get_metrics_from_events(skale, node_id, start_date, end_date, wei,
                                                         is_validator=True)
@@ -90,6 +89,8 @@ def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei
     df = pd.DataFrame(all_metrics, columns=columns)
     df.sort_values(by=['Date'], inplace=True, ascending=False)
     metrics_rows = df.values.tolist()
+    if to_file:
+        df.to_csv('metrics.csv', index=False)
     return metrics_rows, total_bounty
 
 

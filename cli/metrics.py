@@ -105,7 +105,12 @@ def node(index, since, till, wei):
     is_flag=True,
     help=MSGS['wei']['help']
 )
-def validator(index, since, till, wei):
+@click.option(
+    '--to-file', '-f',
+    is_flag=True,
+    help=TEXTS['validator']['save_to_file']['help']
+)
+def validator(index, since, till, wei, to_file):
     if index < 0:
         print(TEXTS['validator']['index']['valid_id_msg'])
         return
@@ -115,8 +120,7 @@ def validator(index, since, till, wei):
         return
     print(TEXTS['validator']['index']['wait_msg'])
 
-    metrics_rows, total_bounty = get_metrics_for_validator(skale, index, since, till, wei)
-
+    metrics_rows, total_bounty = get_metrics_for_validator(skale, index, since, till, wei, to_file)
     if metrics_rows:
         print_validator_metrics(metrics_rows, total_bounty, wei)
     else:
