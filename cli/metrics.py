@@ -122,7 +122,7 @@ def validator(index, since, till, wei, to_file):
 
     metrics, total_bounty = get_metrics_for_validator(skale, index, since, till, wei, to_file)
     if metrics['rows']:
-        print(metrics['totals'])
+        # print(metrics['totals'])
         print_validator_metrics(metrics['rows'], total_bounty, wei)
     else:
         print('\n' + MSGS['no_data'])

@@ -44,7 +44,8 @@ def test_not_existing_id(runner):
 
 def test_metrics(skale, runner):
     result = runner.invoke(validator, ['-id', str(D_VALIDATOR_ID)])
-    metrics, total_bounty = get_metrics_for_validator(skale, D_VALIDATOR_ID)
+    metrics_all, total_bounty = get_metrics_for_validator(skale, D_VALIDATOR_ID)
+    metrics = metrics_all['rows']
     row_count = len(metrics) + SERVICE_ROW_COUNT
     output_list = result.output.splitlines()[-row_count:]
     assert '       Date           Node ID   Bounty   Downtime   Latency' == output_list[0]
@@ -56,26 +57,11 @@ def test_metrics(skale, runner):
     assert f' Total bounty per the given period: {total_bounty:.3f} SKL' == output_list[-1]  # noqa
 
 
-@pytest.mark.skip(reason="skip temporary")
-def test_metrics_limited(skale, runner):
-    node_ids = get_nodes_for_validator(skale, D_VALIDATOR_ID)
-    metrics, total_bounty = get_metrics_from_events(skale, node_ids, is_validator=True, limit=1)
-
-    result = runner.invoke(validator, ['-id', str(D_VALIDATOR_ID), '-l', str(1)])
-    row_count = len(metrics) + SERVICE_ROW_COUNT
-    output_list = result.output.splitlines()[-row_count:]
-
-    assert '       Date           Node ID   Bounty   Downtime   Latency' == output_list[0]
-    assert '-----------------------------------------------------------' == output_list[1]
-    assert f'{metrics[0][0]}         {metrics[0][1]}    {metrics[0][2]:.1f}          {metrics[0][3]}       {metrics[0][4]:.1f}' == output_list[2]  # noqa
-    assert '' == output_list[-2]
-    assert f' Total bounty per the given period: {total_bounty:.3f} SKL' == output_list[-1]  # noqa
-
-
 def test_metrics_since_not_empty(skale, runner):
     start_date = '2000-01-01'
-    metrics, total_bounty = get_metrics_for_validator(skale, D_VALIDATOR_ID,
+    metrics_all, total_bounty = get_metrics_for_validator(skale, D_VALIDATOR_ID,
                                                       start_date=yy_mm_dd_to_date(start_date))
+    metrics = metrics_all['rows']
     result = runner.invoke(validator, ['-id', str(D_VALIDATOR_ID), '-s', start_date])
     row_count = len(metrics) + SERVICE_ROW_COUNT
     output_list = result.output.splitlines()[-row_count:]
@@ -97,8 +83,9 @@ def test_metrics_since_empty(runner):
 
 def test_metrics_till_not_empty(skale, runner):
     end_date = '2100-01-01'
-    metrics, total_bounty = get_metrics_for_validator(skale, D_VALIDATOR_ID,
+    metrics_all, total_bounty = get_metrics_for_validator(skale, D_VALIDATOR_ID,
                                                       end_date=yy_mm_dd_to_date(end_date))
+    metrics = metrics_all['rows']
     row_count = len(metrics) + SERVICE_ROW_COUNT
     result = runner.invoke(validator, ['-id', str(D_VALIDATOR_ID), '-t', end_date])
     output_list = result.output.splitlines()[-row_count:]
@@ -121,9 +108,10 @@ def test_metrics_till_empty(runner):
 def test_metrics_since_till_not_empty(skale, runner):
     start_date = '2000-01-01'
     end_date = '2100-01-01'
-    metrics, total_bounty = get_metrics_for_validator(skale, D_VALIDATOR_ID,
-                                                      start_date=yy_mm_dd_to_date(start_date),
-                                                      end_date=yy_mm_dd_to_date(end_date))
+    metrics_all, total_bounty = get_metrics_for_validator(skale, D_VALIDATOR_ID,
+                                                          start_date=yy_mm_dd_to_date(start_date),
+                                                          end_date=yy_mm_dd_to_date(end_date))
+    metrics = metrics_all['rows']
     row_count = len(metrics) + SERVICE_ROW_COUNT
     result = runner.invoke(validator, ['-id', str(D_VALIDATOR_ID),
                                        '-s', start_date, '-t', end_date])
