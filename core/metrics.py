@@ -86,19 +86,22 @@ def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei
                                                         is_validator=True)
         all_metrics.extend(metrics)
         total_bounty += total_bounty
-    columns = ['Date', 'Bounty', 'Node ID', 'Downtime', 'Latency']
+    columns = ['Date', 'Node ID', 'Bounty', 'Downtime', 'Latency']
     df = pd.DataFrame(all_metrics, columns=columns)
     df.sort_values(by=['Date'], inplace=True, ascending=False)
     metrics_rows = df.values.tolist()
     if to_file:
         df.to_csv('metrics.csv', index=False)
-    return metrics_rows, total_bounty
+    node_group = df.groupby(['Node ID'])
+    metrics_sums = node_group.agg({'Bounty': 'sum', 'Downtime': 'sum', 'Latency': 'mean'})
+    # print(metrics_sums)
+    return {'rows': metrics_rows, 'totals': metrics_sums}, total_bounty
 
 
 def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
                             wei=None, is_validator=False):
-    print(start_date, end_date)
-    print(f'node id = {node_id}')
+    # print(start_date, end_date)
+    # print(f'node id = {node_id}')
     metrics_rows = []
 
     total_bounty = 0
@@ -106,7 +109,7 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
     block_number = skale.monitors_data.contract.functions.getLastBountyBlock(node_id).call()
     while True:
         block_data = skale.web3.eth.getBlock(block_number)
-        print(f'block number = {block_number}')
+        # print(f'block number = {block_number}')
         txs = block_data["transactions"]
         for tx in txs:
             rec = skale.web3.eth.getTransactionReceipt(tx)

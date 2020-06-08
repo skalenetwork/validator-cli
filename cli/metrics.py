@@ -120,9 +120,10 @@ def validator(index, since, till, wei, to_file):
         return
     print(TEXTS['validator']['index']['wait_msg'])
 
-    metrics_rows, total_bounty = get_metrics_for_validator(skale, index, since, till, wei, to_file)
-    if metrics_rows:
-        print_validator_metrics(metrics_rows, total_bounty, wei)
+    metrics, total_bounty = get_metrics_for_validator(skale, index, since, till, wei, to_file)
+    if metrics['rows']:
+        print(metrics['totals'])
+        print_validator_metrics(metrics['rows'], total_bounty, wei)
     else:
         print('\n' + MSGS['no_data'])
     # print(len(all_metrics))   # TODO: Remove
