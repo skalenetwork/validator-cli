@@ -92,6 +92,6 @@ def test_metrics_since_till_limited_in_wei_not_empty(skale, runner):
     output_list = list(
         map(lambda s: s.strip(), result.output.splitlines()[-row_count:])
     )
-    assert output_list[0] == 'Date                All nodes              Node ID = 0             Node ID = 1     '  # noqa
+    assert output_list[0] == 'Date                All nodes              Node ID = 0             Node ID = 1'  # noqa
     assert output_list[1] == '-----------------------------------------------------------------------------------------'  # noqa
     assert output_list[2] == f'{metrics[0][0]}   {metrics[0][1]}   {metrics[0][2]}   {metrics[0][3]}'  # noqa
