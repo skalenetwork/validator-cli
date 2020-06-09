@@ -72,6 +72,8 @@ validator:
     help: Withdraw earned fee to specified address
     confirm: |-
       Are you sure you want to withdraw fees?
+  bond_amount:
+    help: Get amount of tokens that validator delegated to himself
 holder:
   help: Token holder commands
   delegate:

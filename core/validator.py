@@ -23,7 +23,8 @@ from terminaltables import SingleTable
 
 from utils.web3_utils import (init_skale_from_config, init_skale_w_wallet_from_config,
                               check_tx_result)
-from utils.print_formatters import print_validators, print_delegations, print_linked_addresses
+from utils.print_formatters import (print_bond_amount, print_validators,
+                                    print_delegations, print_linked_addresses)
 from utils.helper import to_wei, from_wei
 from utils.constants import SPIN_COLOR
 
@@ -59,7 +60,8 @@ def delegations(validator_id, wei):
     skale = init_skale_from_config()
     if not skale:
         return
-    delegations_list = skale.delegation_controller.get_all_delegations_by_validator(validator_id)
+    delegations_list = skale.delegation_controller.get_all_delegations_by_validator(
+        validator_id)
     print(f'Delegations for validator ID {validator_id}:\n')
     print_delegations(delegations_list, wei)
 
@@ -111,7 +113,8 @@ def linked_addresses(address):
     skale = init_skale_from_config()
     if not skale:
         return
-    addresses = skale.validator_service.get_linked_addresses_by_validator_address(address)
+    addresses = skale.validator_service.get_linked_addresses_by_validator_address(
+        address)
     addresses_info = get_addresses_info(skale, addresses)
     print(f'Linked addresses for {address}:\n')
     print_linked_addresses(addresses_info)
@@ -136,7 +139,8 @@ def info(validator_id):
     validator_info = skale.validator_service.get(validator_id)
     # is_accepting_new_requests = skale.validator_service.is_accepting_new_requests(validator_id)
     # accepting_delegation_requests = 'Yes' if is_accepting_new_requests else 'No'
-    minimum_delegation_amount = from_wei(validator_info['minimum_delegation_amount'])
+    minimum_delegation_amount = from_wei(
+        validator_info['minimum_delegation_amount'])
     table = SingleTable([
         ['Validator ID', validator_id],
         ['Name', validator_info['name']],
@@ -175,3 +179,11 @@ def withdraw_fee(recipient_address, pk_file):
             sp.write(f'Transaction failed: {tx_res.hash}')
             return
         sp.write(f'✔ Earned fees successfully transferred to {recipient_address}')
+
+
+def get_bond_amount(validator_id=None):
+    skale = init_skale_from_config()
+    bond_amount = skale.validator_service.get_and_update_bond_amount(
+        validator_id
+    )
+    print_bond_amount(validator_id, bond_amount)
