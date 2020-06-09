@@ -210,3 +210,7 @@ def print_sgx_info(info):
     ]
     table = SingleTable(table_data)
     print(table.table)
+
+
+def print_bond_amount(validator_id, bond_amount):
+    print(f'Bond amount for validator with id {validator_id} - {bond_amount}')

@@ -18,7 +18,7 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from yaspin import yaspin
-from skale.utils.web3_utils import wait_receipt, check_receipt
+from skale.utils.web3_utils import wait_receipt, check_receipt, to_checksum_address
 
 from utils.helper import to_skl
 from utils.web3_utils import init_skale_from_config, init_skale_w_wallet_from_config
@@ -28,10 +28,13 @@ from utils.constants import SPIN_COLOR
 
 
 def delegations(address, wei):
+    checksum_address = to_checksum_address(address)
     skale = init_skale_from_config()
     if not skale:
         return
-    delegations_list = skale.delegation_controller.get_all_delegations_by_holder(address)
+    delegations_list = skale.delegation_controller.get_all_delegations_by_holder(
+        checksum_address
+    )
     print(f'Delegations for address {address}:\n')
     print_delegations(delegations_list, wei)
 

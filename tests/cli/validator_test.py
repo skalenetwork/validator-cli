@@ -7,8 +7,9 @@ from skale.utils.account_tools import send_ether
 from skale.utils.contracts_provision.main import _skip_evm_time
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
 
-from cli.validator import (_register, _ls, _delegations, _accept_delegation, _link_address,
-                           _unlink_address, _linked_addresses, _info, _withdraw_bounty,
+from cli.validator import (_bond_amount, _register, _ls, _delegations, _accept_delegation,
+                           _link_address, _unlink_address, _linked_addresses,
+                           _info, _withdraw_bounty,
                            _withdraw_fee)
 from tests.conftest import str_contains
 from tests.constants import (
@@ -56,7 +57,8 @@ def test_ls(runner, skale):
     output_list = result.output.splitlines()
 
     validators = skale.validator_service.ls()
-    registration_time = datetime.datetime.fromtimestamp(validators[0]['registration_time'])
+    registration_time = datetime.datetime.fromtimestamp(
+        validators[0]['registration_time'])
 
     print('output_listoutput_list')
     print(output_list)
@@ -286,3 +288,17 @@ def test_withdraw_fee(runner, skale):
     expected_output = f'\x1b[K✔ Earned fees successfully transferred to {skale.wallet.address}'
     assert expected_output in output_list
     assert result.exit_code == 0
+
+
+def test_bond_amount(runner, skale):
+    bond = skale.validator_service.get_and_update_bond_amount(D_VALIDATOR_ID)
+
+    result = runner.invoke(
+        _bond_amount,
+        [
+            str(D_VALIDATOR_ID)
+        ]
+    )
+    output = result.output
+    assert result.exit_code == 0
+    assert output == f'Bond amount for validator with id 1 - {bond}\n'

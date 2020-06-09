@@ -21,7 +21,8 @@ import click
 from web3 import Web3
 
 from core.validator import (register, validators_list, delegations, accept_pending_delegation,
-                            link_node_address, unlink_node_address, linked_addresses, info,
+                            get_bond_amount, link_node_address, unlink_node_address,
+                            linked_addresses, info,
                             withdraw_bounty, withdraw_fee)
 from utils.helper import abort_if_false
 from utils.validations import EthAddressType, PercentageType, UrlType
@@ -189,3 +190,9 @@ def _withdraw_bounty(validator_id, recipient_address, pk_file):
               prompt=TEXTS['withdraw_fee']['confirm'])
 def _withdraw_fee(recipient_address, pk_file):
     withdraw_fee(recipient_address, pk_file)
+
+
+@validator.command('bond-amount', help=TEXTS['bond_amount']['help'])
+@click.argument('validator_id', type=int)
+def _bond_amount(validator_id):
+    get_bond_amount(validator_id)
