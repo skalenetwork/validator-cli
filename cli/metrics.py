@@ -21,7 +21,7 @@ import time
 import click
 
 from core.metrics import (
-    check_if_node_is_registered, check_if_validator_is_registered, get_metrics_from_events,
+    check_if_node_is_registered, check_if_validator_is_registered, get_metrics_for_node,
     get_metrics_for_validator
 )
 from utils.print_formatters import print_node_metrics, print_validator_metrics
@@ -74,7 +74,7 @@ def node(index, since, till, wei):
         print(TEXTS['node']['index']['id_error_msg'])
         return
     print(TEXTS['node']['index']['wait_msg'])
-    metrics, total_bounty = get_metrics_from_events(skale, int(index), since, till, wei)
+    metrics, total_bounty = get_metrics_for_node(skale, int(index), since, till, wei)
     print(metrics)
 
     if metrics:
