@@ -75,7 +75,7 @@ def node(index, since, till, wei):
         return
     print(TEXTS['node']['index']['wait_msg'])
     metrics, total_bounty = get_metrics_for_node(skale, int(index), since, till, wei)
-    print(metrics)
+    # print(metrics)
 
     if metrics:
         print_node_metrics(metrics, total_bounty, wei)
@@ -123,7 +123,7 @@ def validator(index, since, till, wei, to_file):
     start = time.time()
     metrics, total_bounty = get_metrics_for_validator(skale, index, since, till, wei, to_file)
     if metrics['rows']:
-        print(metrics['totals'])
+        # print(metrics['totals'])
         print_validator_metrics(metrics['rows'], total_bounty, wei)
     else:
         print('\n' + MSGS['no_data'])
