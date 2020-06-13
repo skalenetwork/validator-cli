@@ -3,7 +3,7 @@
 from datetime import datetime
 
 from cli.metrics import node
-from core.metrics import get_metrics_from_events
+from core.metrics import get_metrics_for_node
 from tests.constants import NODE_ID, SERVICE_ROW_COUNT
 from tests.prepare_data import set_test_msr
 from utils.texts import Texts
@@ -40,7 +40,7 @@ def test_not_existing_id(runner):
 
 
 def test_metrics(skale, runner):
-    metrics, total_bounty = get_metrics_from_events(skale, NODE_ID)
+    metrics, total_bounty = get_metrics_for_node(skale, NODE_ID)
     row_count = len(metrics) + SERVICE_ROW_COUNT
     result = runner.invoke(node, ['-id', str(NODE_ID)])
     output_list = result.output.splitlines()[-row_count:]
@@ -63,8 +63,8 @@ def test_metrics_since_empty(runner):
 
 def test_metrics_till_not_empty(skale, runner):
     end_date = '2100-01-01'
-    metrics, total_bounty = get_metrics_from_events(skale, NODE_ID,
-                                                    end_date=yy_mm_dd_to_date(end_date))
+    metrics, total_bounty = get_metrics_for_node(skale, NODE_ID,
+                                                 end_date=yy_mm_dd_to_date(end_date))
     row_count = len(metrics) + SERVICE_ROW_COUNT
     result = runner.invoke(node, ['-id', str(NODE_ID), '-t', end_date])
     output_list = result.output.splitlines()[-row_count:]
@@ -87,9 +87,9 @@ def test_metrics_till_empty(runner):
 def test_metrics_since_till_not_empty(skale, runner):
     start_date = '2000-01-01'
     end_date = '2100-01-01'
-    metrics, total_bounty = get_metrics_from_events(skale, NODE_ID,
-                                                    start_date=yy_mm_dd_to_date(start_date),
-                                                    end_date=yy_mm_dd_to_date(end_date))
+    metrics, total_bounty = get_metrics_for_node(skale, NODE_ID,
+                                                 start_date=yy_mm_dd_to_date(start_date),
+                                                 end_date=yy_mm_dd_to_date(end_date))
     row_count = len(metrics) + SERVICE_ROW_COUNT
     result = runner.invoke(node, ['-id', str(NODE_ID),
                                   '-s', start_date, '-t', end_date])

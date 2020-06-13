@@ -107,15 +107,15 @@ def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei
             self.node_id = node_id
 
         def run(self):
-            print("Starting ", self.node_id)
+            # print("Starting ", self.node_id)
             metrics = get_metrics_from_events(skale, self.node_id, start_date, end_date, wei,
                                                  is_validator=True)
             all_metrics.extend(metrics)
-            print("Exiting :", self.node_id)
+            # print("Exiting :", self.node_id)
 
     node_ids = get_nodes_for_validator(skale, val_id, )
-    print(f'<<<<<<< nodes: {node_ids}')
-    print(skale.nodes_data.get_active_node_ids())
+    # print(f'<<<<<<< nodes: {node_ids}')
+    # print(skale.nodes_data.get_active_node_ids())
     all_metrics = []
     thread_list = []
     for node_id in node_ids:
@@ -125,17 +125,19 @@ def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei
         node_thread.start()
     for th in thread_list:
         th.join()
-    # print(f'>>>> all: {all_metrics}')
-    columns = ['Date', 'Node ID', 'Bounty', 'Downtime', 'Latency']
-    df = pd.DataFrame(all_metrics, columns=columns)
-    df.sort_values(by=['Date'], inplace=True, ascending=False)
-    metrics_rows = df.values.tolist()
-    if to_file:
-        df.to_csv('metrics.csv', index=False)
-    node_group = df.groupby(['Node ID'])
-    metrics_sums = node_group.agg({'Bounty': 'sum', 'Downtime': 'sum', 'Latency': 'mean'})
-    total_bounty = df['Bounty'].sum()
-
+    # print(f'>>>> ALL: {all_metrics}')
+    if all_metrics:
+        columns = ['Date', 'Node ID', 'Bounty', 'Downtime', 'Latency']
+        df = pd.DataFrame(all_metrics, columns=columns)
+        df.sort_values(by=['Date'], inplace=True, ascending=False)
+        metrics_rows = df.values.tolist()
+        if to_file:
+            df.to_csv('metrics.csv', index=False)
+        node_group = df.groupby(['Node ID'])
+        metrics_sums = node_group.agg({'Bounty': 'sum', 'Downtime': 'sum', 'Latency': 'mean'})
+        total_bounty = df['Bounty'].sum()
+    else:
+        metrics_rows = metrics_sums = total_bounty = None
     return {'rows': metrics_rows, 'totals': metrics_sums}, total_bounty
 
 
