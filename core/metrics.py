@@ -1,3 +1,4 @@
+import threading
 import sys
 from datetime import datetime
 
@@ -98,12 +99,50 @@ def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei
     return {'rows': metrics_rows, 'totals': metrics_sums}, total_bounty
 
 
+def get_metrics_for_validator_without_threads(skale, val_id, start_date=None, end_date=None, wei=None,
+                              to_file=False):
+    class nodeThread(threading.Thread):
+        def __init__(self, node_id):
+            threading.Thread.__init__(self)
+            self.node_id = node_id
+
+        def run(self):
+            print("Starting ", self.node_id)
+            metrics, total_bounty = get_metrics_from_events(skale, self.node_id, start_date, end_date,
+                                                            wei,
+                                                            is_validator=True)
+            all_metrics.extend(metrics)
+            total_bounty += total_bounty
+            print("Exiting :", self.node_id)
+
+    node_ids = get_nodes_for_validator(skale, val_id, )
+    print(f'<<<<<<< nodes: {node_ids}')
+    print(skale.nodes_data.get_active_node_ids())
+    all_metrics = []
+    total_bounty = 0
+    thread_list = []
+    for node_id in node_ids:
+        node_thread = nodeThread(node_id)
+
+        thread_list.append(node_thread)
+        node_thread.start()
+    for th in thread_list:
+        th.join()
+    # print(f'>>>> all: {all_metrics}')
+    columns = ['Date', 'Node ID', 'Bounty', 'Downtime', 'Latency']
+    df = pd.DataFrame(all_metrics, columns=columns)
+    df.sort_values(by=['Date'], inplace=True, ascending=False)
+    metrics_rows = df.values.tolist()
+    if to_file:
+        df.to_csv('metrics.csv', index=False)
+    node_group = df.groupby(['Node ID'])
+    metrics_sums = node_group.agg({'Bounty': 'sum', 'Downtime': 'sum', 'Latency': 'mean'})
+    return {'rows': metrics_rows, 'totals': metrics_sums}, total_bounty
+
+
 def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
                             wei=None, is_validator=False):
-    # print(start_date, end_date)
-    # print(f'node id = {node_id}')
     metrics_rows = []
-
     total_bounty = 0
 
     block_number = skale.monitors_data.contract.functions.getLastBountyBlock(node_id).call()

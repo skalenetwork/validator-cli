@@ -17,6 +17,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import time
 import click
 
 from core.metrics import (
@@ -119,11 +120,13 @@ def validator(index, since, till, wei, to_file):
         print(TEXTS['validator']['index']['id_error_msg'])
         return
     print(TEXTS['validator']['index']['wait_msg'])
-
+    start = time.time()
     metrics, total_bounty = get_metrics_for_validator(skale, index, since, till, wei, to_file)
     if metrics['rows']:
-        # print(metrics['totals'])
+        print(metrics['totals'])
         print_validator_metrics(metrics['rows'], total_bounty, wei)
     else:
         print('\n' + MSGS['no_data'])
     # print(len(all_metrics))   # TODO: Remove
+    end = time.time()
+    print(f'Check completed. Execution time = {end - start}')
