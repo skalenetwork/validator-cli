@@ -178,8 +178,7 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
                 # print(f'metrics = {metrics_rows}')
             block_number = args['previousBlockEvent']
 
-        # if block_number is None or block_number == 0:  # TODO: Changed because of SM bug
-        if block_number is None or block_number == 0 or block_number in range(6566655, 6566659):
+        if block_number is None or block_number == 0:
             break
     return metrics_rows, total_bounty
 
