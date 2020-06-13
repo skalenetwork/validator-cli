@@ -78,7 +78,7 @@ def format_limit(limit):
 
 
 def get_metrics_for_validator2(skale, val_id, start_date=None, end_date=None, wei=None,
-                              to_file=False):
+                               to_file=False):
     node_ids = get_nodes_for_validator(skale, val_id, )
     all_metrics = []
     total_bounty = 0
@@ -109,7 +109,7 @@ def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei
         def run(self):
             # print("Starting ", self.node_id)
             metrics = get_metrics_from_events(skale, self.node_id, start_date, end_date, wei,
-                                                 is_validator=True)
+                                              is_validator=True)
             all_metrics.extend(metrics)
             # print("Exiting :", self.node_id)
 
@@ -141,8 +141,7 @@ def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei
     return {'rows': metrics_rows, 'totals': metrics_sums}, total_bounty
 
 
-def get_metrics_for_node(skale, node_id, start_date=None, end_date=None, wei=None,
-                              to_file=False):
+def get_metrics_for_node(skale, node_id, start_date=None, end_date=None, wei=None, to_file=False):
     metrics = get_metrics_from_events(skale, node_id, start_date, end_date, wei)
     columns = ['Date', 'Bounty', 'Downtime', 'Latency']
     df = pd.DataFrame(metrics, columns=columns)

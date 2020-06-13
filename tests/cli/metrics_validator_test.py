@@ -2,10 +2,8 @@
 
 from datetime import datetime
 
-import pytest
-
 from cli.metrics import validator
-from core.metrics import get_metrics_from_events, get_nodes_for_validator, get_metrics_for_validator
+from core.metrics import get_metrics_for_validator
 from tests.constants import D_VALIDATOR_ID, SERVICE_ROW_COUNT
 from tests.prepare_data import set_test_msr
 from utils.texts import Texts
@@ -60,7 +58,7 @@ def test_metrics(skale, runner):
 def test_metrics_since_not_empty(skale, runner):
     start_date = '2000-01-01'
     metrics_all, total_bounty = get_metrics_for_validator(skale, D_VALIDATOR_ID,
-                                                      start_date=yy_mm_dd_to_date(start_date))
+                                                          start_date=yy_mm_dd_to_date(start_date))
     metrics = metrics_all['rows']
     result = runner.invoke(validator, ['-id', str(D_VALIDATOR_ID), '-s', start_date])
     row_count = len(metrics) + SERVICE_ROW_COUNT
@@ -84,7 +82,7 @@ def test_metrics_since_empty(runner):
 def test_metrics_till_not_empty(skale, runner):
     end_date = '2100-01-01'
     metrics_all, total_bounty = get_metrics_for_validator(skale, D_VALIDATOR_ID,
-                                                      end_date=yy_mm_dd_to_date(end_date))
+                                                          end_date=yy_mm_dd_to_date(end_date))
     metrics = metrics_all['rows']
     row_count = len(metrics) + SERVICE_ROW_COUNT
     result = runner.invoke(validator, ['-id', str(D_VALIDATOR_ID), '-t', end_date])
