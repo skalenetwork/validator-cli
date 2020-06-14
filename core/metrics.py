@@ -107,7 +107,7 @@ def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei
 
         def run(self):
             # print("Starting ", self.node_id)
-            metrics = get_metrics_from_events(skale, self.node_id, start_date, end_date, wei,
+            metrics = get_metrics_from_events(skale, self.node_id, start_date, end_date,
                                               is_validator=True)
             all_metrics.extend(metrics)
             # print("Exiting :", self.node_id)
@@ -128,6 +128,8 @@ def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei
     if all_metrics:
         columns = ['Date', 'Node ID', 'Bounty', 'Downtime', 'Latency']
         df = pd.DataFrame(all_metrics, columns=columns)
+        if not wei:
+            df['Bounty'] = df['Bounty'].apply(to_skl)
         df.sort_values(by=['Date'], inplace=True, ascending=False)
         metrics_rows = df.values.tolist()
         node_group = df.groupby(['Node ID'])
@@ -142,17 +144,20 @@ def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei
 
 
 def get_metrics_for_node(skale, node_id, start_date=None, end_date=None, wei=None, to_file=False):
-    metrics = get_metrics_from_events(skale, node_id, start_date, end_date, wei)
+    metrics = get_metrics_from_events(skale, node_id, start_date, end_date)
     columns = ['Date', 'Bounty', 'Downtime', 'Latency']
     df = pd.DataFrame(metrics, columns=columns)
+    if not wei:
+        df['Bounty'] = df['Bounty'].apply(to_skl)
     total_bounty = df['Bounty'].sum()
+    metrics_rows = df.values.tolist()
     if to_file:
         df.to_csv('node_metrics.csv', index=False)
-    return metrics, total_bounty
+    return metrics_rows, total_bounty
 
 
 def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
-                            wei=None, is_validator=False):
+                            is_validator=False):
     metrics_rows = []
 
     block_number = skale.monitors_data.contract.functions.getLastBountyBlock(node_id).call()
@@ -173,8 +178,6 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
                 return metrics_rows
             if end_date is None or end_date > block_timestamp:
                 bounty = args['bounty']
-                if not wei:
-                    bounty = to_skl(bounty)
                 metrics_row = [str(block_timestamp),
                                bounty,
                                args['averageDowntime'],
