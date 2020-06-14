@@ -104,8 +104,7 @@ sys.excepthook = handle_exception
 if __name__ == '__main__':
     logger.info(f'cmd: {" ".join(str(x) for x in sys.argv)}, v.{__version__}')
     cmd_collection = click.CommandCollection(sources=[cli, validator_cli, holder_cli,
-                                                      metrics_cli, bounty_cli,
-                                                      sgx_cli])
+                                                      metrics_cli, sgx_cli])
     try:
         cmd_collection()
     except Exception as err:
