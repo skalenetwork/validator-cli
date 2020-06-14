@@ -1,10 +1,10 @@
-import threading
-import sys
 from datetime import datetime
 
 from web3.logs import DISCARD
 
 import pandas as pd
+import threading
+
 from utils.helper import to_skl
 
 BLOCK_CHUNK_SIZE = 1000
@@ -22,79 +22,6 @@ def check_if_validator_is_registered(skale, val_id):
 def get_nodes_for_validator(skale, val_id):
     validator_service = skale.get_contract_by_name('validator_service')
     return validator_service.contract.functions.getValidatorNodeIndexes(val_id).call()
-
-
-def get_start_block(skale, node_id):
-    return skale.nodes_data.get(node_id)['start_block']
-
-
-def find_block_for_tx_stamp(skale, tx_stamp, lo=0, hi=None):
-    if hi is None:
-        hi = skale.web3.eth.blockNumber
-    while lo < hi:
-        mid = (lo + hi) // 2
-        block_data = skale.web3.eth.getBlock(mid)
-        midval = datetime.utcfromtimestamp(block_data['timestamp'])
-        if midval < tx_stamp:
-            lo = mid + 1
-        elif midval > tx_stamp:
-            hi = mid
-        else:
-            return mid
-    return lo - 1
-
-
-def progress_bar(count, total, status='', bar_len=60):
-    if total > 0:
-        done_len = int(round(bar_len * count / float(total)))
-
-        percents = round(100.0 * count / float(total), 1)
-        bar = '=' * done_len + '-' * (bar_len - done_len)
-
-        sys.stdout.write('[%s] %s%s %s\r' % (bar, percents, '%', status))
-        sys.stdout.flush()
-
-
-def get_start_end_block_numbers(skale, node_ids, start_date=None, end_date=None):
-    if start_date is None:
-        start_block_number = get_start_block(skale, node_ids[0])
-    else:
-        start_block_number = find_block_for_tx_stamp(skale, start_date)
-
-    if end_date is None:
-        last_block_number = skale.web3.eth.blockNumber
-    else:
-        last_block_number = find_block_for_tx_stamp(skale, end_date)
-
-    return start_block_number, last_block_number
-
-
-def format_limit(limit):
-    if limit is None:
-        return float('inf')
-    else:
-        return int(limit)
-
-
-def get_metrics_for_validator2(skale, val_id, start_date=None, end_date=None, wei=None,
-                               to_file=False):
-    node_ids = get_nodes_for_validator(skale, val_id, )
-    all_metrics = []
-    total_bounty = 0
-    for node_id in node_ids:
-        metrics, total_bounty = get_metrics_from_events(skale, node_id, start_date, end_date, wei,
-                                                        is_validator=True)
-        all_metrics.extend(metrics)
-        total_bounty += total_bounty
-    columns = ['Date', 'Node ID', 'Bounty', 'Downtime', 'Latency']
-    df = pd.DataFrame(all_metrics, columns=columns)
-    df.sort_values(by=['Date'], inplace=True, ascending=False)
-    metrics_rows = df.values.tolist()
-    if to_file:
-        df.to_csv('metrics.csv', index=False)
-    node_group = df.groupby(['Node ID'])
-    metrics_sums = node_group.agg({'Bounty': 'sum', 'Downtime': 'sum', 'Latency': 'mean'})
-    return {'rows': metrics_rows, 'totals': metrics_sums}, total_bounty
 
 
 def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei=None,
