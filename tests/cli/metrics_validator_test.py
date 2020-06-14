@@ -44,7 +44,8 @@ def test_metrics(skale, runner):
     result = runner.invoke(validator, ['-id', str(D_VALIDATOR_ID)])
     metrics_all, total_bounty = get_metrics_for_validator(skale, D_VALIDATOR_ID)
     metrics = metrics_all['rows']
-    row_count = len(metrics) + SERVICE_ROW_COUNT
+    totals = metrics_all['totals']
+    row_count = len(metrics) + len(totals) + SERVICE_ROW_COUNT * 2
     output_list = result.output.splitlines()[-row_count:]
     assert '       Date           Node ID   Bounty   Downtime   Latency' == output_list[0]
     assert '-----------------------------------------------------------' == output_list[1]
@@ -57,11 +58,12 @@ def test_metrics(skale, runner):
 
 def test_metrics_since_not_empty(skale, runner):
     start_date = '2000-01-01'
+    result = runner.invoke(validator, ['-id', str(D_VALIDATOR_ID), '-s', start_date])
     metrics_all, total_bounty = get_metrics_for_validator(skale, D_VALIDATOR_ID,
                                                           start_date=yy_mm_dd_to_date(start_date))
     metrics = metrics_all['rows']
-    result = runner.invoke(validator, ['-id', str(D_VALIDATOR_ID), '-s', start_date])
-    row_count = len(metrics) + SERVICE_ROW_COUNT
+    totals = metrics_all['totals']
+    row_count = len(metrics) + len(totals) + SERVICE_ROW_COUNT * 2
     output_list = result.output.splitlines()[-row_count:]
 
     assert '       Date           Node ID   Bounty   Downtime   Latency' == output_list[0]
@@ -84,7 +86,8 @@ def test_metrics_till_not_empty(skale, runner):
     metrics_all, total_bounty = get_metrics_for_validator(skale, D_VALIDATOR_ID,
                                                           end_date=yy_mm_dd_to_date(end_date))
     metrics = metrics_all['rows']
-    row_count = len(metrics) + SERVICE_ROW_COUNT
+    totals = metrics_all['totals']
+    row_count = len(metrics) + len(totals) + SERVICE_ROW_COUNT * 2
     result = runner.invoke(validator, ['-id', str(D_VALIDATOR_ID), '-t', end_date])
     output_list = result.output.splitlines()[-row_count:]
 
@@ -110,7 +113,8 @@ def test_metrics_since_till_not_empty(skale, runner):
                                                           start_date=yy_mm_dd_to_date(start_date),
                                                           end_date=yy_mm_dd_to_date(end_date))
     metrics = metrics_all['rows']
-    row_count = len(metrics) + SERVICE_ROW_COUNT
+    totals = metrics_all['totals']
+    row_count = len(metrics) + len(totals) + SERVICE_ROW_COUNT * 2
     result = runner.invoke(validator, ['-id', str(D_VALIDATOR_ID),
                                        '-s', start_date, '-t', end_date])
     output_list = result.output.splitlines()[-row_count:]

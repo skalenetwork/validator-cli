@@ -5,7 +5,6 @@ from datetime import datetime
 from web3.logs import DISCARD
 
 import pandas as pd
-from utils.filter import SkaleFilter
 from utils.helper import to_skl
 
 BLOCK_CHUNK_SIZE = 1000
@@ -132,8 +131,8 @@ def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei
         df.sort_values(by=['Date'], inplace=True, ascending=False)
         metrics_rows = df.values.tolist()
         node_group = df.groupby(['Node ID'])
-        metrics_sums = node_group.agg({'Bounty': 'sum', 'Downtime': 'sum', 'Latency': 'mean'}).reset_index()
-        metrics_sums = metrics_sums.values.tolist()
+        metrics_sums = node_group.agg({'Bounty': 'sum', 'Downtime': 'sum', 'Latency': 'mean'})
+        metrics_sums = metrics_sums.reset_index().values.tolist()
         total_bounty = df['Bounty'].sum()
         if to_file:
             df.to_csv('metrics.csv', index=False)
