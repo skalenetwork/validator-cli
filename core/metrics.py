@@ -131,11 +131,12 @@ def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei
         df = pd.DataFrame(all_metrics, columns=columns)
         df.sort_values(by=['Date'], inplace=True, ascending=False)
         metrics_rows = df.values.tolist()
+        node_group = df.groupby(['Node ID'])
+        metrics_sums = node_group.agg({'Bounty': 'sum', 'Downtime': 'sum', 'Latency': 'mean'}).reset_index()
+        metrics_sums = metrics_sums.values.tolist()
+        total_bounty = df['Bounty'].sum()
         if to_file:
             df.to_csv('metrics.csv', index=False)
-        node_group = df.groupby(['Node ID'])
-        metrics_sums = node_group.agg({'Bounty': 'sum', 'Downtime': 'sum', 'Latency': 'mean'})
-        total_bounty = df['Bounty'].sum()
     else:
         metrics_rows = metrics_sums = total_bounty = None
     return {'rows': metrics_rows, 'totals': metrics_sums}, total_bounty

@@ -144,7 +144,7 @@ def print_node_metrics(rows, total, wei):
     table.add_rows([headers] + rows)
     table.set_deco(table.HEADER)
     table.set_chars(['-', '|', '+', '-'])
-    print('\n')
+    # print('\n')
     print(table.draw())
     print_total_info(total, wei)
 
@@ -163,6 +163,28 @@ def print_validator_metrics(rows, total, wei):
         table.set_cols_dtype(["t", "i", "t", "i", "f"])
     else:
         table.set_cols_dtype(["t", "i", "f", "i", "f"])
+    table.set_precision(1)
+    table.add_rows([headers] + rows)
+    table.set_deco(table.HEADER)
+    table.set_chars(['-', '|', '+', '-'])
+    print('\n')
+    print(table.draw())
+    # print_total_info(total, wei)
+
+
+def print_validator_node_totals(rows, total, wei):
+    headers = [
+        'Node ID',
+        'Total Bounty',
+        'Downtime',
+        'Latency'
+    ]
+    table = texttable.Texttable(max_width=get_tty_width())
+    table.set_cols_align(["r", "r", "r", "r"])
+    if wei:
+        table.set_cols_dtype(["i", "t", "i", "f"])
+    else:
+        table.set_cols_dtype(["i", "f", "i", "f"])
     table.set_precision(1)
     table.add_rows([headers] + rows)
     table.set_deco(table.HEADER)
