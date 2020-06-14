@@ -149,7 +149,7 @@ def print_node_metrics(rows, total, wei):
     print_total_info(total, wei)
 
 
-def print_validator_metrics(rows, total, wei):
+def print_validator_metrics(rows, wei):
     headers = [
         'Date',
         'Node ID',
@@ -169,7 +169,6 @@ def print_validator_metrics(rows, total, wei):
     table.set_chars(['-', '|', '+', '-'])
     print('\n')
     print(table.draw())
-    # print_total_info(total, wei)
 
 
 def print_validator_node_totals(rows, total, wei):

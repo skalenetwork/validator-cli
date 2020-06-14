@@ -77,13 +77,10 @@ def node(node_id, since, till, wei):
         return
     print(TEXTS['node']['index']['wait_msg'])
     metrics, total_bounty = get_metrics_for_node(skale, int(node_id), since, till, wei)
-    # print(metrics)
-
     if metrics:
         print_node_metrics(metrics, total_bounty, wei)
     else:
         print('\n' + MSGS['no_data'])
-    # print(len(metrics))   # TODO: Remove
 
 
 @metrics.command(help=TEXTS['validator']['help'])
@@ -123,13 +120,9 @@ def validator(val_id, since, till, wei, to_file):
         print(TEXTS['validator']['index']['id_error_msg'])
         return
     print(TEXTS['validator']['index']['wait_msg'])
-    # start = time.time()
     metrics, total_bounty = get_metrics_for_validator(skale, val_id, since, till, wei, to_file)
     if metrics['rows']:
-        print_validator_metrics(metrics['rows'], total_bounty, wei)
+        print_validator_metrics(metrics['rows'], wei)
         print_validator_node_totals(metrics['totals'], total_bounty, wei)
     else:
         print('\n' + MSGS['no_data'])
-    # print(len(all_metrics))   # TODO: Remove
-    # end = time.time()
-    # print(f'Check completed. Execution time = {end - start}')
