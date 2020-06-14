@@ -119,18 +119,6 @@ msg:
 pk_file:
   help: Path to file with private key (only for `software` wallet type)
 
-bounty:
-  help: Validator bounty commands
-  validator:
-    help: "List of monthly aggregated bounties for all nodes of a validator with a given id (daily aggregated for testnet).\n\n
-          Collecting data from blockchain can take a long time.
-          It is recommended to use optional arguments (-s, -t, -l) for limiting output by time or a row count"
-    index:
-      help: Validator ID
-      prompt: Enter validator ID
-      valid_id_msg: "Error: Validator ID should be greater than 0"
-      id_error_msg: "Error: Validator ID doesn't exist"
-      wait_msg: Please wait - collecting bounty data from blockchain...
 
 metrics:
   help: Node metrics commands

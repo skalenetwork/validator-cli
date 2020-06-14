@@ -28,7 +28,6 @@ from cli import __version__
 from cli.info import BUILD_DATETIME, COMMIT, BRANCH, OS, VERSION
 from cli.validator import validator_cli
 from cli.metrics import metrics_cli
-from cli.bounty import bounty_cli
 from cli.holder import holder_cli
 from cli.sgx_wallet import sgx_cli
 from utils.validations import UrlType
