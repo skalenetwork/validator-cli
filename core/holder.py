@@ -49,11 +49,12 @@ def delegate(validator_id, amount, delegation_period, info, pk_file):
             validator_id=validator_id,
             amount=amount_wei,
             delegation_period=delegation_period,
-            info=info
+            info=info,
+            raise_for_status=False
         )
-        receipt = wait_receipt(skale.web3, tx_res.hash)
+        receipt = wait_receipt(skale.web3, tx_res.tx_hash)
         if not check_receipt(receipt, raise_error=False):
-            sp.write(f'Transaction failed, check receipt: {tx_res.hash}')
+            sp.write(f'Transaction failed, check receipt: {tx_res.tx_hash}')
             return
         sp.write("✔ Delegation request sent")
 
@@ -64,11 +65,12 @@ def cancel_pending_delegation(delegation_id: int, pk_file: str) -> None:
         return
     with yaspin(text='Canceling delegation request', color=SPIN_COLOR) as sp:
         tx_res = skale.delegation_controller.cancel_pending_delegation(
-            delegation_id=delegation_id
+            delegation_id=delegation_id,
+            raise_for_status=False
         )
-        receipt = wait_receipt(skale.web3, tx_res.hash)
+        receipt = wait_receipt(skale.web3, tx_res.tx_hash)
         if not check_receipt(receipt, raise_error=False):
-            sp.write(f'Transaction failed, check receipt: {tx_res.hash}')
+            sp.write(f'Transaction failed, check receipt: {tx_res.tx_hash}')
             return
         sp.write("✔ Delegation request canceled")
 
@@ -79,11 +81,12 @@ def undelegate(delegation_id: int, pk_file: str) -> None:
         return
     with yaspin(text='Requesting undelegation', color=SPIN_COLOR) as sp:
         tx_res = skale.delegation_controller.request_undelegation(
-            delegation_id=delegation_id
+            delegation_id=delegation_id,
+            raise_for_status=False
         )
-        receipt = wait_receipt(skale.web3, tx_res.hash)
+        receipt = wait_receipt(skale.web3, tx_res.tx_hash)
         if not check_receipt(receipt, raise_error=False):
-            sp.write(f'Transaction failed, check receipt: {tx_res.hash}')
+            sp.write(f'Transaction failed, check receipt: {tx_res.tx_hash}')
             return
         sp.write("✔ Successfully undelegated")
 

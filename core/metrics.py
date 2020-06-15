@@ -8,7 +8,7 @@ BLOCK_CHUNK_SIZE = 1000
 
 
 def check_if_node_is_registered(skale, node_id):
-    return node_id in skale.nodes_data.get_active_node_ids()
+    return node_id in skale.nodes.get_active_node_ids()
 
 
 def check_if_validator_is_registered(skale, val_id):
@@ -22,7 +22,7 @@ def get_nodes_for_validator(skale, val_id):
 
 
 def get_start_block(skale, node_id):
-    return skale.nodes_data.get(node_id)['start_block']
+    return skale.nodes.get(node_id)['start_block']
 
 
 def find_block_for_tx_stamp(skale, tx_stamp, lo=0, hi=None):
