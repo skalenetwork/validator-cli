@@ -47,6 +47,20 @@ class PercentageType(click.ParamType):
             )
 
 
+class PermilleType(click.ParamType):
+    name = 'permille'
+
+    def convert(self, value, param, ctx):
+        if 0 <= float(value) <= 1000:
+            return value
+        else:
+            self.fail(
+                f'Wrong permille value provided: {value}, should be in range(0, 1000)',
+                param,
+                ctx
+            )
+
+
 class UrlType(click.ParamType):
     name = 'url'
 
