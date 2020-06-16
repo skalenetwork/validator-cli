@@ -67,7 +67,11 @@ def metrics():
     is_flag=True,
     help=MSGS['wei']['help']
 )
-def node(node_id, since, till, wei):
+@click.option(
+    '--to-file', '-f',
+    help=TEXTS['validator']['save_to_file']['help']
+)
+def node(node_id, since, till, wei, to_file):
     if node_id < 0:
         print(TEXTS['node']['index']['valid_id_msg'])
         return
@@ -76,7 +80,7 @@ def node(node_id, since, till, wei):
         print(TEXTS['node']['index']['id_error_msg'])
         return
     print(TEXTS['node']['index']['wait_msg'])
-    metrics, total_bounty = get_metrics_for_node(skale, int(node_id), since, till, wei)
+    metrics, total_bounty = get_metrics_for_node(skale, int(node_id), since, till, wei, to_file)
     if metrics:
         print_node_metrics(metrics, total_bounty, wei)
     else:
@@ -108,7 +112,6 @@ def node(node_id, since, till, wei):
 )
 @click.option(
     '--to-file', '-f',
-    is_flag=True,
     help=TEXTS['validator']['save_to_file']['help']
 )
 def validator(val_id, since, till, wei, to_file):

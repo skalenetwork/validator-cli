@@ -25,7 +25,7 @@ def get_nodes_for_validator(skale, val_id):
 
 
 def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei=None,
-                              to_file=False):
+                              to_file=None):
     class nodeThread(threading.Thread):
         def __init__(self, node_id):
             threading.Thread.__init__(self)
@@ -58,13 +58,13 @@ def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei
         metrics_sums = metrics_sums.reset_index().values.tolist()
         total_bounty = df['Bounty'].sum()
         if to_file:
-            df.to_csv('metrics.csv', index=False)
+            df.to_csv(to_file, index=False)
     else:
         metrics_rows = metrics_sums = total_bounty = None
     return {'rows': metrics_rows, 'totals': metrics_sums}, total_bounty
 
 
-def get_metrics_for_node(skale, node_id, start_date=None, end_date=None, wei=None, to_file=False):
+def get_metrics_for_node(skale, node_id, start_date=None, end_date=None, wei=None, to_file=None):
     metrics = get_metrics_from_events(skale, node_id, start_date, end_date)
     columns = ['Date', 'Bounty', 'Downtime', 'Latency']
     df = pd.DataFrame(metrics, columns=columns)
@@ -73,7 +73,7 @@ def get_metrics_for_node(skale, node_id, start_date=None, end_date=None, wei=Non
     total_bounty = df['Bounty'].sum()
     metrics_rows = df.values.tolist()
     if to_file:
-        df.to_csv('node_metrics.csv', index=False)
+        df.to_csv(to_file, index=False)
     return metrics_rows, total_bounty
 
 
