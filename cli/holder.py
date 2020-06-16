@@ -21,7 +21,9 @@ import click
 
 from utils.texts import Texts
 from utils.helper import abort_if_false
-from core.holder import delegate, delegations, cancel_pending_delegation, undelegate, locked
+from core.holder import (delegate, delegations,
+                         cancel_pending_delegation, locked,
+                         undelegate, withdraw_bounty)
 from utils.constants import DELEGATION_PERIOD_OPTIONS
 
 
@@ -112,6 +114,20 @@ def _undelegate(delegation_id, pk_file):
         delegation_id=int(delegation_id),
         pk_file=pk_file
     )
+
+
+@holder.command('withdraw-bounty', help=TEXTS['withdraw_bounty']['help'])
+@click.argument('validator_id')
+@click.argument('recipient_address')
+@click.option(
+    '--pk-file',
+    help=G_TEXTS['pk_file']['help']
+)
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=TEXTS['withdraw_bounty']['confirm'])
+def _withdraw_bounty(validator_id, recipient_address, pk_file):
+    withdraw_bounty(int(validator_id), recipient_address, pk_file)
 
 
 @holder.command('locked', help=TEXTS['locked']['help'])

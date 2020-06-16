@@ -4,7 +4,10 @@ import datetime
 from skale.utils.contracts_provision.main import _skip_evm_time
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
 
-from cli.holder import _delegate, _delegations, _cancel_delegation, _undelegate, _locked
+from cli.holder import (
+    _delegate, _delegations, _cancel_delegation,
+    _undelegate, _locked, _withdraw_bounty
+)
 from utils.helper import to_wei
 from tests.conftest import str_contains
 from tests.constants import (TEST_PK_FILE, D_VALIDATOR_ID, D_DELEGATION_AMOUNT,
@@ -166,4 +169,22 @@ def test_locked(runner, skale):
     expected_output = f'Locked amount for address {skale.wallet.address}:'
     assert expected_output in output_list
     assert output_list[-1] == str(locked_amount_wei)
+    assert result.exit_code == 0
+
+
+def test_withdraw_bounty(runner, skale):
+    _skip_evm_time(skale.web3, MONTH_IN_SECONDS * 3)
+    recipient_address = skale.wallet.address
+    result = runner.invoke(
+        _withdraw_bounty,
+        [
+            str(D_VALIDATOR_ID),
+            recipient_address,
+            '--pk-file', TEST_PK_FILE,
+            '--yes'
+        ]
+    )
+    output_list = result.output.splitlines()
+    expected_output = f'\x1b[K✔ Bounty successfully transferred to {skale.wallet.address}'
+    assert expected_output in output_list
     assert result.exit_code == 0

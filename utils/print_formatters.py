@@ -212,5 +212,11 @@ def print_sgx_info(info):
     print(table.table)
 
 
-def print_bond_amount(validator_id, bond_amount):
-    print(f'Bond amount for validator with id {validator_id} - {bond_amount}')
+def print_bond_amount(validator_id, bond_amount, wei=False):
+    if wei:
+        print(f'Bond amount for validator with id '
+              f'{validator_id} - {bond_amount} WEI')
+    else:
+        bond_amount = from_wei(bond_amount)
+        print(f'Bond amount for validator with id '
+              f'{validator_id} - {bond_amount} SKL')
