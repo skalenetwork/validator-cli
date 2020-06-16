@@ -20,8 +20,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install python dependencies
       run: |
-        sudo apt-get intstall libudev-dev
-        sudo apt-get intall libusb-1.0-0-dev
+        sudo apt-get install libudev-dev
+        sudo apt-get install libusb-1.0-0-dev
         python -m pip install --upgrade pip
         pip install -e .
         pip install -e .[dev]
