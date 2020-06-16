@@ -242,7 +242,7 @@ def test_linked_addresses(runner, skale):
 def test_info(runner, skale):
     result = runner.invoke(_info, [str(D_VALIDATOR_ID)])
     output_list = result.output.splitlines()
- 
+
     print(output_list)
     assert result.exit_code == 0
     assert '\x1b(0x\x1b(B Validator ID                     \x1b(0x\x1b(B 1                                          \x1b(0x\x1b(B' in output_list  # noqa
