@@ -64,16 +64,14 @@ validator:
       Are you sure you want to unlink this address from your validator account?
   linked_addresses:
     help: List of the linked addresses for validator address
-  withdraw_bounty:
-    help: Withdraw earned bounty to specified address
-    confirm: |-
-      Are you sure you want to withdraw bounty?
   withdraw_fee:
     help: Withdraw earned fee to specified address
     confirm: |-
       Are you sure you want to withdraw fees?
   bond_amount:
     help: Get amount of tokens that validator delegated to himself
+    wei:
+      help: Show bond amount in wei
 holder:
   help: Token holder commands
   delegate:
@@ -104,6 +102,10 @@ holder:
     help: Show amount of locked tokens for address
     wei:
       help: Show amount in wei
+  withdraw_bounty:
+    help: Withdraw earned bounty to specified address
+    confirm: |-
+      Are you sure you want to withdraw bounty?
 msg:
   run_init: You should run < init > first
   limit:

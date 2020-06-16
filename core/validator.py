@@ -43,7 +43,7 @@ def register(name: str, description: str, commission_rate: int, min_delegation: 
             raise_for_status=False
         )
         if not check_tx_result(tx_res.tx_hash, skale.web3):
-            sp.write(f'Transaction failed: {tx_res.tx_hash}')
+            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
             return
         sp.write("✔ New validator registered")
 
@@ -77,7 +77,7 @@ def accept_pending_delegation(delegation_id, pk_file: str) -> None:
             raise_for_status=False
         )
         if not check_tx_result(tx_res.tx_hash, skale.web3):
-            sp.write(f'Transaction failed: {tx_res.tx_hash}')
+            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
             return
         sp.write(f'✔ Delegation request with ID {delegation_id} accepted')
 
@@ -93,7 +93,7 @@ def link_node_address(node_address: str, signature: str, pk_file: str) -> None:
             raise_for_status=False
         )
         if not check_tx_result(tx_res.tx_hash, skale.web3):
-            sp.write(f'Transaction failed: {tx_res.tx_hash}')
+            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
             return
         sp.write(f'✔ Node address {node_address} linked to your validator address')
 
@@ -108,7 +108,7 @@ def unlink_node_address(node_address: str, pk_file: str) -> None:
             raise_for_status=False
         )
         if not check_tx_result(tx_res.tx_hash, skale.web3):
-            sp.write(f'Transaction failed: {tx_res.tx_hash}')
+            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
             return
         sp.write(f'✔ Node address {node_address} unlinked from your validator address')
 
@@ -156,22 +156,6 @@ def info(validator_id):
     print(table.table)
 
 
-def withdraw_bounty(validator_id, recipient_address, pk_file):
-    skale = init_skale_w_wallet_from_config(pk_file)
-    if not skale:
-        return
-    with yaspin(text='Withdrawing bounty', color=SPIN_COLOR) as sp:
-        tx_res = skale.distributor.withdraw_bounty(
-            validator_id=validator_id,
-            to=recipient_address,
-            raise_for_status=False
-        )
-        if not check_tx_result(tx_res.tx_hash, skale.web3):
-            sp.write(f'Transaction failed: {tx_res.tx_hash}')
-            return
-        sp.write(f'✔ Bounty successfully transferred to {recipient_address}')
-
-
 def withdraw_fee(recipient_address, pk_file):
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
@@ -182,14 +166,14 @@ def withdraw_fee(recipient_address, pk_file):
             raise_for_status=False
         )
         if not check_tx_result(tx_res.tx_hash, skale.web3):
-            sp.write(f'Transaction failed: {tx_res.tx_hash}')
+            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
             return
         sp.write(f'✔ Earned fees successfully transferred to {recipient_address}')
 
 
-def get_bond_amount(validator_id=None):
+def get_bond_amount(validator_id, wei=False):
     skale = init_skale_from_config()
     bond_amount = skale.validator_service.get_and_update_bond_amount(
         validator_id
     )
-    print_bond_amount(validator_id, bond_amount)
+    print_bond_amount(validator_id, bond_amount, wei)

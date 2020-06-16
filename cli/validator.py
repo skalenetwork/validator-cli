@@ -23,7 +23,7 @@ from web3 import Web3
 from core.validator import (register, validators_list, delegations, accept_pending_delegation,
                             get_bond_amount, link_node_address, unlink_node_address,
                             linked_addresses, info,
-                            withdraw_bounty, withdraw_fee)
+                            withdraw_fee)
 from utils.helper import abort_if_false
 from utils.validations import EthAddressType, PercentageType, UrlType
 from utils.texts import Texts
@@ -165,20 +165,6 @@ def _info(validator_id):
     )
 
 
-@validator.command('withdraw-bounty', help=TEXTS['withdraw_bounty']['help'])
-@click.argument('validator_id')
-@click.argument('recipient_address')
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option('--yes', is_flag=True, callback=abort_if_false,
-              expose_value=False,
-              prompt=TEXTS['withdraw_bounty']['confirm'])
-def _withdraw_bounty(validator_id, recipient_address, pk_file):
-    withdraw_bounty(int(validator_id), recipient_address, pk_file)
-
-
 @validator.command('withdraw-fee', help=TEXTS['withdraw_fee']['help'])
 @click.argument('recipient_address')
 @click.option(
@@ -193,6 +179,8 @@ def _withdraw_fee(recipient_address, pk_file):
 
 
 @validator.command('bond-amount', help=TEXTS['bond_amount']['help'])
+@click.option('--wei', '-w', is_flag=True,
+              help=TEXTS['bond_amount']['wei']['help'])
 @click.argument('validator_id', type=int)
-def _bond_amount(validator_id):
-    get_bond_amount(validator_id)
+def _bond_amount(validator_id, wei):
+    get_bond_amount(validator_id, wei)
