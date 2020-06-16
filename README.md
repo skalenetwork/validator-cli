@@ -352,11 +352,12 @@ Optional arguments:
 -   `--since/-s` - Show requested data since a given date inclusively (e.g. 2020-01-20)
 -   `--till/-t` - Show requested data before a given date not inclusively (e.g. 2020-01-21)
 -   `--wei/-w` - Show bounty amount in wei
+-   `--to-file/-f` - Export metrics to .csv file (with a given file pathname)
 
 Usage example:
 
 ```bash
-sk-val metrics node -id 1 --since 2020-04-30 --till 2020-05-01 -w
+sk-val metrics node -id 1 --since 2020-04-30 --till 2020-05-01 -w -f /home/user/filename.csv
 ```
 
 #### Validator metrics
@@ -378,11 +379,12 @@ Optional arguments:
 -   `--since/-s` - Show requested data since a given date inclusively (e.g. 2020-01-20)
 -   `--till/-t` - Show requested data before a given date not inclusively (e.g. 2020-01-21)
 -   `--wei/-w` - Show bounty amount in wei
+-   `--to-file/-f` - Export metrics to .csv file (with a given file pathname)
 
 Usage example:
 
 ```bash
-sk-val metrics validator -id 1 --since 2020-04-30 --till 2020-05-01 -w
+sk-val metrics validator -id 1 --since 2020-04-30 --till 2020-05-01 -w -f /home/user/filename.csv
 ```
 
 ## Development
