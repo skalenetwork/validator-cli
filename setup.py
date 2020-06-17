@@ -49,11 +49,14 @@ extras_require = {
         "twine==3.1.1",
         "mock==4.0.2",
         "boto3==1.13.7"
+    ],
+    'hw-wallet': [
+        "ledgerblue==0.1.31"
     ]
 }
 
 extras_require['dev'] = (
-    extras_require['linter'] + extras_require['dev']
+    extras_require['linter'] + extras_require['dev'] + extras_require['hw-wallet']
 )
 
 
@@ -70,7 +73,7 @@ setup(
     url='https://github.com/skalenetwork/validators-cli',
     install_requires=[
         "click==7.1.2",
-        "skale.py==3.7dev1",
+        "skale.py==3.8dev2",
         "terminaltables==3.1.0",
         "yaspin==0.16.0",
         "texttable==1.6.2",

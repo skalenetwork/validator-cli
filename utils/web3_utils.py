@@ -44,9 +44,9 @@ def init_skale(endpoint, wallet=None, disable_spin=DISABLE_SPIN):
 def init_skale_w_wallet(endpoint, wallet_type, pk_file=None, disable_spin=DISABLE_SPIN):
     """Init instance of SKALE library with wallet"""
     web3 = init_web3(endpoint)
-    if wallet_type == 'hardware':
+    if wallet_type == 'ledger':
         wallet = LedgerWallet(web3)
-    if wallet_type == 'sgx':
+    elif wallet_type == 'sgx':
         info = get_sgx_info()
         wallet = SgxWallet(info['server_url'],
                            web3,
@@ -73,7 +73,7 @@ def init_skale_w_wallet_from_config(pk_file=None):
         print('You should run < init > first')
         return
     if config['wallet'] == 'software' and not pk_file:
-        print('Please specify path to the private key file to use software vallet with `--pk-file`\
+        print('Please specify path to the private key file to use software wallet with `--pk-file`\
             option')
         return
     if config['wallet'] == 'sgx' and not sgx_inited():

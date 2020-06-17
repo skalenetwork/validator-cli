@@ -207,7 +207,7 @@ Output info:
 1) Validator ID
 2) Name
 3) Address
-4) Fee rate (%)
+4) Fee rate (permille - ‰)
 5) Minimum delegation amount (SKL)
 6) Accepting new delegation requests
 

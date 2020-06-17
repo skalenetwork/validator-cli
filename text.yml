@@ -25,8 +25,8 @@ validator:
       help: Validator description
       prompt: Please enter validator description
     commission_rate:
-      help: Commission rate (percentage)
-      prompt: Please enter validator commission rate in % 
+      help: Commission rate (permille ‰)
+      prompt: Please enter validator commission rate in permille (0 - 1000)
     min_delegation:
       help: Validator minimum delegation amount
       prompt: Please enter minimum delegation amount in SKALE tokens
@@ -64,14 +64,14 @@ validator:
       Are you sure you want to unlink this address from your validator account?
   linked_addresses:
     help: List of the linked addresses for validator address
-  withdraw_bounty:
-    help: Withdraw earned bounty to specified address
-    confirm: |-
-      Are you sure you want to withdraw bounty?
   withdraw_fee:
     help: Withdraw earned fee to specified address
     confirm: |-
       Are you sure you want to withdraw fees?
+  bond_amount:
+    help: Get amount of tokens that validator delegated to himself
+    wei:
+      help: Show bond amount in wei
 holder:
   help: Token holder commands
   delegate:
@@ -102,6 +102,10 @@ holder:
     help: Show amount of locked tokens for address
     wei:
       help: Show amount in wei
+  withdraw_bounty:
+    help: Withdraw earned bounty to specified address
+    confirm: |-
+      Are you sure you want to withdraw bounty?
 msg:
   run_init: You should run < init > first
   limit:

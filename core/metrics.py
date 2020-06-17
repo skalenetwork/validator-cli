@@ -11,7 +11,7 @@ BLOCK_CHUNK_SIZE = 1000
 
 
 def check_if_node_is_registered(skale, node_id):
-    return node_id in skale.nodes_data.get_active_node_ids()
+    return node_id in skale.nodes.get_active_node_ids()
 
 
 def check_if_validator_is_registered(skale, val_id):
