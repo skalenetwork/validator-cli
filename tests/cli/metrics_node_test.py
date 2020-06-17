@@ -131,3 +131,26 @@ def test_metrics_with_csv_export(skale, runner):
     df = pandas.read_csv(filname)
     assert len(df.axes[0]) == 2
     assert len(df.axes[1]) == 4
+
+
+def test_metrics_with_csv_export_in_wei(skale, runner):
+    filname = 'node_metrics.csv'
+    metrics, total_bounty = get_metrics_for_node(skale, NODE_ID, wei=True)
+    row_count = len(metrics) + SERVICE_ROW_COUNT
+    result = runner.invoke(node, ['-id', str(NODE_ID), '-w', '-f', filname])
+    output_list = result.output.splitlines()[-row_count:]
+
+    assert '       Date                  Bounty           Downtime   Latency' == output_list[0]
+    assert '----------------------------------------------------------------' == output_list[1]
+    assert f'{metrics[0][0]}   {metrics[0][1]}          {metrics[0][2]}       {metrics[0][3]}' == output_list[2]  # noqa
+    assert f'{metrics[1][0]}   {metrics[1][1]}          {metrics[1][2]}       {metrics[1][3]}' == output_list[3]  # noqa
+    assert '' == output_list[-2]
+    assert f' Total bounty per the given period: {total_bounty} wei' == output_list[-1]  # noqa
+
+    assert os.path.isfile(filname)
+    df = pandas.read_csv(filname)
+    assert len(df.axes[0]) == 2
+    assert len(df.axes[1]) == 4
+    metrics_list = df.values.tolist()
+    metrics_list[0][1] = int(metrics_list[0][1])
+    assert metrics[0] == metrics_list[0]
