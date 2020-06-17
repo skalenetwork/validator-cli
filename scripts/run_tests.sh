@@ -10,5 +10,6 @@ export SGX_DATA_DIR='tests/tmp-test-sgx'
 
 bash scripts/run_sgx_simulator.sh
 
-python $PROJECT_DIR/tests/prepare_data.py
-py.test --cov=$PROJECT_DIR/ $PROJECT_DIR/tests/
+#python $PROJECT_DIR/tests/prepare_data.py
+#py.test --cov=$PROJECT_DIR/ $PROJECT_DIR/tests/
+py.test -v -s --cov=$PROJECT_DIR/ $PROJECT_DIR/$1  --cov-report term-missing

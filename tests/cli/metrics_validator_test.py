@@ -191,8 +191,8 @@ def test_metrics_with_csv_export_in_wei(skale, runner):
     row_count = len(metrics) + len(totals) + SERVICE_ROW_COUNT * 2
     output_list = result.output.splitlines()[-row_count:]
 
-    assert '       Date           Node ID          Bounty           Downtime   Latency' == output_list[0]
-    assert '--------------------------------------------------------------------------' == output_list[1]
+    assert '       Date           Node ID          Bounty           Downtime   Latency' == output_list[0]  # noqa
+    assert '--------------------------------------------------------------------------' == output_list[1]  # noqa
     assert f'{metrics[0][0]}         {metrics[0][1]}   {metrics[0][2]}          {metrics[0][3]}       {metrics[0][4]}' == output_list[2]  # noqa
     assert f'{metrics[1][0]}         {metrics[1][1]}   {metrics[1][2]}          {metrics[1][3]}       {metrics[1][4]}' == output_list[3]  # noqa
     assert f'{metrics[2][0]}         {metrics[2][1]}   {metrics[2][2]}          {metrics[2][3]}       {metrics[2][4]}' == output_list[4]  # noqa
