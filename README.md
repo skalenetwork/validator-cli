@@ -10,7 +10,8 @@
 2.  [CLI usage](#cli-usage)  
     2.1 [Init](#init)  
     2.2 [Validator commands](#validator-commands)  
-    2.3 [Holder commands](#holder-commands)
+    2.3 [Holder commands](#holder-commands)  
+    2.4 [Metrics commands](#metrics-commands)
 3.  [Development](#development)  
 
 ## Installation
@@ -350,13 +351,13 @@ Optional arguments:
 
 -   `--since/-s` - Show requested data since a given date inclusively (e.g. 2020-01-20)
 -   `--till/-t` - Show requested data before a given date not inclusively (e.g. 2020-01-21)
--   `--limit/-l` - Number of records to show
 -   `--wei/-w` - Show bounty amount in wei
+-   `--to-file/-f` - Export metrics to .csv file (with a given file pathname)
 
 Usage example:
 
 ```bash
-sk-val metrics node -id 1 --since 2020-04-30 --till 2020-05-01 -l 10 -w
+sk-val metrics node -id 1 --since 2020-04-30 --till 2020-05-01 -w -f /home/user/filename.csv
 ```
 
 #### Validator metrics
@@ -377,42 +378,13 @@ Optional arguments:
 
 -   `--since/-s` - Show requested data since a given date inclusively (e.g. 2020-01-20)
 -   `--till/-t` - Show requested data before a given date not inclusively (e.g. 2020-01-21)
--   `--limit/-l` - Number of records to show
 -   `--wei/-w` - Show bounty amount in wei
+-   `--to-file/-f` - Export metrics to .csv file (with a given file pathname)
 
 Usage example:
 
 ```bash
-sk-val metrics validator -id 1 --since 2020-04-30 --till 2020-05-01 -l 10 -w
-```
-
-### Bounty commands
-
-#### Validator
-
-Shows a list of monthly aggregated bounties for all nodes of a given validator ID (Note: testnets are aggregated daily)
-
-```bash
-sk-val bounty validator
-```
-
-Required arguments:
-
--   `--index/-id` - Validator ID
-
-Collecting metrics from the SKALE Manager may take a long time. It is therefore recommended to use optional arguments to limit output by filtering by time period or limiting the number of records to show.
-
-Optional arguments:
-
--   `--since/-s` - Show requested data since a given date inclusively (e.g. 2020-01-20)
--   `--till/-t` - Show requested data before a given date not inclusively (e.g. 2020-01-21)
--   `--limit/-l` - Number of records to show
--   `--wei/-w` - Show bounty amount in wei
-
-Usage example:
-
-```bash
-sk-val bounty validator -id 1 --since 2020-04-30 --till 2020-05-01 -l 10 -w
+sk-val metrics validator -id 1 --since 2020-04-30 --till 2020-05-01 -w -f /home/user/filename.csv
 ```
 
 ## Development
