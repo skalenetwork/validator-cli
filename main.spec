@@ -8,6 +8,8 @@
 import os
 import importlib
 
+import wcwidth
+
 package_imports = [['sgx', ['generate.sh']]]
 
 external_data = []
@@ -23,7 +25,11 @@ block_cipher = None
 a = Analysis(['./cli/main.py'],
              pathex=['.'],
              binaries=[],
-             datas=[("./text.yml", "data"), *external_data],
+             datas=[
+                 ("./text.yml", "data"),
+                 (os.path.dirname(wcwidth.__file__), 'wcwidth'),
+                 *external_data
+                 ],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
