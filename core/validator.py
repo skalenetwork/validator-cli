@@ -149,7 +149,7 @@ def info(validator_id):
         ['Validator ID', validator_id],
         ['Name', validator_info['name']],
         ['Address', validator_info['validator_address']],
-        ['Fee rate (permille - permille ‰)', validator_info['fee_rate']],
+        ['Fee rate (percent %)', validator_info['fee_rate']],
         ['Minimum delegation amount (SKL)', minimum_delegation_amount],
         # ['Accepting delegation requests', accepting_delegation_requests]
     ])

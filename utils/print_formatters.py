@@ -55,7 +55,7 @@ def print_validators(validators, wei):
         'Id',
         'Address',
         'Description',
-        'Fee rate (permille)',
+        'Fee rate (precent %)',
         'Registration time',
         f'Minimum delegation ({m_type})',
         'Validator status'
