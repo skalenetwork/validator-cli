@@ -81,7 +81,7 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
                             is_validator=False):
     metrics_rows = []
 
-    block_number = skale.monitors_data.contract.functions.getLastBountyBlock(node_id).call()
+    block_number = skale.monitors.get_last_bounty_block(node_id)
     while True:
         block_data = skale.web3.eth.getBlock(block_number)
         txs = block_data["transactions"]
