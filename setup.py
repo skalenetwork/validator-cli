@@ -48,7 +48,9 @@ extras_require = {
         "pytest-cov==2.8.1",
         "twine==3.1.1",
         "mock==4.0.2",
-        "boto3==1.13.7"
+        "boto3==1.13.7",
+        "pytest-cov==2.9.0",
+        "codecov==2.1.7"
     ],
     'hw-wallet': [
         "ledgerblue==0.1.31"
@@ -77,6 +79,7 @@ setup(
         "terminaltables==3.1.0",
         "yaspin==0.16.0",
         "texttable==1.6.2",
+        "pandas==1.0.4",
         "terminaltables==3.1.0"
     ],
     python_requires='>=3.6,<4',
