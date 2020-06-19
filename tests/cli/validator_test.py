@@ -21,7 +21,6 @@ from tests.constants import (
 
 def create_new_validator(skale, runner):
     _generate_new_pk_file(skale)
-
     return runner.invoke(
         _register,
         [
@@ -49,6 +48,10 @@ def test_register(runner, skale):
 
     n_of_validators_after = skale.validator_service.number_of_validators()
     assert n_of_validators_after == n_of_validators_before + 1
+
+    validator = skale.validator_service.get(n_of_validators_after)
+    assert validator['fee_rate'] == int(D_VALIDATOR_FEE * 10)
+
     assert result.exit_code == 0
 
 
@@ -61,7 +64,7 @@ def test_ls(runner, skale):
         validators[0]['registration_time'])
     assert "Name   Id                    Address                     Description   Fee rate (precent %)    Registration time    Minimum delegation (SKL)   Validator status" in output_list  # noqa
     assert "---------------------------------------------------------------------------------------------------------------------------------------------------------------" in output_list  # noqa
-    assert f'test   1    {skale.wallet.address}   test          10                     {registration_time}   1E-12                      Trusted         ' in output_list  # noqa
+    assert f'test   1    {skale.wallet.address}   test          1.0                    {registration_time}   1E-12                      Trusted         ' in output_list  # noqa
     assert result.exit_code == 0
 
 
@@ -77,8 +80,8 @@ def test_ls_all(runner, skale):
                                  validators))
     assert "Name   Id                    Address                     Description   Fee rate (precent %)    Registration time    Minimum delegation (SKL)   Validator status" in output_list  # noqa
     assert "---------------------------------------------------------------------------------------------------------------------------------------------------------------" in output_list  # noqa
-    assert f'test   1    {validators[0]["validator_address"]}   test          10                     {registration_time[0]}   1E-12                      Trusted         ' in output_list  # noqa
-    assert f'test   2    {validators[1]["validator_address"]}   test          10                     {registration_time[1]}   1000                       Registered      ' in output_list  # noqa
+    assert f'test   1    {validators[0]["validator_address"]}   test          1.0                    {registration_time[0]}   1E-12                      Trusted         ' in output_list  # noqa
+    assert f'test   2    {validators[1]["validator_address"]}   test          1.0                    {registration_time[1]}   1000                       Registered      ' in output_list  # noqa
     assert result.exit_code == 0
 
 
@@ -247,7 +250,7 @@ def test_info(runner, skale):
     assert '\x1b(0x\x1b(B Validator ID                    \x1b(0x\x1b(B 1                                          \x1b(0x\x1b(B' in output_list  # noqa
     assert '\x1b(0x\x1b(B Name                            \x1b(0x\x1b(B test                                       \x1b(0x\x1b(B' in output_list  # noqa
     assert f'\x1b(0x\x1b(B Address                         \x1b(0x\x1b(B {skale.wallet.address} \x1b(0x\x1b(B' in output_list  # noqa
-    assert '\x1b(0x\x1b(B Fee rate (percent %)            \x1b(0x\x1b(B 10                                         \x1b(0x\x1b(B' in output_list  # noqa
+    assert '\x1b(0x\x1b(B Fee rate (percent %)            \x1b(0x\x1b(B 1.0                                        \x1b(0x\x1b(B' in output_list  # noqa
     assert '\x1b(0x\x1b(B Minimum delegation amount (SKL) \x1b(0x\x1b(B 1E-12                                      \x1b(0x\x1b(B' in output_list  # noqa
     # assert '\x1b(0x\x1b(B Accepting delegation requests   \x1b(0x\x1b(B Yes                                        \x1b(0x\x1b(B' in output_list  # noqa
 

@@ -82,7 +82,7 @@ def _register(name, description, commission_rate, min_delegation, pk_file):
     register(
         name=name,
         description=description,
-        commission_rate=int(commission_rate),
+        commission_rate=float(commission_rate),
         min_delegation=int(min_delegation),
         pk_file=pk_file
     )
