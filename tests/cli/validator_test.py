@@ -81,7 +81,7 @@ def test_ls_all(runner, skale):
     assert "Name   Id                    Address                     Description   Fee rate (precent %)    Registration time    Minimum delegation (SKL)   Validator status" in output_list  # noqa
     assert "---------------------------------------------------------------------------------------------------------------------------------------------------------------" in output_list  # noqa
     assert f'test   1    {validators[0]["validator_address"]}   test          1.0                    {registration_time[0]}   1E-12                      Trusted         ' in output_list  # noqa
-    assert f'test   2    {validators[1]["validator_address"]}   test          1.0                    {registration_time[1]}   1000                       Registered      ' in output_list  # noqa
+    assert f'test   2    {validators[1]["validator_address"]}   test          10.5                   {registration_time[1]}   1000                       Registered      ' in output_list  # noqa
     assert result.exit_code == 0
 
 
