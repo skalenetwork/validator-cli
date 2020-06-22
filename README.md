@@ -246,6 +246,24 @@ Optional arguments:
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
 -   `--yes` - Confirmation flag
 
+
+#### Set MDA
+
+Set a new minimum delegation amount for the validator
+
+```bash
+sk-val validator set-mda [NEW_MDA] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) NEW_MDA - New MDA value
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
+
 ### Holder commands
 
 #### Delegate

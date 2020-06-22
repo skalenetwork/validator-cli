@@ -72,6 +72,8 @@ validator:
     help: Get amount of tokens that validator delegated to himself
     wei:
       help: Show bond amount in wei
+  set_mda:
+    help: Set a new minimum delegation amount for the validator
 holder:
   help: Token holder commands
   delegate:
@@ -122,7 +124,8 @@ msg:
 
 pk_file:
   help: Path to file with private key (only for `software` wallet type)
-
+yes_opt:
+  prompt: Are you sure?
 
 metrics:
   help: Node metrics commands

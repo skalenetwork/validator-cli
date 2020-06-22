@@ -22,8 +22,7 @@ from web3 import Web3
 
 from core.validator import (register, validators_list, delegations, accept_pending_delegation,
                             get_bond_amount, link_node_address, unlink_node_address,
-                            linked_addresses, info,
-                            withdraw_fee)
+                            linked_addresses, info, withdraw_fee, set_mda)
 from utils.helper import abort_if_false
 from utils.validations import EthAddressType, PercentageType, UrlType, PermilleType
 from utils.texts import Texts
@@ -185,3 +184,16 @@ def _withdraw_fee(recipient_address, pk_file):
 @click.argument('validator_id', type=int)
 def _bond_amount(validator_id, wei):
     get_bond_amount(validator_id, wei)
+
+
+@validator.command('set-mda', help=TEXTS['set_mda']['help'])
+@click.argument('new_mda')
+@click.option(
+    '--pk-file',
+    help=G_TEXTS['pk_file']['help']
+)
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=G_TEXTS['yes_opt']['prompt'])
+def _set_mda(new_mda, pk_file):
+    set_mda(float(new_mda), pk_file)

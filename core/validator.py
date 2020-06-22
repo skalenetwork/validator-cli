@@ -177,3 +177,19 @@ def get_bond_amount(validator_id, wei=False):
         validator_id
     )
     print_bond_amount(validator_id, bond_amount, wei)
+
+
+def set_mda(new_mda, pk_file):
+    skale = init_skale_w_wallet_from_config(pk_file)
+    if not skale:
+        return
+    with yaspin(text='Changing minimum delegation amount', color=SPIN_COLOR) as sp:
+        new_mda_wei = to_wei(new_mda)
+        tx_res = skale.validator_service.set_validator_mda(
+            minimum_delegation_amount=new_mda_wei,
+            raise_for_status=False
+        )
+        if not check_tx_result(tx_res.tx_hash, skale.web3):
+            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+            return
+        sp.write(f'✔ Minimum delegation amount for your validator ID changed to {new_mda}')

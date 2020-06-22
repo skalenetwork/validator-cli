@@ -1,5 +1,6 @@
 """ Tests for cli/validator.py module """
 
+import random
 import datetime
 
 from skale.wallets.web3_wallet import generate_wallet
@@ -10,7 +11,7 @@ from web3 import Web3
 
 from cli.validator import (_bond_amount, _register, _ls, _delegations, _accept_delegation,
                            _link_address, _unlink_address, _linked_addresses,
-                           _info, _withdraw_fee)
+                           _info, _withdraw_fee, _set_mda)
 from tests.conftest import str_contains
 from tests.constants import (
     D_VALIDATOR_NAME, D_VALIDATOR_DESC, D_VALIDATOR_FEE, D_VALIDATOR_ID,
@@ -288,3 +289,21 @@ def test_bond_amount(runner, skale):
     output = result.output
     assert result.exit_code == 0
     assert output == f'Bond amount for validator with id {D_VALIDATOR_ID} - {bond_wei} WEI\n'
+
+
+def test_set_mda(runner, skale):
+    minimum_delegation_amount = str(random.randint(1000, 10000))
+    result = runner.invoke(
+        _set_mda,
+        [
+            minimum_delegation_amount,
+            '--pk-file', TEST_PK_FILE,
+            '--yes'
+        ]
+    )
+    output_list = result.output.splitlines()
+    assert result.exit_code == 0
+
+    print('output_list')
+    print(output_list)
+    assert f'\x1b[K✔ Minimum delegation amount for your validator ID changed to {minimum_delegation_amount}.0' in output_list  # noqa
