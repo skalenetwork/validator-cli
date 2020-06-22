@@ -25,20 +25,22 @@ from utils.web3_utils import (init_skale_from_config, init_skale_w_wallet_from_c
                               check_tx_result)
 from utils.print_formatters import (print_bond_amount, print_validators,
                                     print_delegations, print_linked_addresses)
-from utils.helper import to_wei, from_wei
+from utils.helper import to_wei, from_wei, percent_to_permille, permille_to_percent
 from utils.constants import SPIN_COLOR
 
 
-def register(name: str, description: str, commission_rate: int, min_delegation: int, pk_file: str):
+def register(name: str, description: str, commission_rate: float, min_delegation: int,
+             pk_file: str):
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
     with yaspin(text='Registering new validator', color=SPIN_COLOR) as sp:
         min_delegation_wei = to_wei(min_delegation)
+        commission_rate_permille = percent_to_permille(commission_rate)
         tx_res = skale.validator_service.register_validator(
             name=name,
             description=description,
-            fee_rate=commission_rate,
+            fee_rate=commission_rate_permille,
             min_delegation_amount=min_delegation_wei,
             raise_for_status=False
         )
@@ -145,11 +147,12 @@ def info(validator_id):
     # accepting_delegation_requests = 'Yes' if is_accepting_new_requests else 'No'
     minimum_delegation_amount = from_wei(
         validator_info['minimum_delegation_amount'])
+    fee_rate_percent = permille_to_percent(validator_info['fee_rate'])
     table = SingleTable([
         ['Validator ID', validator_id],
         ['Name', validator_info['name']],
         ['Address', validator_info['validator_address']],
-        ['Fee rate (permille - permille ‰)', validator_info['fee_rate']],
+        ['Fee rate (percent %)', fee_rate_percent],
         ['Minimum delegation amount (SKL)', minimum_delegation_amount],
         # ['Accepting delegation requests', accepting_delegation_requests]
     ])
