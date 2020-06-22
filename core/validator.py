@@ -209,7 +209,7 @@ def change_address(address, pk_file):
             return
         sp.write(
             f'✔ Requested new address for your validator ID: {address}.\n'
-            'You can finish the procedure by running < skale validator confirm-address > '
+            'You can finish the procedure by running < sk-val validator confirm-address > '
             'using the new key.'
         )
 

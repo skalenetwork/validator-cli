@@ -330,7 +330,7 @@ def test_change_address(runner, skale):
     output_list = result.output.splitlines()
     assert result.exit_code == 0
     assert f'\x1b[K✔ Requested new address for your validator ID: {wallet.address}.' in output_list
-    assert f'You can finish the procedure by running < skale validator confirm-address > using the new key.' in output_list  # noqa
+    assert f'You can finish the procedure by running < sk-val validator confirm-address > using the new key.' in output_list  # noqa
 
 
 def test_confirm_address(runner, skale):
