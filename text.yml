@@ -74,6 +74,10 @@ validator:
       help: Show bond amount in wei
   set_mda:
     help: Set a new minimum delegation amount for the validator
+  change_address:
+    help: Request address change for the validator
+  confirm_address:
+    help: Confirm address change for the validator
 holder:
   help: Token holder commands
   delegate:

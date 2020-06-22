@@ -264,6 +264,40 @@ Optional arguments:
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
 -   `--yes` - Confirmation flag
 
+#### Request address change
+
+Request address change for the validator
+
+```bash
+sk-val validator change-address [ADDRESS] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) ADDRESS - New validator address
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
+
+#### Confirm address change
+
+Confirm address change for the validator. Should be executed using new validator key.
+
+```bash
+sk-val validator confirm-address [VALIDATOR_ID] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) VALIDATOR_ID - ID of the validator
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
+
 ### Holder commands
 
 #### Delegate

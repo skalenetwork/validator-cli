@@ -193,3 +193,37 @@ def set_mda(new_mda, pk_file):
             sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
             return
         sp.write(f'✔ Minimum delegation amount for your validator ID changed to {new_mda}')
+
+
+def change_address(address, pk_file):
+    skale = init_skale_w_wallet_from_config(pk_file)
+    if not skale:
+        return
+    with yaspin(text='Requesting new validator address', color=SPIN_COLOR) as sp:
+        tx_res = skale.validator_service.request_for_new_address(
+            new_validator_address=address,
+            raise_for_status=False
+        )
+        if not check_tx_result(tx_res.tx_hash, skale.web3):
+            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+            return
+        sp.write(
+            f'✔ Requested new address for your validator ID: {address}.\n'
+            'You can finish the procedure by running < skale validator confirm-address > '
+            'using the new key.'
+        )
+
+
+def confirm_address(validator_id, pk_file):
+    skale = init_skale_w_wallet_from_config(pk_file)
+    if not skale:
+        return
+    with yaspin(text='Confirming validator address change', color=SPIN_COLOR) as sp:
+        tx_res = skale.validator_service.confirm_new_address(
+            validator_id=validator_id,
+            raise_for_status=False
+        )
+        if not check_tx_result(tx_res.tx_hash, skale.web3):
+            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+            return
+        sp.write(f'✔ Validator address changed')

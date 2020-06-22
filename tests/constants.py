@@ -7,6 +7,9 @@ HERE = os.path.dirname(os.path.realpath(__file__))
 TEST_PK_FILE = os.path.join(HERE, 'test-pk.txt')
 SECOND_TEST_PK_FILE = os.path.join(HERE, 'second-test-pk.txt')
 
+ADDRESS_CHANGE_PK_FILE_1 = os.path.join(HERE, 'ch-test-pk-1.txt')
+ADDRESS_CHANGE_PK_FILE_2 = os.path.join(HERE, 'ch-test-pk-2.txt')
+
 # validator
 
 D_VALIDATOR_ID = 1
