@@ -63,7 +63,7 @@ validator:
     confirm: |-
       Are you sure you want to unlink this address from your validator account?
   linked_addresses:
-    help: List of the linked addresses for validator address
+    help: List of the linked addresses for validator ID
   withdraw_fee:
     help: Withdraw earned fee to specified address
     confirm: |-
