@@ -246,6 +246,73 @@ Optional arguments:
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
 -   `--yes` - Confirmation flag
 
+#### Set MDA
+
+Set a new minimum delegation amount for the validator
+
+```bash
+sk-val validator set-mda [NEW_MDA] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) NEW_MDA - New MDA value
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
+
+#### Request address change
+
+Request address change for the validator
+
+```bash
+sk-val validator change-address [ADDRESS] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) ADDRESS - New validator address
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
+
+#### Confirm address change
+
+Confirm address change for the validator. Should be executed using new validator key.
+
+```bash
+sk-val validator confirm-address [VALIDATOR_ID] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) VALIDATOR_ID - ID of the validator
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
+
+#### Earned fees
+
+Get earned fee amount for the validator address
+
+```bash
+sk-val validator earned-fees [ADDRESS]
+```
+
+Required params:
+
+1) ADDRESS - Validator address
+
+Optional arguments:
+
+-   `--wei` - Show amount in wei
+
 ### Holder commands
 
 #### Delegate
@@ -330,6 +397,23 @@ Required arguments:
 Options:
 
 -   `--wei/-w` - Show tokens amount in wei
+
+#### Earned bounties
+
+Get earned bounties amount by token holder for the validator ID
+
+```bash
+sk-val holder earned-bounties [VALIDATOR_ID] [ADDRESS]
+```
+
+Required params:
+
+1) VALIDATOR_ID - ID of the validator
+1) ADDRESS - Token holder address
+
+Optional arguments:
+
+-   `--wei` - Show amount in wei
 
 ### Metrics commands
 

@@ -26,7 +26,7 @@ from utils.web3_utils import (check_tx_result,
                               init_skale_from_config,
                               init_skale_w_wallet_from_config)
 from utils.print_formatters import print_delegations
-from utils.helper import to_wei
+from utils.helper import to_wei, from_wei
 from utils.constants import SPIN_COLOR
 
 
@@ -117,3 +117,18 @@ def locked(address, wei):
     locked_amount_wei = skale.token_state.get_and_update_locked_amount(address)
     amount = locked_amount_wei if wei else to_skl(locked_amount_wei)
     print(f'Locked amount for address {address}:\n{amount}')
+
+
+def earned_bounties(validator_id, address, wei):
+    skale = init_skale_from_config()
+    if not skale:
+        return
+    earned_bounties_data = skale.distributor.get_earned_bounty_amount(validator_id, address)
+    earned_bounties_amount = earned_bounties_data['earned']
+    earned_bounties_msg = f'Earned bounties for {address}, validator ID - {validator_id}: '
+    if not wei:
+        earned_bounties_amount = from_wei(earned_bounties_amount)
+        earned_bounties_msg += f'{earned_bounties_amount} SKL'
+    else:
+        earned_bounties_msg += f'{earned_bounties_amount} WEI'
+    print(earned_bounties_msg + f'\nEnd month: {earned_bounties_data["end_month"]}')

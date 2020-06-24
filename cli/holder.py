@@ -23,12 +23,15 @@ from utils.texts import Texts
 from utils.helper import abort_if_false
 from core.holder import (delegate, delegations,
                          cancel_pending_delegation, locked,
-                         undelegate, withdraw_bounty)
+                         undelegate, withdraw_bounty, earned_bounties)
 from utils.constants import DELEGATION_PERIOD_OPTIONS
+from utils.validations import EthAddressType
 
 
 G_TEXTS = Texts()
 TEXTS = G_TEXTS['holder']
+
+ETH_ADDRESS_TYPE = EthAddressType()
 
 
 @click.group()
@@ -135,3 +138,18 @@ def _withdraw_bounty(validator_id, recipient_address, pk_file):
 @click.option('--wei', '-w', is_flag=True, help=TEXTS['locked']['wei']['help'])
 def _locked(address, wei):
     locked(address, wei)
+
+
+@holder.command('earned-bounties', help=TEXTS['earned_bounties']['help'])
+@click.argument(
+    'validator_id',
+    type=int
+)
+@click.argument(
+    'address',
+    type=ETH_ADDRESS_TYPE
+)
+@click.option('--wei', '-w', is_flag=True,
+              help=G_TEXTS['wei']['help'])
+def _earned_bounties(validator_id, address, wei):
+    earned_bounties(validator_id, address, wei)

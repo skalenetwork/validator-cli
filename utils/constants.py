@@ -42,6 +42,7 @@ TEXT_FILE = os.path.join(ROOT_DIR, 'text.yml')
 
 LONG_LINE = '-' * 50
 SPIN_COLOR = 'yellow'
+DISABLE_SPIN = os.getenv('DISABLE_SPIN')
 
 HOME_DIR = str(Path.home())
 SKALE_VAL_CONFIG_FOLDER = os.path.join(HOME_DIR, '.skale-val-cli')

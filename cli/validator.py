@@ -22,8 +22,8 @@ from web3 import Web3
 
 from core.validator import (register, validators_list, delegations, accept_pending_delegation,
                             get_bond_amount, link_node_address, unlink_node_address,
-                            linked_addresses, info,
-                            withdraw_fee)
+                            linked_addresses, info, withdraw_fee, set_mda, change_address,
+                            confirm_address, earned_fees)
 from utils.helper import abort_if_false
 from utils.validations import EthAddressType, UrlType, FloatPercentageType
 from utils.texts import Texts
@@ -184,3 +184,59 @@ def _withdraw_fee(recipient_address, pk_file):
 @click.argument('validator_id', type=int)
 def _bond_amount(validator_id, wei):
     get_bond_amount(validator_id, wei)
+
+
+@validator.command('set-mda', help=TEXTS['set_mda']['help'])
+@click.argument('new_mda')
+@click.option(
+    '--pk-file',
+    help=G_TEXTS['pk_file']['help']
+)
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=G_TEXTS['yes_opt']['prompt'])
+def _set_mda(new_mda, pk_file):
+    set_mda(float(new_mda), pk_file)
+
+
+@validator.command('change-address', help=TEXTS['change_address']['help'])
+@click.argument(
+    'address',
+    type=ETH_ADDRESS_TYPE
+)
+@click.option(
+    '--pk-file',
+    help=G_TEXTS['pk_file']['help']
+)
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=G_TEXTS['yes_opt']['prompt'])
+def _change_address(address, pk_file):
+    change_address(address, pk_file)
+
+
+@validator.command('confirm-address', help=TEXTS['confirm_address']['help'])
+@click.argument(
+    'validator_id',
+    type=int
+)
+@click.option(
+    '--pk-file',
+    help=G_TEXTS['pk_file']['help']
+)
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=G_TEXTS['yes_opt']['prompt'])
+def _confirm_address(validator_id, pk_file):
+    confirm_address(validator_id, pk_file)
+
+
+@validator.command('earned-fees', help=TEXTS['earned_fees']['help'])
+@click.argument(
+    'address',
+    type=ETH_ADDRESS_TYPE
+)
+@click.option('--wei', '-w', is_flag=True,
+              help=G_TEXTS['wei']['help'])
+def _earned_fees(address, wei):
+    earned_fees(address, wei)

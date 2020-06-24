@@ -63,7 +63,7 @@ validator:
     confirm: |-
       Are you sure you want to unlink this address from your validator account?
   linked_addresses:
-    help: List of the linked addresses for validator address
+    help: List of the linked addresses for validator ID
   withdraw_fee:
     help: Withdraw earned fee to specified address
     confirm: |-
@@ -72,6 +72,14 @@ validator:
     help: Get amount of tokens that validator delegated to himself
     wei:
       help: Show bond amount in wei
+  set_mda:
+    help: Set a new minimum delegation amount for the validator
+  change_address:
+    help: Request address change for the validator
+  confirm_address:
+    help: Confirm address change for the validator
+  earned_fees:
+    help: Get earned fee amount for the validator address
 holder:
   help: Token holder commands
   delegate:
@@ -106,6 +114,8 @@ holder:
     help: Withdraw earned bounty to specified address
     confirm: |-
       Are you sure you want to withdraw bounty?
+  earned_bounties:
+    help: Get earned bounties amount by token holder for the validator address
 msg:
   run_init: You should run < init > first
   limit:
@@ -122,7 +132,10 @@ msg:
 
 pk_file:
   help: Path to file with private key (only for `software` wallet type)
-
+yes_opt:
+  prompt: Are you sure?
+wei:
+  help: Show amount in wei
 
 metrics:
   help: Node metrics commands

@@ -1,5 +1,6 @@
 """ Tests for cli/validator.py module """
 
+import random
 import datetime
 
 from skale.wallets.web3_wallet import generate_wallet
@@ -10,18 +11,45 @@ from web3 import Web3
 
 from cli.validator import (_bond_amount, _register, _ls, _delegations, _accept_delegation,
                            _link_address, _unlink_address, _linked_addresses,
-                           _info, _withdraw_fee)
+                           _info, _withdraw_fee, _set_mda, _change_address, _confirm_address,
+                           _earned_fees)
 from tests.conftest import str_contains
 from tests.constants import (
     D_VALIDATOR_NAME, D_VALIDATOR_DESC, D_VALIDATOR_FEE, D_VALIDATOR_ID,
     D_VALIDATOR_MIN_DEL, SECOND_TEST_PK_FILE, D_DELEGATION_AMOUNT, D_DELEGATION_PERIOD,
-    D_DELEGATION_INFO, TEST_PK_FILE
+    D_DELEGATION_INFO, TEST_PK_FILE, ADDRESS_CHANGE_PK_FILE_1, ADDRESS_CHANGE_PK_FILE_2
 )
 
 
-def create_new_validator(skale, runner):
-    _generate_new_pk_file(skale)
-    return runner.invoke(
+def create_new_validator(skale, runner, pk_file_path):
+    wallet = _generate_new_pk_file(skale, pk_file_path)
+    runner.invoke(
+        _register,
+        [
+            '-n', D_VALIDATOR_NAME,
+            '-d', D_VALIDATOR_DESC,
+            '-c', D_VALIDATOR_FEE,
+            '--min-delegation', D_VALIDATOR_MIN_DEL,
+            '--pk-file', pk_file_path,
+            '--yes'
+        ]
+    )
+    return wallet
+
+
+def _generate_new_pk_file(skale, pk_file_path):
+    eth_amount = 0.1
+    wallet = generate_wallet(skale.web3)
+    send_ether(skale.web3, skale.wallet, wallet.address, eth_amount)
+    with open(pk_file_path, "w") as text_file:
+        print(wallet._private_key, file=text_file)
+    return wallet
+
+
+def test_register(runner, skale):
+    n_of_validators_before = skale.validator_service.number_of_validators()
+    _generate_new_pk_file(skale, SECOND_TEST_PK_FILE)
+    result = runner.invoke(
         _register,
         [
             '-n', D_VALIDATOR_NAME,
@@ -32,20 +60,6 @@ def create_new_validator(skale, runner):
             '--yes'
         ]
     )
-
-
-def _generate_new_pk_file(skale):
-    eth_amount = 0.1
-    wallet = generate_wallet(skale.web3)
-    send_ether(skale.web3, skale.wallet, wallet.address, eth_amount)
-    with open(SECOND_TEST_PK_FILE, "w") as text_file:
-        print(wallet._private_key, file=text_file)
-
-
-def test_register(runner, skale):
-    n_of_validators_before = skale.validator_service.number_of_validators()
-    result = create_new_validator(skale, runner)
-
     n_of_validators_after = skale.validator_service.number_of_validators()
     assert n_of_validators_after == n_of_validators_before + 1
 
@@ -70,7 +84,7 @@ def test_ls(runner, skale):
 
 def test_ls_all(runner, skale):
     if skale.validator_service.number_of_validators() < 2:
-        create_new_validator(skale, runner)
+        create_new_validator(skale, runner, SECOND_TEST_PK_FILE)
 
     result = runner.invoke(_ls, args="--all")
     output_list = result.output.splitlines()
@@ -290,3 +304,71 @@ def test_bond_amount(runner, skale):
     output = result.output
     assert result.exit_code == 0
     assert output == f'Bond amount for validator with id {D_VALIDATOR_ID} - {bond_wei} WEI\n'
+
+
+def test_set_mda(runner):
+    minimum_delegation_amount = str(random.randint(1000, 10000))
+    result = runner.invoke(
+        _set_mda,
+        [
+            minimum_delegation_amount,
+            '--pk-file', TEST_PK_FILE,
+            '--yes'
+        ]
+    )
+    output_list = result.output.splitlines()
+    assert result.exit_code == 0
+    assert f'\x1b[K✔ Minimum delegation amount for your validator ID changed to {minimum_delegation_amount}.0' in output_list  # noqa
+
+
+def test_change_address(runner, skale):
+    wallet = generate_wallet(skale.web3)
+    result = runner.invoke(
+        _change_address,
+        [
+            wallet.address,
+            '--pk-file', TEST_PK_FILE,
+            '--yes'
+        ]
+    )
+    output_list = result.output.splitlines()
+    assert result.exit_code == 0
+    assert f'\x1b[K✔ Requested new address for your validator ID: {wallet.address}.' in output_list
+    assert f'You can finish the procedure by running < sk-val validator confirm-address > using the new key.' in output_list  # noqa
+
+
+def test_confirm_address(runner, skale):
+    wallet_1 = create_new_validator(skale, runner, ADDRESS_CHANGE_PK_FILE_1)
+    wallet_2 = _generate_new_pk_file(skale, ADDRESS_CHANGE_PK_FILE_2)
+
+    main_wallet = skale.wallet
+    skale.wallet = wallet_1
+    skale.validator_service.request_for_new_address(
+        new_validator_address=wallet_2.address,
+        wait_for=True
+    )
+    skale.wallet = main_wallet
+    latest_validator_id = skale.validator_service.number_of_validators()
+
+    result = runner.invoke(
+        _confirm_address,
+        [
+            str(latest_validator_id),
+            '--pk-file', ADDRESS_CHANGE_PK_FILE_2,
+            '--yes'
+        ]
+    )
+    output_list = result.output.splitlines()
+    assert result.exit_code == 0
+    assert '\x1b[K✔ Validator address changed' in output_list
+
+
+def test_earned_fees(runner, skale):
+    earned_fee = skale.distributor.get_earned_fee_amount(skale.wallet.address)
+    result = runner.invoke(
+        _earned_fees,
+        [skale.wallet.address, '--wei']
+    )
+    output = result.output
+    assert result.exit_code == 0
+    assert output == f'Earned fee for {skale.wallet.address}: {earned_fee["earned"]} WEI\nEnd month: {earned_fee["end_month"]}\n'  # noqa

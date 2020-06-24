@@ -180,3 +180,68 @@ def get_bond_amount(validator_id, wei=False):
         validator_id
     )
     print_bond_amount(validator_id, bond_amount, wei)
+
+
+def set_mda(new_mda, pk_file):
+    skale = init_skale_w_wallet_from_config(pk_file)
+    if not skale:
+        return
+    with yaspin(text='Changing minimum delegation amount', color=SPIN_COLOR) as sp:
+        new_mda_wei = to_wei(new_mda)
+        tx_res = skale.validator_service.set_validator_mda(
+            minimum_delegation_amount=new_mda_wei,
+            raise_for_status=False
+        )
+        if not check_tx_result(tx_res.tx_hash, skale.web3):
+            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+            return
+        sp.write(f'✔ Minimum delegation amount for your validator ID changed to {new_mda}')
+
+
+def change_address(address, pk_file):
+    skale = init_skale_w_wallet_from_config(pk_file)
+    if not skale:
+        return
+    with yaspin(text='Requesting new validator address', color=SPIN_COLOR) as sp:
+        tx_res = skale.validator_service.request_for_new_address(
+            new_validator_address=address,
+            raise_for_status=False
+        )
+        if not check_tx_result(tx_res.tx_hash, skale.web3):
+            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+            return
+        sp.write(
+            f'✔ Requested new address for your validator ID: {address}.\n'
+            'You can finish the procedure by running < sk-val validator confirm-address > '
+            'using the new key.'
+        )
+
+
+def confirm_address(validator_id, pk_file):
+    skale = init_skale_w_wallet_from_config(pk_file)
+    if not skale:
+        return
+    with yaspin(text='Confirming validator address change', color=SPIN_COLOR) as sp:
+        tx_res = skale.validator_service.confirm_new_address(
+            validator_id=validator_id,
+            raise_for_status=False
+        )
+        if not check_tx_result(tx_res.tx_hash, skale.web3):
+            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+            return
+        sp.write(f'✔ Validator address changed')
+
+
+def earned_fees(validator_address, wei):
+    skale = init_skale_from_config()
+    if not skale:
+        return
+    earned_fee = skale.distributor.get_earned_fee_amount(validator_address)
+    earned_fee_amount = earned_fee['earned']
+    earned_fee_msg = f'Earned fee for {validator_address}: '
+    if not wei:
+        earned_fee_amount = from_wei(earned_fee_amount)
+        earned_fee_msg += f'{earned_fee_amount} SKL'
+    else:
+        earned_fee_msg += f'{earned_fee_amount} WEI'
+    print(earned_fee_msg + f'\nEnd month: {earned_fee["end_month"]}')
