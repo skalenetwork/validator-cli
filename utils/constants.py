@@ -54,3 +54,5 @@ SGX_SSL_CERTS_PATH = os.path.join(SGX_DATA_DIR, 'ssl')
 
 WALLET_TYPES = ['software', 'ledger', 'sgx']
 DELEGATION_PERIOD_OPTIONS = ['3', '6', '9', '12']  # strings because of click.Choice design
+
+PERMILLE_MULTIPLIER = 10

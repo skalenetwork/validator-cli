@@ -61,6 +61,26 @@ class PermilleType(click.ParamType):
             )
 
 
+class FloatPercentageType(click.ParamType):
+    name = 'float_percentage'
+
+    def convert(self, value, param, ctx):
+        val = float(value)
+        if round(val, 1) != val:
+            self.fail(
+                f'Wrong percentage value provided: {value} could have only 1 decimal',
+                param,
+                ctx
+            )
+        if val <= 0 or val >= 100:
+            self.fail(
+                f'Wrong percentage value provided: {value}, should be in range(0, 100)',
+                param,
+                ctx
+            )
+        return value
+
+
 class UrlType(click.ParamType):
     name = 'url'
 

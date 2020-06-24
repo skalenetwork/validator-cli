@@ -23,7 +23,7 @@ import urllib
 import logging
 
 from web3 import Web3
-from utils.constants import SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE
+from utils.constants import SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE, PERMILLE_MULTIPLIER
 
 logger = logging.getLogger(__name__)
 
@@ -82,3 +82,11 @@ def from_wei(val):
 
 def to_wei(val):
     return Web3.toWei(val, 'ether')
+
+
+def permille_to_percent(val):
+    return int(val) / PERMILLE_MULTIPLIER
+
+
+def percent_to_permille(val):
+    return int(val * PERMILLE_MULTIPLIER)

@@ -25,13 +25,12 @@ from core.validator import (register, validators_list, delegations, accept_pendi
                             linked_addresses, info, withdraw_fee, set_mda, change_address,
                             confirm_address, earned_fees)
 from utils.helper import abort_if_false
-from utils.validations import EthAddressType, PercentageType, UrlType, PermilleType
+from utils.validations import EthAddressType, UrlType, FloatPercentageType
 from utils.texts import Texts
 
 
 ETH_ADDRESS_TYPE = EthAddressType()
-PERCENTAGE_TYPE = PercentageType()
-PERMILLE_TYPE = PermilleType()
+FLOAT_PERCENTAGE_TYPE = FloatPercentageType()
 URL_TYPE = UrlType()
 
 G_TEXTS = Texts()
@@ -63,7 +62,7 @@ def validator():
 )
 @click.option(
     '--commission-rate', '-c',
-    type=PERMILLE_TYPE,
+    type=FLOAT_PERCENTAGE_TYPE,
     help=TEXTS['register']['commission_rate']['help'],
     prompt=TEXTS['register']['commission_rate']['prompt']
 )
@@ -83,7 +82,7 @@ def _register(name, description, commission_rate, min_delegation, pk_file):
     register(
         name=name,
         description=description,
-        commission_rate=int(commission_rate),
+        commission_rate=float(commission_rate),
         min_delegation=int(min_delegation),
         pk_file=pk_file
     )

@@ -22,7 +22,7 @@ import datetime
 import texttable
 
 from terminaltables import SingleTable
-from utils.helper import to_skl, from_wei
+from utils.helper import to_skl, from_wei, permille_to_percent
 
 
 def get_tty_width():
@@ -55,7 +55,7 @@ def print_validators(validators, wei):
         'Id',
         'Address',
         'Description',
-        'Fee rate (permille)',
+        'Fee rate (percent %)',
         'Registration time',
         f'Minimum delegation ({m_type})',
         'Validator status'
@@ -67,12 +67,13 @@ def print_validators(validators, wei):
         if not wei:
             validator['minimum_delegation_amount'] = from_wei(
                 validator['minimum_delegation_amount'])
+        fee_rate_percent = permille_to_percent(validator['fee_rate'])
         rows.append([
             validator['name'],
             validator['id'],
             validator['validator_address'],
             validator['description'],
-            validator['fee_rate'],
+            fee_rate_percent,
             date,
             validator['minimum_delegation_amount'],
             status
