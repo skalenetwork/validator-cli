@@ -6,7 +6,7 @@ from skale.utils.contracts_provision import MONTH_IN_SECONDS
 
 from cli.holder import (
     _delegate, _delegations, _cancel_delegation,
-    _undelegate, _locked, _withdraw_bounty
+    _undelegate, _locked, _withdraw_bounty, _earned_bounties
 )
 from utils.helper import to_wei
 from tests.conftest import str_contains
@@ -188,3 +188,17 @@ def test_withdraw_bounty(runner, skale):
     expected_output = f'\x1b[K✔ Bounty successfully transferred to {skale.wallet.address}'
     assert expected_output in output_list
     assert result.exit_code == 0
+
+
+def test_earned_bounties(runner, skale):
+    earned_bounties = skale.distributor.get_earned_bounty_amount(
+        D_VALIDATOR_ID,
+        skale.wallet.address
+    )
+    result = runner.invoke(
+        _earned_bounties,
+        [str(D_VALIDATOR_ID), skale.wallet.address, '--wei']
+    )
+    output = result.output
+    assert result.exit_code == 0
+    assert output == f'Earned bounties for {skale.wallet.address}, validator ID - {D_VALIDATOR_ID}: {earned_bounties["earned"]} WEI\nEnd month: {earned_bounties["end_month"]}\n'  # noqa

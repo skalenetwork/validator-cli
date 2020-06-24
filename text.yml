@@ -78,6 +78,8 @@ validator:
     help: Request address change for the validator
   confirm_address:
     help: Confirm address change for the validator
+  earned_fees:
+    help: Get earned fee amount for the validator address
 holder:
   help: Token holder commands
   delegate:
@@ -112,6 +114,8 @@ holder:
     help: Withdraw earned bounty to specified address
     confirm: |-
       Are you sure you want to withdraw bounty?
+  earned_bounties:
+    help: Get earned bounties amount by token holder for the validator address
 msg:
   run_init: You should run < init > first
   limit:
@@ -130,6 +134,8 @@ pk_file:
   help: Path to file with private key (only for `software` wallet type)
 yes_opt:
   prompt: Are you sure?
+wei:
+  help: Show amount in wei
 
 metrics:
   help: Node metrics commands

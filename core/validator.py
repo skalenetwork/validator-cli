@@ -227,3 +227,18 @@ def confirm_address(validator_id, pk_file):
             sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
             return
         sp.write(f'✔ Validator address changed')
+
+
+def earned_fees(validator_address, wei):
+    skale = init_skale_from_config()
+    if not skale:
+        return
+    earned_fee = skale.distributor.get_earned_fee_amount(validator_address)
+    earned_fee_amount = earned_fee['earned']
+    earned_fee_msg = f'Earned fee for {validator_address}: '
+    if not wei:
+        earned_fee_amount = from_wei(earned_fee_amount)
+        earned_fee_msg += f'{earned_fee_amount} SKL'
+    else:
+        earned_fee_msg += f'{earned_fee_amount} WEI'
+    print(earned_fee_msg + f'\nEnd month: {earned_fee["end_month"]}')

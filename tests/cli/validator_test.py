@@ -11,7 +11,8 @@ from web3 import Web3
 
 from cli.validator import (_bond_amount, _register, _ls, _delegations, _accept_delegation,
                            _link_address, _unlink_address, _linked_addresses,
-                           _info, _withdraw_fee, _set_mda, _change_address, _confirm_address)
+                           _info, _withdraw_fee, _set_mda, _change_address, _confirm_address,
+                           _earned_fees)
 from tests.conftest import str_contains
 from tests.constants import (
     D_VALIDATOR_NAME, D_VALIDATOR_DESC, D_VALIDATOR_FEE, D_VALIDATOR_ID,
@@ -357,3 +358,14 @@ def test_confirm_address(runner, skale):
     output_list = result.output.splitlines()
     assert result.exit_code == 0
     assert '\x1b[K✔ Validator address changed' in output_list
+
+
+def test_earned_fees(runner, skale):
+    earned_fee = skale.distributor.get_earned_fee_amount(skale.wallet.address)
+    result = runner.invoke(
+        _earned_fees,
+        [skale.wallet.address, '--wei']
+    )
+    output = result.output
+    assert result.exit_code == 0
+    assert output == f'Earned fee for {skale.wallet.address}: {earned_fee["earned"]} WEI\nEnd month: {earned_fee["end_month"]}\n'  # noqa
