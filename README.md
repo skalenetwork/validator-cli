@@ -400,7 +400,7 @@ Options:
 
 #### Earned bounties
 
-Get earned bounties amount by token holder for the validator address
+Get earned bounties amount by token holder for the validator ID
 
 ```bash
 sk-val holder earned-bounties [VALIDATOR_ID] [ADDRESS]
