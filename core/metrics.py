@@ -95,7 +95,7 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
             block_timestamp = datetime.utcfromtimestamp(block_data['timestamp'])
             if start_date is not None and start_date > block_timestamp:
                 return metrics_rows
-            if end_date is None or end_date > block_timestamp:
+            if args['nodeIndex'] == node_id and (end_date is None or end_date > block_timestamp):
                 bounty = args['bounty']
                 metrics_row = [str(block_timestamp),
                                bounty,
