@@ -20,8 +20,7 @@ def check_if_validator_is_registered(skale, val_id):
 
 
 def get_nodes_for_validator(skale, val_id):
-    validator_service = skale.get_contract_by_name('validator_service')
-    return validator_service.contract.functions.getValidatorNodeIndexes(val_id).call()
+    return skale.nodes.get_validator_node_indices(val_id)
 
 
 def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei=None,

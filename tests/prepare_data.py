@@ -64,11 +64,11 @@ def get_bounties(skale):
 
 def set_test_msr(msr=D_VALIDATOR_MIN_DEL):
     skale = init_skale_w_wallet_from_config(pk_file=TEST_PK_FILE)
-    tx_res = skale.constants_holder._set_msr(
+    skale.constants_holder._set_msr(
         new_msr=msr,
         wait_for=True
     )
-    tx_res.raise_for_status()
+    skale.validator_service.set_validator_mda(0, wait_for=True)
 
 
 if __name__ == '__main__':
