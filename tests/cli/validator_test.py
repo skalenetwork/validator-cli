@@ -1,12 +1,14 @@
 """ Tests for cli/validator.py module """
 
+import copy
 import random
-import datetime
+from datetime import datetime
 
 from skale.wallets.web3_wallet import generate_wallet
 from skale.utils.account_tools import send_ether
 from skale.utils.contracts_provision.main import _skip_evm_time
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
+from utils.helper import from_wei, permille_to_percent
 from web3 import Web3
 
 from cli.validator import (_bond_amount, _register, _ls, _delegations, _accept_delegation,
@@ -69,16 +71,49 @@ def test_register(runner, skale):
     assert result.exit_code == 0
 
 
+def check_validator_fields(expected, actual, fields):
+    for i, field in enumerate(fields):
+        assert str(actual[i]) == str(expected[field])
+
+
+def convert_validators_info(validator_info):
+    result = []
+    for data in validator_info:
+        info = copy.deepcopy(data)
+        info['fee_rate'] = permille_to_percent(info['fee_rate'])
+        info['minimum_delegation_amount'] = from_wei(
+            info['minimum_delegation_amount']
+        )
+        info['status'] = 'Trusted' if info['trusted'] else 'Registered'
+        info['registration_time'] = datetime.fromtimestamp(
+            info['registration_time']
+        ).strftime('%d.%m.%Y-%H:%M:%S')
+        result.append(info)
+    return result
+
+
 def test_ls(runner, skale):
     result = runner.invoke(_ls)
     output_list = result.output.splitlines()
 
-    validators = skale.validator_service.ls()
-    registration_time = datetime.datetime.fromtimestamp(
-        validators[0]['registration_time'])
-    assert "Name   Id                    Address                     Description   Fee rate (percent %)    Registration time    Minimum delegation (SKL)   Validator status" in output_list  # noqa
-    assert "---------------------------------------------------------------------------------------------------------------------------------------------------------------" in output_list  # noqa
-    assert f'test   1    {skale.wallet.address}   test          1.0                    {registration_time}   1E-12                      Trusted         ' in output_list  # noqa
+    validators_info = skale.validator_service.ls()
+    converted_info = convert_validators_info(validators_info)
+    expected_info = list(filter(lambda v: v['status'] == 'Trusted',
+                                converted_info))
+
+    header = list(filter(lambda s: s.strip().startswith('Name'), output_list))
+    assert len(header) == 1
+    pos = output_list.index(header[0])
+    actual_info = output_list[pos + 2:]
+
+    fields = ['name', 'id', 'validator_address', 'description', 'fee_rate',
+              'registration_time', 'minimum_delegation_amount',
+              'status']
+    assert len(actual_info) == len(expected_info)
+    for plain_actual, expected in zip(actual_info, expected_info):
+        actual = plain_actual.split()
+        check_validator_fields(expected, actual, fields)
+
     assert result.exit_code == 0
 
 
@@ -89,13 +124,22 @@ def test_ls_all(runner, skale):
     result = runner.invoke(_ls, args="--all")
     output_list = result.output.splitlines()
 
-    validators = skale.validator_service.ls()
-    registration_time = list(map(lambda x: datetime.datetime.fromtimestamp(x['registration_time']),
-                                 validators))
-    assert "Name   Id                    Address                     Description   Fee rate (percent %)    Registration time    Minimum delegation (SKL)   Validator status" in output_list  # noqa
-    assert "---------------------------------------------------------------------------------------------------------------------------------------------------------------" in output_list  # noqa
-    assert f'test   1    {validators[0]["validator_address"]}   test          1.0                    {registration_time[0]}   1E-12                      Trusted         ' in output_list  # noqa
-    assert f'test   2    {validators[1]["validator_address"]}   test          10.5                   {registration_time[1]}   1000                       Registered      ' in output_list  # noqa
+    validator_info = skale.validator_service.ls()
+    expected_info = convert_validators_info(validator_info)
+
+    header = list(filter(lambda s: s.strip().startswith('Name'), output_list))
+    assert len(header) == 1
+    pos = output_list.index(header[0])
+    actual_info = output_list[pos + 2:]
+
+    fields = ['name', 'id', 'validator_address', 'description', 'fee_rate',
+              'registration_time', 'minimum_delegation_amount',
+              'status']
+    assert len(actual_info) == len(expected_info)
+    for plain_actual, expected in zip(actual_info, expected_info):
+        actual = plain_actual.split()
+        check_validator_fields(expected, actual, fields)
+
     assert result.exit_code == 0
 
 
@@ -106,7 +150,7 @@ def test_delegations_skl(runner, skale):
     )
     output_list = result.output.splitlines()
     delegation = skale.delegation_controller.get_delegation(0)
-    created_time = datetime.datetime.fromtimestamp(delegation['created'])
+    created_time = datetime.fromtimestamp(delegation['created'])
     assert output_list[0] == f'Delegations for validator ID {D_VALIDATOR_ID}:'
     assert str_contains(output_list[2], [
         'Id', 'Delegator Address', 'Status', 'Validator Id', 'Amount (SKL)',
@@ -125,7 +169,7 @@ def test_delegations_wei(runner, skale):
     )
     output_list = result.output.splitlines()
     delegation = skale.delegation_controller.get_delegation(0)
-    created_time = datetime.datetime.fromtimestamp(delegation['created'])
+    created_time = datetime.fromtimestamp(delegation['created'])
 
     assert output_list[0] == f'Delegations for validator ID {D_VALIDATOR_ID}:'
     assert str_contains(output_list[2], [
@@ -265,7 +309,7 @@ def test_info(runner, skale):
     assert '\x1b(0x\x1b(B Name                            \x1b(0x\x1b(B test                                       \x1b(0x\x1b(B' in output_list  # noqa
     assert f'\x1b(0x\x1b(B Address                         \x1b(0x\x1b(B {skale.wallet.address} \x1b(0x\x1b(B' in output_list  # noqa
     assert '\x1b(0x\x1b(B Fee rate (percent %)            \x1b(0x\x1b(B 1.0                                        \x1b(0x\x1b(B' in output_list  # noqa
-    assert '\x1b(0x\x1b(B Minimum delegation amount (SKL) \x1b(0x\x1b(B 1E-12                                      \x1b(0x\x1b(B' in output_list  # noqa
+    assert '\x1b(0x\x1b(B Minimum delegation amount (SKL) \x1b(0x\x1b(B 0                                          \x1b(0x\x1b(B', '\x1b(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj\x1b(B'  # noqa
     # assert '\x1b(0x\x1b(B Accepting delegation requests   \x1b(0x\x1b(B Yes                                        \x1b(0x\x1b(B' in output_list  # noqa
 
 
