@@ -101,8 +101,7 @@ def withdraw_bounty(validator_id, recipient_address, pk_file):
     with yaspin(text='Withdrawing bounty', color=SPIN_COLOR) as sp:
         tx_res = skale.distributor.withdraw_bounty(
             validator_id=validator_id,
-            to=recipient_address,
-            raise_for_status=False
+            to=recipient_address
         )
         if not check_tx_result(tx_res.tx_hash, skale.web3):
             sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')

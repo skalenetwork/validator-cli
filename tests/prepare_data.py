@@ -4,7 +4,11 @@ import random
 import string
 import time
 
-from skale.utils.contracts_provision.main import setup_validator, cleanup_nodes_schains
+from skale.utils.contracts_provision import MONTH_IN_SECONDS
+from skale.utils.contracts_provision.main import (
+    setup_validator,
+    cleanup_nodes_schains, _skip_evm_time
+)
 from skale.utils.helper import init_default_logger
 
 from tests.constants import (NODE_ID, TEST_DELTA, TEST_EPOCH, TEST_NODE_NAME, TEST_PK_FILE,
@@ -71,7 +75,7 @@ def set_test_msr(msr=D_VALIDATOR_MIN_DEL):
     skale.validator_service.set_validator_mda(0, wait_for=True)
 
 
-if __name__ == '__main__':
+def main():
     init_default_logger()
     skale = init_skale_w_wallet_from_config(pk_file=TEST_PK_FILE)
     cleanup_nodes_schains(skale)
@@ -79,5 +83,11 @@ if __name__ == '__main__':
     accelerate_skale_manager(skale)
     set_test_msr(0)
     create_nodes(skale, TEST_NODES_COUNT)
+    skale.constants_holder.set_launch_timestamp(int(time.time()))
+    _skip_evm_time(skale.web3, MONTH_IN_SECONDS * 3)
     get_bounties(skale)
     set_test_msr()
+
+
+if __name__ == '__main__':
+    main()
