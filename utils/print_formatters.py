@@ -62,7 +62,8 @@ def print_validators(validators, wei):
     ]
     rows = []
     for validator in validators:
-        date = datetime.datetime.fromtimestamp(validator['registration_time'])
+        dt = datetime.datetime.fromtimestamp(validator['registration_time'])
+        strtime = dt.strftime('%d.%m.%Y-%H:%M:%S')
         status = 'Trusted' if validator['trusted'] else 'Registered'
         if not wei:
             validator['minimum_delegation_amount'] = from_wei(
@@ -74,7 +75,7 @@ def print_validators(validators, wei):
             validator['validator_address'],
             validator['description'],
             fee_rate_percent,
-            date,
+            strtime,
             validator['minimum_delegation_amount'],
             status
         ])
