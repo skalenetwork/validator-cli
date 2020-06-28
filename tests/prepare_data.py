@@ -11,7 +11,8 @@ from skale.utils.contracts_provision.main import (
 )
 from skale.utils.helper import init_default_logger
 
-from tests.constants import (NODE_ID, TEST_DELTA, TEST_EPOCH, TEST_NODE_NAME, TEST_PK_FILE,
+from tests.constants import (NODE_ID, TEST_CHECKTIME, TEST_DELTA, TEST_EPOCH,
+                             TEST_NODE_NAME, TEST_PK_FILE,
                              D_VALIDATOR_MIN_DEL, TEST_NODES_COUNT)
 from utils.web3_utils import init_skale_w_wallet_from_config
 
@@ -21,8 +22,8 @@ def accelerate_skale_manager(skale):
     delta_period = skale.constants_holder.get_delta_period()
     print(f'Existing times for SM: {reward_period}, {delta_period}')
 
-    tx_res = skale.constants_holder.set_periods(TEST_EPOCH, TEST_DELTA, wait_for=True)
-    tx_res.raise_for_status()
+    skale.constants_holder.set_check_time(TEST_CHECKTIME, wait_for=True)
+    skale.constants_holder.set_periods(TEST_EPOCH, TEST_DELTA, wait_for=True)
     reward_period = skale.constants_holder.get_reward_period()
     delta_period = skale.constants_holder.get_delta_period()
     print(f'New times for SM: {reward_period}, {delta_period}')
