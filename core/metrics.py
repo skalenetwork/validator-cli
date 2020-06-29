@@ -15,8 +15,7 @@ def check_if_node_is_registered(skale, node_id):
 
 
 def check_if_validator_is_registered(skale, val_id):
-    validator_service = skale.get_contract_by_name('validator_service')
-    return validator_service.contract.functions.validatorExists(val_id).call()
+    return skale.validator_service.validator_exists(val_id)
 
 
 def get_nodes_for_validator(skale, val_id):
