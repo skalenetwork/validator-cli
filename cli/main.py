@@ -32,6 +32,7 @@ from cli.holder import holder_cli
 from cli.sgx_wallet import sgx_cli
 from utils.validations import UrlType
 from utils.texts import Texts
+from utils.logs import init_logger, init_log_dir
 from utils.helper import safe_mk_dirs, write_json, download_file
 from utils.constants import (SKALE_VAL_CONFIG_FOLDER, SKALE_VAL_CONFIG_FILE,
                              SKALE_VAL_ABI_FILE, LONG_LINE, WALLET_TYPES)
@@ -102,6 +103,8 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 sys.excepthook = handle_exception
 
 if __name__ == '__main__':
+    init_log_dir()
+    init_logger()
     logger.info(f'cmd: {" ".join(str(x) for x in sys.argv)}, v.{__version__}')
     cmd_collection = click.CommandCollection(sources=[cli, validator_cli, holder_cli,
                                                       metrics_cli, sgx_cli])

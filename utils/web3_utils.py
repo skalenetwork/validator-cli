@@ -21,7 +21,7 @@ import os
 from yaspin import yaspin
 from skale import Skale
 
-from skale.utils.web3_utils import init_web3, wait_receipt, check_receipt
+from skale.utils.web3_utils import init_web3
 from skale.wallets import LedgerWallet, SgxWallet, Web3Wallet
 
 from core.sgx_tools import get_sgx_info, sgx_inited
@@ -86,8 +86,3 @@ def init_skale_w_wallet_from_config(pk_file=None):
 def get_data_from_config():
     config = get_config()
     return config['endpoint'], config['wallet']
-
-
-def check_tx_result(tx_hash, web3):
-    receipt = wait_receipt(web3, tx_hash)
-    return check_receipt(receipt, raise_error=False)

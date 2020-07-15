@@ -21,8 +21,10 @@
 from yaspin import yaspin
 from terminaltables import SingleTable
 
-from utils.web3_utils import (init_skale_from_config, init_skale_w_wallet_from_config,
-                              check_tx_result)
+from skale.transactions.result import (DryRunFailedError, InsufficientBalanceError,
+                                       TransactionFailedError)
+
+from utils.web3_utils import (init_skale_from_config, init_skale_w_wallet_from_config)
 from utils.print_formatters import (print_bond_amount, print_validators,
                                     print_delegations, print_linked_addresses)
 from utils.helper import to_wei, from_wei, percent_to_permille, permille_to_percent
@@ -42,10 +44,13 @@ def register(name: str, description: str, commission_rate: float, min_delegation
             description=description,
             fee_rate=commission_rate_permille,
             min_delegation_amount=min_delegation_wei,
-            raise_for_status=False
+            raise_for_status=False,
+            wait_for=True
         )
-        if not check_tx_result(tx_res.tx_hash, skale.web3):
-            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+        try:
+            tx_res.raise_for_status()
+        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+            sp.write(str(err))
             return
         sp.write("✔ New validator registered")
 
@@ -76,10 +81,13 @@ def accept_pending_delegation(delegation_id, pk_file: str) -> None:
     with yaspin(text='Accepting delegation request', color=SPIN_COLOR) as sp:
         tx_res = skale.delegation_controller.accept_pending_delegation(
             delegation_id=delegation_id,
-            raise_for_status=False
+            raise_for_status=False,
+            wait_for=True
         )
-        if not check_tx_result(tx_res.tx_hash, skale.web3):
-            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+        try:
+            tx_res.raise_for_status()
+        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+            sp.write(str(err))
             return
         sp.write(f'✔ Delegation request with ID {delegation_id} accepted')
 
@@ -92,10 +100,13 @@ def link_node_address(node_address: str, signature: str, pk_file: str) -> None:
         tx_res = skale.validator_service.link_node_address(
             node_address=node_address,
             signature=signature,
-            raise_for_status=False
+            raise_for_status=False,
+            wait_for=True
         )
-        if not check_tx_result(tx_res.tx_hash, skale.web3):
-            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+        try:
+            tx_res.raise_for_status()
+        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+            sp.write(str(err))
             return
         sp.write(f'✔ Node address {node_address} linked to your validator address')
 
@@ -107,10 +118,13 @@ def unlink_node_address(node_address: str, pk_file: str) -> None:
     with yaspin(text='Unlinking node address', color=SPIN_COLOR) as sp:
         tx_res = skale.validator_service.unlink_node_address(
             node_address=node_address,
-            raise_for_status=False
+            raise_for_status=False,
+            wait_for=True
         )
-        if not check_tx_result(tx_res.tx_hash, skale.web3):
-            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+        try:
+            tx_res.raise_for_status()
+        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+            sp.write(str(err))
             return
         sp.write(f'✔ Node address {node_address} unlinked from your validator address')
 
@@ -166,10 +180,13 @@ def withdraw_fee(recipient_address, pk_file):
     with yaspin(text='Withdrawing fee', color=SPIN_COLOR) as sp:
         tx_res = skale.distributor.withdraw_fee(
             to=recipient_address,
-            raise_for_status=False
+            raise_for_status=False,
+            wait_for=True
         )
-        if not check_tx_result(tx_res.tx_hash, skale.web3):
-            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+        try:
+            tx_res.raise_for_status()
+        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+            sp.write(str(err))
             return
         sp.write(f'✔ Earned fees successfully transferred to {recipient_address}')
 
@@ -190,10 +207,13 @@ def set_mda(new_mda, pk_file):
         new_mda_wei = to_wei(new_mda)
         tx_res = skale.validator_service.set_validator_mda(
             minimum_delegation_amount=new_mda_wei,
-            raise_for_status=False
+            raise_for_status=False,
+            wait_for=True
         )
-        if not check_tx_result(tx_res.tx_hash, skale.web3):
-            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+        try:
+            tx_res.raise_for_status()
+        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+            sp.write(str(err))
             return
         sp.write(f'✔ Minimum delegation amount for your validator ID changed to {new_mda}')
 
@@ -205,10 +225,13 @@ def change_address(address, pk_file):
     with yaspin(text='Requesting new validator address', color=SPIN_COLOR) as sp:
         tx_res = skale.validator_service.request_for_new_address(
             new_validator_address=address,
-            raise_for_status=False
+            raise_for_status=False,
+            wait_for=True
         )
-        if not check_tx_result(tx_res.tx_hash, skale.web3):
-            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+        try:
+            tx_res.raise_for_status()
+        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+            sp.write(str(err))
             return
         sp.write(
             f'✔ Requested new address for your validator ID: {address}.\n'
@@ -224,10 +247,13 @@ def confirm_address(validator_id, pk_file):
     with yaspin(text='Confirming validator address change', color=SPIN_COLOR) as sp:
         tx_res = skale.validator_service.confirm_new_address(
             validator_id=validator_id,
-            raise_for_status=False
+            raise_for_status=False,
+            wait_for=True
         )
-        if not check_tx_result(tx_res.tx_hash, skale.web3):
-            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+        try:
+            tx_res.raise_for_status()
+        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+            sp.write(str(err))
             return
         sp.write(f'✔ Validator address changed')
 

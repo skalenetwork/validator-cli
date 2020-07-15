@@ -20,10 +20,11 @@
 from yaspin import yaspin
 from skale.utils.web3_utils import (wait_receipt, check_receipt,
                                     to_checksum_address)
+from skale.transactions.result import (DryRunFailedError, InsufficientBalanceError,
+                                       TransactionFailedError)
 
 from utils.helper import to_skl
-from utils.web3_utils import (check_tx_result,
-                              init_skale_from_config,
+from utils.web3_utils import (init_skale_from_config,
                               init_skale_w_wallet_from_config)
 from utils.print_formatters import print_delegations
 from utils.helper import to_wei, from_wei
@@ -101,10 +102,14 @@ def withdraw_bounty(validator_id, recipient_address, pk_file):
     with yaspin(text='Withdrawing bounty', color=SPIN_COLOR) as sp:
         tx_res = skale.distributor.withdraw_bounty(
             validator_id=validator_id,
-            to=recipient_address
+            to=recipient_address,
+            raise_for_status=False,
+            wait_for=True
         )
-        if not check_tx_result(tx_res.tx_hash, skale.web3):
-            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+        try:
+            tx_res.raise_for_status()
+        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+            sp.write(str(err))
             return
         sp.write(f'✔ Bounty successfully transferred to {recipient_address}')
 
