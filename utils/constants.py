@@ -56,3 +56,14 @@ WALLET_TYPES = ['software', 'ledger', 'sgx']
 DELEGATION_PERIOD_OPTIONS = ['3', '6', '9', '12']  # strings because of click.Choice design
 
 PERMILLE_MULTIPLIER = 10
+
+
+LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+LOG_FILE_SIZE_MB = 50
+LOG_FILE_SIZE_BYTES = LOG_FILE_SIZE_MB * 1000000
+
+LOG_BACKUP_COUNT = 2
+LOG_DATA_PATH = os.path.join(SKALE_VAL_CONFIG_FOLDER, 'log')
+LOG_FILEPATH = os.path.join(LOG_DATA_PATH, 'sk-val.log')
+DEBUG_LOG_FILEPATH = os.path.join(LOG_DATA_PATH, 'debug-sk-val.log')
