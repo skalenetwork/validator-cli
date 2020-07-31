@@ -10,6 +10,9 @@ SECOND_TEST_PK_FILE = os.path.join(HERE, 'second-test-pk.txt')
 ADDRESS_CHANGE_PK_FILE_1 = os.path.join(HERE, 'ch-test-pk-1.txt')
 ADDRESS_CHANGE_PK_FILE_2 = os.path.join(HERE, 'ch-test-pk-2.txt')
 
+PROJECT_DIR = os.path.join(HERE, os.pardir)
+DIST_DIR = os.path.join(PROJECT_DIR, 'dist')
+
 # validator
 
 D_VALIDATOR_ID = 1
