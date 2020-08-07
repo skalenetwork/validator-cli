@@ -57,5 +57,5 @@ fi
 mv $PARENT_DIR/dist/main $PARENT_DIR/dist/$EXECUTABLE_NAME
 
 echo "========================================================================================="
-echo "Built node-cli v$VERSION, branch: $BRANCH"
+echo "Built validator-cli v$VERSION, branch: $BRANCH"
 echo "Executable: $EXECUTABLE_NAME"

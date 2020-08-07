@@ -72,7 +72,7 @@ setup(
     long_description_markdown_filename='README.md',
     author='SKALE Labs',
     author_email='support@skalelabs.com',
-    url='https://github.com/skalenetwork/validators-cli',
+    url='https://github.com/skalenetwork/validator-cli',
     install_requires=[
         "click==7.1.2",
         "skale.py==3.10dev1",
