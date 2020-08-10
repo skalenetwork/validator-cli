@@ -17,13 +17,13 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import threading
+import time
 from datetime import datetime
 
 from web3.logs import DISCARD
 
 import pandas as pd
-import threading
-
 from utils.helper import to_skl
 
 BLOCK_CHUNK_SIZE = 1000
@@ -43,6 +43,7 @@ def get_nodes_for_validator(skale, val_id):
 
 def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei=None,
                               to_file=None):
+    start = time.time()
     class nodeThread(threading.Thread):
         def __init__(self, node_id):
             threading.Thread.__init__(self)
@@ -78,10 +79,13 @@ def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei
             df.to_csv(to_file, index=False)
     else:
         metrics_rows = metrics_sums = total_bounty = None
+    end = time.time()
+    print(f'Check completed. Execution time = {end - start}')
     return {'rows': metrics_rows, 'totals': metrics_sums}, total_bounty
 
 
 def get_metrics_for_node(skale, node_id, start_date=None, end_date=None, wei=None, to_file=None):
+    start = time.time()
     metrics = get_metrics_from_events(skale, node_id, start_date, end_date)
     columns = ['Date', 'Bounty', 'Downtime', 'Latency']
     df = pd.DataFrame(metrics, columns=columns)
@@ -91,6 +95,8 @@ def get_metrics_for_node(skale, node_id, start_date=None, end_date=None, wei=Non
     metrics_rows = df.values.tolist()
     if to_file:
         df.to_csv(to_file, index=False)
+    end = time.time()
+    print(f'Check completed. Execution time = {end - start}')
     return metrics_rows, total_bounty
 
 
@@ -100,6 +106,7 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
 
     block_number = skale.monitors.get_last_bounty_block(node_id)
     while True:
+        print(block_number)
         block_data = skale.web3.eth.getBlock(block_number)
         txs = block_data["transactions"]
         for tx in txs:
@@ -109,6 +116,7 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
             if len(h_receipt) == 0:
                 continue
             args = h_receipt[0]['args']
+            print(args)
             block_timestamp = datetime.utcfromtimestamp(block_data['timestamp'])
             if start_date is not None and start_date > block_timestamp:
                 return metrics_rows
@@ -121,7 +129,8 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
                 if is_validator:
                     metrics_row.insert(1, args['nodeIndex'])
                 metrics_rows.append(metrics_row)
-            block_number = args['previousBlockEvent']
+                block_number = args['previousBlockEvent']
+                break
 
         if block_number is None or block_number == 0:
             break
