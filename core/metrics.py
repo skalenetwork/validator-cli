@@ -111,7 +111,10 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
             block_timestamp = datetime.utcfromtimestamp(block_data['timestamp'])
             if start_date is not None and start_date > block_timestamp:
                 return metrics_rows
-            if args['nodeIndex'] == node_id and (end_date is None or end_date > block_timestamp):
+            if args['nodeIndex'] == node_id:
+                block_number = args['previousBlockEvent']
+                if end_date is not None and end_date <= block_timestamp:
+                    break
                 bounty = args['bounty']
                 metrics_row = [str(block_timestamp),
                                bounty,
@@ -120,7 +123,6 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
                 if is_validator:
                     metrics_row.insert(1, args['nodeIndex'])
                 metrics_rows.append(metrics_row)
-                block_number = args['previousBlockEvent']
                 break
 
         if block_number is None or block_number == 0:
