@@ -18,6 +18,7 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+import click
 from yaspin import yaspin
 from terminaltables import SingleTable
 
@@ -90,6 +91,43 @@ def accept_pending_delegation(delegation_id, pk_file: str) -> None:
             sp.write(str(err))
             return
         sp.write(f'✔ Delegation request with ID {delegation_id} accepted')
+
+
+def accept_all_delegations(pk_file: str) -> None:
+    skale = init_skale_w_wallet_from_config(pk_file)
+    if not skale:
+        return
+    validator_id = skale.validator_service.validator_id_by_address(skale.wallet.address)
+    delegations_list = skale.delegation_controller.get_all_delegations_by_validator(
+        validator_id)
+
+    pending_delegations = list(filter(lambda delegation: delegation['status'] == 'PROPOSED',
+                                      delegations_list))
+    n_of_pending_delegations = len(pending_delegations)
+    if n_of_pending_delegations == 0:
+        print('No pending delegations to accept')
+        exit(0)
+
+    print(f'\n{n_of_pending_delegations} delegation(s) will be accepted:\n')
+    print_delegations(pending_delegations, False)
+
+    if not click.confirm('\nDo you want to continue?'):
+        print('Operation canceled')
+        exit(0)
+
+    with yaspin(text='Accepting ALL delegation requests', color=SPIN_COLOR) as sp:
+        for delegation in pending_delegations:
+            tx_res = skale.delegation_controller.accept_pending_delegation(
+                delegation_id=delegation['id'],
+                raise_for_status=False,
+                wait_for=True
+            )
+            try:
+                tx_res.raise_for_status()
+            except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+                sp.write(str(err))
+                return
+            sp.write(f'✔ Delegation request with ID {delegation["id"]} accepted')
 
 
 def link_node_address(node_address: str, signature: str, pk_file: str) -> None:

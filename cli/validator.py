@@ -23,7 +23,7 @@ from web3 import Web3
 from core.validator import (register, validators_list, delegations, accept_pending_delegation,
                             get_bond_amount, link_node_address, unlink_node_address,
                             linked_addresses, info, withdraw_fee, set_mda, change_address,
-                            confirm_address, earned_fees)
+                            confirm_address, earned_fees, accept_all_delegations)
 from utils.helper import abort_if_false
 from utils.validations import EthAddressType, UrlType, FloatPercentageType
 from utils.texts import Texts
@@ -119,6 +119,17 @@ def _delegations(validator_id, wei):
 def _accept_delegation(delegation_id, pk_file):
     accept_pending_delegation(
         delegation_id=int(delegation_id),
+        pk_file=pk_file
+    )
+
+
+@validator.command('accept-all-delegations', help=TEXTS['accept_all_delegations']['help'])
+@click.option(
+    '--pk-file',
+    help=G_TEXTS['pk_file']['help']
+)
+def _accept_all_delegations(pk_file):
+    accept_all_delegations(
         pk_file=pk_file
     )
 

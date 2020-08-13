@@ -4,6 +4,8 @@ import copy
 import random
 from datetime import datetime
 
+import mock
+
 from skale.wallets.web3_wallet import generate_wallet
 from skale.utils.account_tools import send_ether
 from skale.utils.contracts_provision.main import _skip_evm_time
@@ -14,13 +16,14 @@ from web3 import Web3
 from cli.validator import (_bond_amount, _register, _ls, _delegations, _accept_delegation,
                            _link_address, _unlink_address, _linked_addresses,
                            _info, _withdraw_fee, _set_mda, _change_address, _confirm_address,
-                           _earned_fees)
+                           _earned_fees, _accept_all_delegations)
 from tests.conftest import str_contains
 from tests.constants import (
     D_VALIDATOR_NAME, D_VALIDATOR_DESC, D_VALIDATOR_FEE, D_VALIDATOR_ID,
     D_VALIDATOR_MIN_DEL, SECOND_TEST_PK_FILE, D_DELEGATION_AMOUNT, D_DELEGATION_PERIOD,
     D_DELEGATION_INFO, TEST_PK_FILE, ADDRESS_CHANGE_PK_FILE_1, ADDRESS_CHANGE_PK_FILE_2
 )
+from tests.prepare_data import set_test_mda
 
 
 def create_new_validator(skale, runner, pk_file_path):
@@ -183,6 +186,7 @@ def test_delegations_wei(runner, skale):
 
 
 def test_accept_delegation(runner, skale):
+    set_test_mda()
     skale.delegation_controller.delegate(
         validator_id=D_VALIDATOR_ID,
         amount=D_DELEGATION_AMOUNT,
@@ -210,6 +214,49 @@ def test_accept_delegation(runner, skale):
     )
     assert delegations[-1]['id'] == delegation_id
     assert delegations[-1]['status'] == 'ACCEPTED'
+    assert result.exit_code == 0
+    _skip_evm_time(skale.web3, MONTH_IN_SECONDS)
+
+
+# @mock.patch('click.confirm', True)
+def test_accept_all_delegations(runner, skale):
+    n_of_delegations = 2
+    set_test_mda()
+    for _ in range(n_of_delegations):
+        print('Delegating...')
+        skale.delegation_controller.delegate(
+            validator_id=D_VALIDATOR_ID,
+            amount=D_DELEGATION_AMOUNT,
+            delegation_period=D_DELEGATION_PERIOD,
+            info=D_DELEGATION_INFO,
+            wait_for=True
+        )
+    delegations = skale.delegation_controller.get_all_delegations_by_validator(
+        validator_id=D_VALIDATOR_ID
+    )
+
+    delegation_id_1 = delegations[-1]['id']
+    delegation_id_2 = delegations[-2]['id']
+    assert delegations[-1]['status'] == 'PROPOSED'
+    assert delegations[-2]['status'] == 'PROPOSED'
+
+    with mock.patch('click.confirm', return_value=True):
+        result = runner.invoke(
+            _accept_all_delegations,
+            [
+                '--pk-file', TEST_PK_FILE
+            ]
+        )
+
+    delegations = skale.delegation_controller.get_all_delegations_by_validator(
+        validator_id=D_VALIDATOR_ID
+    )
+    assert delegations[-1]['id'] == delegation_id_1
+    assert delegations[-1]['status'] == 'ACCEPTED'
+
+    assert delegations[-2]['id'] == delegation_id_2
+    assert delegations[-2]['status'] == 'ACCEPTED'
+
     assert result.exit_code == 0
     _skip_evm_time(skale.web3, MONTH_IN_SECONDS)
 

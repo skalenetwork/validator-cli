@@ -76,6 +76,11 @@ def set_test_msr(msr=D_VALIDATOR_MIN_DEL):
     skale.validator_service.set_validator_mda(0, wait_for=True)
 
 
+def set_test_mda():
+    skale = init_skale_w_wallet_from_config(pk_file=TEST_PK_FILE)
+    skale.validator_service.set_validator_mda(0, wait_for=True)
+
+
 def main():
     init_default_logger()
     skale = init_skale_w_wallet_from_config(pk_file=TEST_PK_FILE)
