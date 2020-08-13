@@ -17,20 +17,20 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import threading
 from datetime import datetime
 
 from web3.logs import DISCARD
 
 import pandas as pd
-import threading
-
 from utils.helper import to_skl
 
 BLOCK_CHUNK_SIZE = 1000
 
 
 def check_if_node_is_registered(skale, node_id):
-    return node_id in skale.nodes.get_active_node_ids()
+    nodes_number = skale.nodes.contract.functions.getNumberOfNodes().call()
+    return node_id in range(0, nodes_number)
 
 
 def check_if_validator_is_registered(skale, val_id):
@@ -112,7 +112,10 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
             block_timestamp = datetime.utcfromtimestamp(block_data['timestamp'])
             if start_date is not None and start_date > block_timestamp:
                 return metrics_rows
-            if args['nodeIndex'] == node_id and (end_date is None or end_date > block_timestamp):
+            if args['nodeIndex'] == node_id:
+                block_number = args['previousBlockEvent']
+                if end_date is not None and end_date <= block_timestamp:
+                    break
                 bounty = args['bounty']
                 metrics_row = [str(block_timestamp),
                                bounty,
@@ -121,7 +124,7 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
                 if is_validator:
                     metrics_row.insert(1, args['nodeIndex'])
                 metrics_rows.append(metrics_row)
-            block_number = args['previousBlockEvent']
+                break
 
         if block_number is None or block_number == 0:
             break
