@@ -163,7 +163,7 @@ metrics:
       help: Save metrics to .csv file
 
 sgx:
-  help: Sgx wallet commad
+  help: Sgx wallet commands
   init:
     help: "Init sgx account by using sgx server prodvided with SGX-URL argument. \n
          Note: sgx server must be available over the network"
@@ -177,4 +177,9 @@ sgx:
   info: 
     help: Show information about sgx wallet
 
-
+wallet:
+  help: Wallet commands
+  send_eth:
+    help: Send ETH tokens to address
+  send_skl:
+    help: Send SKL tokens to address
