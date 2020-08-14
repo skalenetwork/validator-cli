@@ -6,12 +6,12 @@ from datetime import datetime
 
 import mock
 
+from web3 import Web3
 from skale.wallets.web3_wallet import generate_wallet
 from skale.utils.account_tools import send_ether
 from skale.utils.contracts_provision.main import _skip_evm_time
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
 from utils.helper import from_wei, permille_to_percent
-from web3 import Web3
 
 from cli.validator import (_bond_amount, _register, _ls, _delegations, _accept_delegation,
                            _link_address, _unlink_address, _linked_addresses,
@@ -218,7 +218,6 @@ def test_accept_delegation(runner, skale):
     _skip_evm_time(skale.web3, MONTH_IN_SECONDS)
 
 
-# @mock.patch('click.confirm', True)
 def test_accept_all_delegations(runner, skale):
     n_of_delegations = 2
     set_test_mda()
