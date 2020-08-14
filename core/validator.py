@@ -22,8 +22,7 @@ import click
 from yaspin import yaspin
 from terminaltables import SingleTable
 
-from skale.transactions.result import (DryRunFailedError, InsufficientBalanceError,
-                                       TransactionFailedError)
+from skale.transactions.result import TransactionError
 
 from utils.web3_utils import (init_skale_from_config, init_skale_w_wallet_from_config)
 from utils.print_formatters import (print_bond_amount, print_validators,
@@ -50,7 +49,7 @@ def register(name: str, description: str, commission_rate: float, min_delegation
         )
         try:
             tx_res.raise_for_status()
-        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+        except TransactionError as err:
             sp.write(str(err))
             return
         sp.write("✔ New validator registered")
@@ -87,7 +86,7 @@ def accept_pending_delegation(delegation_id, pk_file: str) -> None:
         )
         try:
             tx_res.raise_for_status()
-        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+        except TransactionError as err:
             sp.write(str(err))
             return
         sp.write(f'✔ Delegation request with ID {delegation_id} accepted')
@@ -124,7 +123,7 @@ def accept_all_delegations(pk_file: str) -> None:
             )
             try:
                 tx_res.raise_for_status()
-            except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+            except TransactionError as err:
                 sp.write(str(err))
                 return
             sp.write(f'✔ Delegation request with ID {delegation["id"]} accepted')
@@ -143,7 +142,7 @@ def link_node_address(node_address: str, signature: str, pk_file: str) -> None:
         )
         try:
             tx_res.raise_for_status()
-        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+        except TransactionError as err:
             sp.write(str(err))
             return
         sp.write(f'✔ Node address {node_address} linked to your validator address')
@@ -161,7 +160,7 @@ def unlink_node_address(node_address: str, pk_file: str) -> None:
         )
         try:
             tx_res.raise_for_status()
-        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+        except TransactionError as err:
             sp.write(str(err))
             return
         sp.write(f'✔ Node address {node_address} unlinked from your validator address')
@@ -223,7 +222,7 @@ def withdraw_fee(recipient_address, pk_file):
         )
         try:
             tx_res.raise_for_status()
-        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+        except TransactionError as err:
             sp.write(str(err))
             return
         sp.write(f'✔ Earned fees successfully transferred to {recipient_address}')
@@ -250,7 +249,7 @@ def set_mda(new_mda, pk_file):
         )
         try:
             tx_res.raise_for_status()
-        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+        except TransactionError as err:
             sp.write(str(err))
             return
         sp.write(f'✔ Minimum delegation amount for your validator ID changed to {new_mda}')
@@ -268,7 +267,7 @@ def change_address(address, pk_file):
         )
         try:
             tx_res.raise_for_status()
-        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+        except TransactionError as err:
             sp.write(str(err))
             return
         sp.write(
@@ -290,7 +289,7 @@ def confirm_address(validator_id, pk_file):
         )
         try:
             tx_res.raise_for_status()
-        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+        except TransactionError as err:
             sp.write(str(err))
             return
         sp.write(f'✔ Validator address changed')

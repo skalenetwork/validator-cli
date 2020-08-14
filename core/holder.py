@@ -20,8 +20,7 @@
 from yaspin import yaspin
 from skale.utils.web3_utils import (wait_receipt, check_receipt,
                                     to_checksum_address)
-from skale.transactions.result import (DryRunFailedError, InsufficientBalanceError,
-                                       TransactionFailedError)
+from skale.transactions.result import TransactionError
 
 from utils.helper import to_skl
 from utils.web3_utils import (init_skale_from_config,
@@ -108,7 +107,7 @@ def withdraw_bounty(validator_id, recipient_address, pk_file):
         )
         try:
             tx_res.raise_for_status()
-        except (DryRunFailedError, InsufficientBalanceError, TransactionFailedError) as err:
+        except TransactionError as err:
             sp.write(str(err))
             return
         sp.write(f'✔ Bounty successfully transferred to {recipient_address}')
