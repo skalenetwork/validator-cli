@@ -183,7 +183,13 @@ wallet:
     help: Send ETH tokens to address
     error: Funds sending failed
     success: Funds were successfully transferred
+    confirm: |-
+      Are you sure you want to send ETH?
+      Please, re-check all values above before confirming.
   send_skl:
     help: Send SKL tokens to address
     error: Funds sending failed
     success: Funds were successfully transferred
+    confirm: |-
+      Are you sure you want to send SKL?
+      Please, re-check all values above before confirming.
