@@ -181,5 +181,9 @@ wallet:
   help: Wallet commands
   send_eth:
     help: Send ETH tokens to address
+    error: Funds sending failed
+    success: Funds were successfully transferred
   send_skl:
     help: Send SKL tokens to address
+    error: Funds sending failed
+    success: Funds were successfully transferred
