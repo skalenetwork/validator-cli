@@ -79,7 +79,7 @@ setup(
         "terminaltables==3.1.0",
         "yaspin==0.16.0",
         "texttable==1.6.2",
-        "pandas==1.0.4",
+        "pandas==1.1.0",
         "terminaltables==3.1.0"
     ],
     python_requires='>=3.6,<4',
