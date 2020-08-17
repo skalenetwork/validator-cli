@@ -144,6 +144,19 @@ Optional arguments:
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
 -   `--yes` - Confirmation flag
 
+#### Accept all pending delegations
+
+Accept ALL pending delegations request for the address.  
+List with all pending delegations to be accepted will be shown. After this user should confirm the operation.
+
+```bash
+sk-val validator accept-all-delegations --pk-file ./pk.txt
+```
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+
 #### Validator linked addresses
 
 List of the linked addresses for validator address
