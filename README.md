@@ -24,7 +24,7 @@
 -   Download executable
 
 ```bash
-VERSION_NUM=0.1.0-develop.3 && sudo -E bash -c "curl -L https://validator-cli.sfo2.digitaloceanspaces.com/develop/sk-val-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/sk-val"
+VERSION_NUM={put the version number here} && sudo -E bash -c "curl -L https://validator-cli.sfo2.digitaloceanspaces.com/develop/sk-val-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/sk-val"
 ```
 
 -   Apply executable permissions to the binary:
@@ -32,6 +32,10 @@ VERSION_NUM=0.1.0-develop.3 && sudo -E bash -c "curl -L https://validator-cli.sf
 ```bash
 chmod +x /usr/local/bin/sk-val
 ```
+
+### Where to find out the latest version?
+
+All validator-cli version numbers are available here: https://github.com/skalenetwork/validator-cli/releases
 
 ## CLI Usage
 
