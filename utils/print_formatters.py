@@ -17,12 +17,12 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import os
 import datetime
-import texttable
+import os
 
+import texttable
 from terminaltables import SingleTable
-from utils.helper import to_skl, from_wei, permille_to_percent
+from utils.helper import from_wei, permille_to_percent, to_skl
 
 
 def get_tty_width():

@@ -18,16 +18,16 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
-from yaspin import yaspin
-from skale import Skale
 
+from skale import Skale
+from skale.utils.exceptions import IncompatibleAbiError
 from skale.utils.web3_utils import init_web3
 from skale.wallets import LedgerWallet, SgxWallet, Web3Wallet
 
 from core.sgx_tools import get_sgx_info, sgx_inited
 from utils.constants import SGX_SSL_CERTS_PATH, SKALE_VAL_ABI_FILE, SPIN_COLOR
 from utils.helper import get_config
-from skale.utils.exceptions import IncompatibleAbiError
+from yaspin import yaspin
 
 DISABLE_SPIN = os.getenv('DISABLE_SPIN')
 
