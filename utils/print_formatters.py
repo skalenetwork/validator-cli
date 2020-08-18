@@ -146,7 +146,7 @@ def print_node_metrics(rows, total, wei):
     table.add_rows([headers] + rows)
     table.set_deco(table.HEADER)
     table.set_chars(['-', '|', '+', '-'])
-    # print('\n')
+    print('\n')
     print(table.draw())
     print_total_info(total, wei)
 

@@ -19,6 +19,8 @@
 
 # import time
 import click
+from yaspin import yaspin
+from utils.constants import SPIN_COLOR
 
 from core.metrics import (
     check_if_node_is_registered, check_if_validator_is_registered, get_metrics_for_node,
@@ -79,8 +81,10 @@ def node(node_id, since, till, wei, to_file):
     if not check_if_node_is_registered(skale, node_id):
         print(TEXTS['node']['index']['id_error_msg'])
         return
-    print(TEXTS['node']['index']['wait_msg'])
-    metrics, total_bounty = get_metrics_for_node(skale, int(node_id), since, till, wei, to_file)
+    # print(TEXTS['node']['index']['wait_msg'])
+    with yaspin(text="Loading", color=SPIN_COLOR) as sp:
+        sp.text = TEXTS['node']['index']['wait_msg']
+        metrics, total_bounty = get_metrics_for_node(skale, int(node_id), since, till, wei, to_file)
     if metrics:
         print_node_metrics(metrics, total_bounty, wei)
     else:
@@ -122,8 +126,10 @@ def validator(val_id, since, till, wei, to_file):
     if not check_if_validator_is_registered(skale, val_id):
         print(TEXTS['validator']['index']['id_error_msg'])
         return
-    print(TEXTS['validator']['index']['wait_msg'])
-    metrics, total_bounty = get_metrics_for_validator(skale, val_id, since, till, wei, to_file)
+    # print(TEXTS['validator']['index']['wait_msg'])
+    with yaspin(text="Loading", color=SPIN_COLOR) as sp:
+        sp.text = TEXTS['validator']['index']['wait_msg']
+        metrics, total_bounty = get_metrics_for_validator(skale, val_id, since, till, wei, to_file)
     if metrics['rows']:
         print_validator_metrics(metrics['rows'], wei)
         print_validator_node_totals(metrics['totals'], total_bounty, wei)
