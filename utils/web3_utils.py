@@ -18,27 +18,32 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
-from yaspin import yaspin
-from skale import Skale
 
+from skale import Skale
+from skale.utils.exceptions import IncompatibleAbiError
 from skale.utils.web3_utils import init_web3
 from skale.wallets import LedgerWallet, SgxWallet, Web3Wallet
 
 from core.sgx_tools import get_sgx_info, sgx_inited
 from utils.constants import SGX_SSL_CERTS_PATH, SKALE_VAL_ABI_FILE, SPIN_COLOR
 from utils.helper import get_config
+from yaspin import yaspin
 
 DISABLE_SPIN = os.getenv('DISABLE_SPIN')
 
 
 def init_skale(endpoint, wallet=None, disable_spin=DISABLE_SPIN):
     """Init read-only instance of SKALE library"""
-    if disable_spin:
-        return Skale(endpoint, SKALE_VAL_ABI_FILE, wallet)
-    with yaspin(text="Loading", color=SPIN_COLOR) as sp:
-        sp.text = 'Connecting to SKALE Manager contracts'
-        skale = Skale(endpoint, SKALE_VAL_ABI_FILE, wallet)
-        return skale
+    try:
+        if disable_spin:
+            return Skale(endpoint, SKALE_VAL_ABI_FILE, wallet)
+        with yaspin(text="Loading", color=SPIN_COLOR) as sp:
+            sp.text = 'Connecting to SKALE Manager contracts'
+            skale = Skale(endpoint, SKALE_VAL_ABI_FILE, wallet)
+            return skale
+    except IncompatibleAbiError:
+        print('Version of validator-cli you use is incompatible with a given ABI!')
+        exit(0)
 
 
 def init_skale_w_wallet(endpoint, wallet_type, pk_file=None, disable_spin=DISABLE_SPIN):
