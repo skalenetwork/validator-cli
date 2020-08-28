@@ -18,6 +18,7 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
+import sys
 
 from skale import Skale
 from skale.utils.exceptions import IncompatibleAbiError
@@ -43,7 +44,7 @@ def init_skale(endpoint, wallet=None, disable_spin=DISABLE_SPIN):
             return skale
     except IncompatibleAbiError:
         print('Version of validator-cli you use is incompatible with a given ABI!')
-        exit(0)
+        sys.exit(0)
 
 
 def init_skale_w_wallet(endpoint, wallet_type, pk_file=None, disable_spin=DISABLE_SPIN):
