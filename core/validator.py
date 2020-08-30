@@ -105,14 +105,14 @@ def accept_all_delegations(pk_file: str) -> None:
     n_of_pending_delegations = len(pending_delegations)
     if n_of_pending_delegations == 0:
         print('No pending delegations to accept')
-        exit(0)
+        return
 
     print(f'\n{n_of_pending_delegations} delegation(s) will be accepted:\n')
     print_delegations(pending_delegations, False)
 
     if not click.confirm('\nDo you want to continue?'):
         print('Operation canceled')
-        exit(0)
+        return
 
     with yaspin(text='Accepting ALL delegation requests', color=SPIN_COLOR) as sp:
         for delegation in pending_delegations:

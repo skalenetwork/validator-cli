@@ -12,6 +12,7 @@
     2.2 [Validator commands](#validator-commands)  
     2.3 [Holder commands](#holder-commands)  
     2.4 [Metrics commands](#metrics-commands)
+    2.5 [Wallet commands](#)
 3.  [Development](#development)  
 
 ## Installation
@@ -23,7 +24,7 @@
 -   Download executable
 
 ```bash
-VERSION_NUM=0.1.0-develop.3 && sudo -E bash -c "curl -L https://validator-cli.sfo2.digitaloceanspaces.com/develop/sk-val-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/sk-val"
+VERSION_NUM={put the version number here} && sudo -E bash -c "curl -L https://validator-cli.sfo2.digitaloceanspaces.com/develop/sk-val-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/sk-val"
 ```
 
 -   Apply executable permissions to the binary:
@@ -31,6 +32,10 @@ VERSION_NUM=0.1.0-develop.3 && sudo -E bash -c "curl -L https://validator-cli.sf
 ```bash
 chmod +x /usr/local/bin/sk-val
 ```
+
+### Where to find out the latest version?
+
+All validator-cli version numbers are available here: https://github.com/skalenetwork/validator-cli/releases
 
 ## CLI Usage
 
@@ -482,6 +487,56 @@ Usage example:
 
 ```bash
 sk-val metrics validator -id 1 --since 2020-04-30 --till 2020-05-01 -w -f /home/user/filename.csv
+```
+
+### Wallet commands
+
+#### Send ETH tokens
+
+Send ETH tokens to specific address
+
+```bash
+sk-val wallet send-eth [ADDRESS] [AMOUNT]
+```
+
+Required arguments:
+
+1) ADDRESS - Ethereum receiver address
+2) AMOUNT - Amount of ETH tokens to send
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
+
+Usage example:
+
+```bash
+sk-val wallet send-eth 0x01C19c5d3Ad1C3014145fC82263Fbae09e23924A 0.01 --pk-file ./pk.txt --yes
+```
+
+#### Send SKL tokens
+
+Send SKL tokens to specific address
+
+```bash
+sk-val wallet send-skl [ADDRESS] [AMOUNT]
+```
+
+Required arguments:
+
+1) ADDRESS - Ethereum receiver address
+2) AMOUNT - Amount of SKL tokens to send
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
+
+Usage example:
+
+```bash
+sk-val wallet send-skl 0x01C19c5d3Ad1C3014145fC82263Fbae09e23924A 0.01 --pk-file ./pk.txt --yes
 ```
 
 ## Development
