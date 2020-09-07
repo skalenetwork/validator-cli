@@ -1,13 +1,12 @@
 name: Build and publish
-on: push
-# on:
-#   pull_request:
-#     types: [closed]
-#     branches:
-#       - master
-#       - develop
-#       - beta
-#       - stable
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+      - develop
+      - beta
+      - stable
 
 jobs:
   create_release:
@@ -34,14 +33,14 @@ jobs:
           tag_name: ${{ env.VERSION }}
           release_name: ${{ env.VERSION }}
           draft: false
-          prerelease: false
+          prerelease: true
       - name: Export outputs
         id: export_outputs
         run: |
           echo "::set-output name=version::$VERSION"
           echo "::set-output name=branch::$BRANCH"
   build_and_publish:
-    # if: github.event.pull_request.merged
+    if: github.event.pull_request.merged
     needs: create_release
     name: Build and publish for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
