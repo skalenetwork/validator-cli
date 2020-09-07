@@ -23,14 +23,22 @@
 
 -   Download executable
 
+Up to `0.6.2-develop.9`:
+
 ```bash
 VERSION_NUM={put the version number here} && sudo -E bash -c "curl -L https://validator-cli.sfo2.digitaloceanspaces.com/develop/sk-val-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/sk-val"
+```
+
+After `0.6.2-develop.10`:
+
+```bash
+VERSION_NUM={put the version number here} && sudo -E bash -c "curl -L https://github.com/skalenetwork/validator-cli/releases/download/$VERSION_NUM/sk-val-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/sk-val"
 ```
 
 -   Apply executable permissions to the binary:
 
 ```bash
-chmod +x /usr/local/bin/sk-val
+sudo chmod +x /usr/local/bin/sk-val
 ```
 
 ### Where to find out the latest version?
