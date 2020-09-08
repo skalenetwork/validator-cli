@@ -353,7 +353,7 @@ Required arguments:
 
 -   `--validator-id` - ID of the validator to delegate
 -   `--amount` - Amount of SKALE tokens to delegate
--   `--delegation-period` - Delegation period (in months)
+-   `--delegation-period` - Delegation period (in months - only `2` avaliable now)
 -   `--info` - Delegation request info
 
 Optional arguments:
