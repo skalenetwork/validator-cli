@@ -12,6 +12,7 @@ jobs:
       ENDPOINT: ${{ secrets.ENDPOINT }}
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       MANAGER_TAG: "1.5.2-develop.2"
+      SGX_WALLET_TAG: "1.58.2-stable.0"
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
