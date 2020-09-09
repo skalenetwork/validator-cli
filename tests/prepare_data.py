@@ -4,10 +4,15 @@ import random
 import string
 import time
 
-from skale.utils.contracts_provision.main import setup_validator, cleanup_nodes_schains
+from skale.utils.contracts_provision import MONTH_IN_SECONDS
+from skale.utils.contracts_provision.main import (
+    setup_validator,
+    cleanup_nodes_schains, _skip_evm_time
+)
 from skale.utils.helper import init_default_logger
 
-from tests.constants import (NODE_ID, TEST_DELTA, TEST_EPOCH, TEST_NODE_NAME, TEST_PK_FILE,
+from tests.constants import (NODE_ID, TEST_CHECKTIME, TEST_DELTA, TEST_EPOCH,
+                             TEST_NODE_NAME, TEST_PK_FILE,
                              D_VALIDATOR_MIN_DEL, TEST_NODES_COUNT)
 from utils.web3_utils import init_skale_w_wallet_from_config
 
@@ -17,8 +22,8 @@ def accelerate_skale_manager(skale):
     delta_period = skale.constants_holder.get_delta_period()
     print(f'Existing times for SM: {reward_period}, {delta_period}')
 
-    tx_res = skale.constants_holder.set_periods(TEST_EPOCH, TEST_DELTA, wait_for=True)
-    tx_res.raise_for_status()
+    skale.constants_holder.set_check_time(TEST_CHECKTIME, wait_for=True)
+    skale.constants_holder.set_periods(TEST_EPOCH, TEST_DELTA, wait_for=True)
     reward_period = skale.constants_holder.get_reward_period()
     delta_period = skale.constants_holder.get_delta_period()
     print(f'New times for SM: {reward_period}, {delta_period}')
@@ -64,14 +69,19 @@ def get_bounties(skale):
 
 def set_test_msr(msr=D_VALIDATOR_MIN_DEL):
     skale = init_skale_w_wallet_from_config(pk_file=TEST_PK_FILE)
-    tx_res = skale.constants_holder._set_msr(
+    skale.constants_holder._set_msr(
         new_msr=msr,
         wait_for=True
     )
-    tx_res.raise_for_status()
+    skale.validator_service.set_validator_mda(0, wait_for=True)
 
 
-if __name__ == '__main__':
+def set_test_mda():
+    skale = init_skale_w_wallet_from_config(pk_file=TEST_PK_FILE)
+    skale.validator_service.set_validator_mda(0, wait_for=True)
+
+
+def main():
     init_default_logger()
     skale = init_skale_w_wallet_from_config(pk_file=TEST_PK_FILE)
     cleanup_nodes_schains(skale)
@@ -79,5 +89,11 @@ if __name__ == '__main__':
     accelerate_skale_manager(skale)
     set_test_msr(0)
     create_nodes(skale, TEST_NODES_COUNT)
+    skale.constants_holder.set_launch_timestamp(int(time.time()))
+    _skip_evm_time(skale.web3, MONTH_IN_SECONDS * 3)
     get_bounties(skale)
     set_test_msr()
+
+
+if __name__ == '__main__':
+    main()

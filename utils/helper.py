@@ -23,7 +23,7 @@ import urllib
 import logging
 
 from web3 import Web3
-from utils.constants import SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE
+from utils.constants import SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE, PERMILLE_MULTIPLIER
 
 logger = logging.getLogger(__name__)
 
@@ -72,5 +72,21 @@ def abort_if_false(ctx, param, value):
         ctx.abort()
 
 
-def to_skl(wei):  # convert to SKL
+def to_skl(wei):  # todo: replace with from_wei()
     return Web3.fromWei(wei, 'ether')
+
+
+def from_wei(val):
+    return Web3.fromWei(val, 'ether')
+
+
+def to_wei(val):
+    return Web3.toWei(val, 'ether')
+
+
+def permille_to_percent(val):
+    return int(val) / PERMILLE_MULTIPLIER
+
+
+def percent_to_permille(val):
+    return int(val * PERMILLE_MULTIPLIER)

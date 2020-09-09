@@ -4,10 +4,17 @@ import datetime
 from skale.utils.contracts_provision.main import _skip_evm_time
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
 
-from cli.holder import _delegate, _delegations, _cancel_delegation, _undelegate, _locked
+from cli.holder import (
+    _delegate, _delegations, _cancel_delegation,
+    _undelegate, _locked, _withdraw_bounty, _earned_bounties
+)
+from utils.helper import to_wei
 from tests.conftest import str_contains
 from tests.constants import (TEST_PK_FILE, D_VALIDATOR_ID, D_DELEGATION_AMOUNT,
                              D_DELEGATION_PERIOD, D_DELEGATION_INFO)
+
+
+DELEGATION_AMOUNT_SKL = 1000
 
 
 def _get_number_of_delegations(skale):
@@ -15,18 +22,33 @@ def _get_number_of_delegations(skale):
 
 
 def test_delegate(runner, skale):
+    _skip_evm_time(skale.web3, MONTH_IN_SECONDS * (D_DELEGATION_PERIOD + 1))
     num_of_delegations_before = _get_number_of_delegations(skale)
+    delegated_amount_before = skale.delegation_controller.get_delegated_amount(skale.wallet.address)
     result = runner.invoke(
         _delegate,
         [
             '--validator-id', D_VALIDATOR_ID,
-            '--amount', D_DELEGATION_AMOUNT,
+            '--amount', DELEGATION_AMOUNT_SKL,
             '--delegation-period', str(D_DELEGATION_PERIOD),
             '--info', D_DELEGATION_INFO,
             '--pk-file', TEST_PK_FILE,
             '--yes'
         ]
     )
+    delegations = skale.delegation_controller.get_all_delegations_by_validator(
+        validator_id=D_VALIDATOR_ID
+    )
+    delegation_id = delegations[-1]['id']
+    skale.delegation_controller.accept_pending_delegation(
+        delegation_id,
+        wait_for=True
+    )
+    _skip_evm_time(skale.web3, MONTH_IN_SECONDS * (D_DELEGATION_PERIOD + 1))
+
+    delegated_amount_after = skale.delegation_controller.get_delegated_amount(skale.wallet.address)
+    assert delegated_amount_after == delegated_amount_before + to_wei(DELEGATION_AMOUNT_SKL)
+
     num_of_delegations_after = _get_number_of_delegations(skale)
     assert num_of_delegations_after == num_of_delegations_before + 1
     assert result.exit_code == 0
@@ -148,3 +170,35 @@ def test_locked(runner, skale):
     assert expected_output in output_list
     assert output_list[-1] == str(locked_amount_wei)
     assert result.exit_code == 0
+
+
+def test_withdraw_bounty(runner, skale):
+    _skip_evm_time(skale.web3, MONTH_IN_SECONDS * 3)
+    recipient_address = skale.wallet.address
+    result = runner.invoke(
+        _withdraw_bounty,
+        [
+            str(D_VALIDATOR_ID),
+            recipient_address,
+            '--pk-file', TEST_PK_FILE,
+            '--yes'
+        ]
+    )
+    output_list = result.output.splitlines()
+    expected_output = f'\x1b[K✔ Bounty successfully transferred to {skale.wallet.address}'
+    assert expected_output in output_list
+    assert result.exit_code == 0
+
+
+def test_earned_bounties(runner, skale):
+    earned_bounties = skale.distributor.get_earned_bounty_amount(
+        D_VALIDATOR_ID,
+        skale.wallet.address
+    )
+    result = runner.invoke(
+        _earned_bounties,
+        [str(D_VALIDATOR_ID), skale.wallet.address, '--wei']
+    )
+    output = result.output
+    assert result.exit_code == 0
+    assert output == f'Earned bounties for {skale.wallet.address}, validator ID - {D_VALIDATOR_ID}: {earned_bounties["earned"]} WEI\nEnd month: {earned_bounties["end_month"]}\n'  # noqa

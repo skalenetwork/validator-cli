@@ -42,11 +42,29 @@ TEXT_FILE = os.path.join(ROOT_DIR, 'text.yml')
 
 LONG_LINE = '-' * 50
 SPIN_COLOR = 'yellow'
+DISABLE_SPIN = os.getenv('DISABLE_SPIN')
 
 HOME_DIR = str(Path.home())
 SKALE_VAL_CONFIG_FOLDER = os.path.join(HOME_DIR, '.skale-val-cli')
 SKALE_VAL_CONFIG_FILE = os.path.join(SKALE_VAL_CONFIG_FOLDER, 'config.json')
 SKALE_VAL_ABI_FILE = os.path.join(SKALE_VAL_CONFIG_FOLDER, 'abi.json')
+SGX_DATA_DIR = os.getenv('SGX_DATA_DIR') or os.path.join(SKALE_VAL_CONFIG_FOLDER, 'sgx')
+SGX_INFO_PATH = os.path.join(SGX_DATA_DIR, 'info.json')
+SGX_SSL_CERTS_PATH = os.path.join(SGX_DATA_DIR, 'ssl')
 
-WALLET_TYPES = ['software', 'ledger']
-DELEGATION_PERIOD_OPTIONS = ['3', '6', '9', '12']  # strings because of click.Choice design
+WALLET_TYPES = ['software', 'ledger', 'sgx']
+# DELEGATION_PERIOD_OPTIONS = ['3', '6', '9', '12']  # strings because of click.Choice design
+DELEGATION_PERIOD_OPTIONS = ['2']  # strings because of click.Choice design
+
+PERMILLE_MULTIPLIER = 10
+
+
+LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+LOG_FILE_SIZE_MB = 50
+LOG_FILE_SIZE_BYTES = LOG_FILE_SIZE_MB * 1000000
+
+LOG_BACKUP_COUNT = 2
+LOG_DATA_PATH = os.path.join(SKALE_VAL_CONFIG_FOLDER, 'log')
+LOG_FILEPATH = os.path.join(LOG_DATA_PATH, 'sk-val.log')
+DEBUG_LOG_FILEPATH = os.path.join(LOG_DATA_PATH, 'debug-sk-val.log')

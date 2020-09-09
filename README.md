@@ -1,6 +1,7 @@
 # SKALE Validator CLI
 
-[![Build Status](https://travis-ci.com/skalenetwork/validator-cli.svg?token=tLesVRTSHvWZxoyqXdoA&branch=develop)](https://travis-ci.com/skalenetwork/validator-cli)
+![Build and publish](https://github.com/skalenetwork/validator-cli/workflows/Build%20and%20publish/badge.svg)
+![Test](https://github.com/skalenetwork/validator-cli/workflows/Test/badge.svg)
 [![Discord](https://img.shields.io/discord/534485763354787851.svg)](https://discord.gg/vvUtWJB)
 
 ## Table of Contents
@@ -9,7 +10,9 @@
 2.  [CLI usage](#cli-usage)  
     2.1 [Init](#init)  
     2.2 [Validator commands](#validator-commands)  
-    2.3 [Holder commands](#holder-commands)
+    2.3 [Holder commands](#holder-commands)  
+    2.4 [Metrics commands](#metrics-commands)
+    2.5 [Wallet commands](#)
 3.  [Development](#development)  
 
 ## Installation
@@ -20,15 +23,27 @@
 
 -   Download executable
 
+Up to `0.6.2-develop.9`:
+
 ```bash
-VERSION_NUM=0.1.0-develop.3 && sudo -E bash -c "curl -L https://validator-cli.sfo2.digitaloceanspaces.com/develop/sk-val-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/sk-val"
+VERSION_NUM={put the version number here} && sudo -E bash -c "curl -L https://validator-cli.sfo2.digitaloceanspaces.com/develop/sk-val-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/sk-val"
+```
+
+After `0.6.2-develop.10`:
+
+```bash
+VERSION_NUM={put the version number here} && sudo -E bash -c "curl -L https://github.com/skalenetwork/validator-cli/releases/download/$VERSION_NUM/sk-val-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/sk-val"
 ```
 
 -   Apply executable permissions to the binary:
 
 ```bash
-chmod +x /usr/local/bin/sk-val
+sudo chmod +x /usr/local/bin/sk-val
 ```
+
+### Where to find out the latest version?
+
+All validator-cli version numbers are available here: https://github.com/skalenetwork/validator-cli/releases
 
 ## CLI Usage
 
@@ -44,13 +59,34 @@ Required arguments:
 
 -   `--endpoint/-e` - RPC endpoint of the node in the network where SKALE manager is deployed (`ws` or `wss`)
 -   `--contracts-url/-c` - - URL to SKALE Manager contracts ABI and addresses
--   `-w/--wallet` - Type of the wallet that will be used for signing transactions (software or ledger)
+-   `-w/--wallet` - Type of the wallet that will be used for signing transactions (software, sgx or hardware)
+
+If you want to use sgx wallet you need to initialize it first (see **SGX commands**)
 
 Usage example:
 
 ```bash
-sk-val init -e ws://geth.test.com:8546 -c https://test.com/manager.json --wallet-type software
+sk-val init -e ws://geth.test.com:8546 -c https://test.com/manager.json --wallet software
 ```
+
+### SGX commands
+
+#### Init 
+ Initialize sgx wallet  
+ ```bash
+sk-val sgx init [SGX_SERVER_URL]
+```
+Optional arguments:
+-   `--force/-f` - Rewrite current sgx wallet data
+-  `--ssl-port` - Port that is used by sgx server to establish tls connection
+
+#### Info
+Print sgx wallet information
+```bash
+sk-val sgx info 
+```
+Optional arguments:
+-   `--raw` - Print info in plain json
 
 ### Validator commands
 
@@ -60,7 +96,7 @@ Register as a new SKALE validator
 
 ```bash
 sk-val validator register
-```
+``` 
 
 Required arguments:
 
@@ -77,7 +113,7 @@ Optional arguments:
 Usage example:
 
 ```bash
-sk-val register -n test -d "test description" -c 20 --min-delegation 1000 --pk-file ./pk.txt
+sk-val validator register -n test -d "test description" -c 20 --min-delegation 1000 --pk-file ./pk.txt
 ```
 
 #### List
@@ -87,6 +123,10 @@ List of available validators
 ```bash
 sk-val validator ls
 ```
+
+Options:
+
+-   `--wei/-w` - Show tokens amount in wei
 
 #### Delegations
 
@@ -116,6 +156,19 @@ Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
 -   `--yes` - Confirmation flag
+
+#### Accept all pending delegations
+
+Accept ALL pending delegations request for the address.  
+List with all pending delegations to be accepted will be shown. After this user should confirm the operation.
+
+```bash
+sk-val validator accept-all-delegations --pk-file ./pk.txt
+```
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
 
 #### Validator linked addresses
 
@@ -180,11 +233,9 @@ Output info:
 1) Validator ID
 2) Name
 3) Address
-4) Fee rate (%)
+4) Fee rate (percent - %)
 5) Minimum delegation amount (SKL)
-6) Delegated tokens
-7) Earned bounty
-8) MSR
+6) Accepting new delegation requests
 
 #### Withdraw bounty
 
@@ -204,7 +255,6 @@ Optional arguments:
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
 -   `--yes` - Confirmation flag
 
-
 #### Withdraw fee
 
 Withdraw earned fee to specified address
@@ -222,6 +272,73 @@ Optional arguments:
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
 -   `--yes` - Confirmation flag
 
+#### Set MDA
+
+Set a new minimum delegation amount for the validator
+
+```bash
+sk-val validator set-mda [NEW_MDA] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) NEW_MDA - New MDA value
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
+
+#### Request address change
+
+Request address change for the validator
+
+```bash
+sk-val validator change-address [ADDRESS] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) ADDRESS - New validator address
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
+
+#### Confirm address change
+
+Confirm address change for the validator. Should be executed using new validator key.
+
+```bash
+sk-val validator confirm-address [VALIDATOR_ID] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) VALIDATOR_ID - ID of the validator
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
+
+#### Earned fees
+
+Get earned fee amount for the validator address
+
+```bash
+sk-val validator earned-fees [ADDRESS]
+```
+
+Required params:
+
+1) ADDRESS - Validator address
+
+Optional arguments:
+
+-   `--wei` - Show amount in wei
+
 ### Holder commands
 
 #### Delegate
@@ -236,7 +353,7 @@ Required arguments:
 
 -   `--validator-id` - ID of the validator to delegate
 -   `--amount` - Amount of SKALE tokens to delegate
--   `--delegation-period` - Delegation period (in months)
+-   `--delegation-period` - Delegation period (in months - only `2` avaliable now)
 -   `--info` - Delegation request info
 
 Optional arguments:
@@ -257,7 +374,7 @@ Required arguments:
 
 Options:
 
-- `--wei/-w` - Show tokens amount in wei
+-   `--wei/-w` - Show tokens amount in wei
 
 #### Cancel pending delegation
 
@@ -273,7 +390,7 @@ Required params:
 
 Optional arguments:
 
-- `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
 
 #### Request undelegation
 
@@ -289,7 +406,7 @@ Required params:
 
 Optional arguments:
 
-- `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
 
 #### Locked
 
@@ -305,7 +422,130 @@ Required arguments:
 
 Options:
 
-- `--wei/-w` - Show tokens amount in wei
+-   `--wei/-w` - Show tokens amount in wei
+
+#### Earned bounties
+
+Get earned bounties amount by token holder for the validator ID
+
+```bash
+sk-val holder earned-bounties [VALIDATOR_ID] [ADDRESS]
+```
+
+Required params:
+
+1) VALIDATOR_ID - ID of the validator
+1) ADDRESS - Token holder address
+
+Optional arguments:
+
+-   `--wei` - Show amount in wei
+
+### Metrics commands
+
+#### Node metrics
+
+Shows a list of metrics and bounties for a given node ID
+
+```bash
+sk-val metrics node
+```
+
+Required arguments:
+
+-   `--index/-id` - Node ID
+
+Collecting metrics from the SKALE Manager may take a long time. It is therefore recommended to use optional arguments to limit output by filtering by time period or limiting the number of records to show.
+
+Optional arguments:
+
+-   `--since/-s` - Show requested data since a given date inclusively (e.g. 2020-01-20)
+-   `--till/-t` - Show requested data before a given date not inclusively (e.g. 2020-01-21)
+-   `--wei/-w` - Show bounty amount in wei
+-   `--to-file/-f` - Export metrics to .csv file (with a given file pathname)
+
+Usage example:
+
+```bash
+sk-val metrics node -id 1 --since 2020-04-30 --till 2020-05-01 -w -f /home/user/filename.csv
+```
+
+#### Validator metrics
+
+Shows a list of metrics and bounties for all nodes for a given validator ID
+
+```bash
+sk-val metrics validator
+```
+
+Required arguments:
+
+-   `--index/-id` - Validator ID
+
+Collecting metrics from the SKALE Manager may take a long time. It is therefore recommended to use optional arguments to limit output by filtering by time period or limiting the number of records to show.
+
+Optional arguments:
+
+-   `--since/-s` - Show requested data since a given date inclusively (e.g. 2020-01-20)
+-   `--till/-t` - Show requested data before a given date not inclusively (e.g. 2020-01-21)
+-   `--wei/-w` - Show bounty amount in wei
+-   `--to-file/-f` - Export metrics to .csv file (with a given file pathname)
+
+Usage example:
+
+```bash
+sk-val metrics validator -id 1 --since 2020-04-30 --till 2020-05-01 -w -f /home/user/filename.csv
+```
+
+### Wallet commands
+
+#### Send ETH tokens
+
+Send ETH tokens to specific address
+
+```bash
+sk-val wallet send-eth [ADDRESS] [AMOUNT]
+```
+
+Required arguments:
+
+1) ADDRESS - Ethereum receiver address
+2) AMOUNT - Amount of ETH tokens to send
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
+
+Usage example:
+
+```bash
+sk-val wallet send-eth 0x01C19c5d3Ad1C3014145fC82263Fbae09e23924A 0.01 --pk-file ./pk.txt --yes
+```
+
+#### Send SKL tokens
+
+Send SKL tokens to specific address
+
+```bash
+sk-val wallet send-skl [ADDRESS] [AMOUNT]
+```
+
+Required arguments:
+
+1) ADDRESS - Ethereum receiver address
+2) AMOUNT - Amount of SKL tokens to send
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
+
+Usage example:
+
+```bash
+sk-val wallet send-skl 0x01C19c5d3Ad1C3014145fC82263Fbae09e23924A 0.01 --pk-file ./pk.txt --yes
+```
 
 ## Development
 

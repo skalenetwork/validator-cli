@@ -1,6 +1,6 @@
 #   -*- coding: utf-8 -*-
 #
-#   This file is part of skale-node-cli
+#   This file is part of validator-cli
 #
 #   Copyright (C) 2019 SKALE Labs
 #
@@ -21,12 +21,17 @@ import click
 
 from utils.texts import Texts
 from utils.helper import abort_if_false
-from core.holder import delegate, delegations, cancel_pending_delegation, undelegate, locked
+from core.holder import (delegate, delegations,
+                         cancel_pending_delegation, locked,
+                         undelegate, withdraw_bounty, earned_bounties)
 from utils.constants import DELEGATION_PERIOD_OPTIONS
+from utils.validations import EthAddressType
 
 
 G_TEXTS = Texts()
 TEXTS = G_TEXTS['holder']
+
+ETH_ADDRESS_TYPE = EthAddressType()
 
 
 @click.group()
@@ -114,8 +119,37 @@ def _undelegate(delegation_id, pk_file):
     )
 
 
+@holder.command('withdraw-bounty', help=TEXTS['withdraw_bounty']['help'])
+@click.argument('validator_id')
+@click.argument('recipient_address')
+@click.option(
+    '--pk-file',
+    help=G_TEXTS['pk_file']['help']
+)
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=TEXTS['withdraw_bounty']['confirm'])
+def _withdraw_bounty(validator_id, recipient_address, pk_file):
+    withdraw_bounty(int(validator_id), recipient_address, pk_file)
+
+
 @holder.command('locked', help=TEXTS['locked']['help'])
 @click.argument('address')
 @click.option('--wei', '-w', is_flag=True, help=TEXTS['locked']['wei']['help'])
 def _locked(address, wei):
     locked(address, wei)
+
+
+@holder.command('earned-bounties', help=TEXTS['earned_bounties']['help'])
+@click.argument(
+    'validator_id',
+    type=int
+)
+@click.argument(
+    'address',
+    type=ETH_ADDRESS_TYPE
+)
+@click.option('--wei', '-w', is_flag=True,
+              help=G_TEXTS['wei']['help'])
+def _earned_bounties(validator_id, address, wei):
+    earned_bounties(validator_id, address, wei)

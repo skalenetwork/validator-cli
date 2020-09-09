@@ -17,10 +17,12 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import os
 import datetime
+import os
+
 import texttable
-from utils.helper import to_skl
+from terminaltables import SingleTable
+from utils.helper import from_wei, permille_to_percent, to_skl
 
 
 def get_tty_width():
@@ -46,28 +48,34 @@ def format_date(date):
     return date.strftime("%b %d %Y %H:%M:%S")
 
 
-def print_validators(validators):
+def print_validators(validators, wei):
+    m_type = 'SKL - wei' if wei else 'SKL'
     headers = [
         'Name',
         'Id',
         'Address',
         'Description',
-        'Fee rate (%)',
+        'Fee rate (percent %)',
         'Registration time',
-        'Minimum delegation (SKL)',
+        f'Minimum delegation ({m_type})',
         'Validator status'
     ]
     rows = []
     for validator in validators:
-        date = datetime.datetime.fromtimestamp(validator['registration_time'])
+        dt = datetime.datetime.fromtimestamp(validator['registration_time'])
+        strtime = dt.strftime('%d.%m.%Y-%H:%M:%S')
         status = 'Trusted' if validator['trusted'] else 'Registered'
+        if not wei:
+            validator['minimum_delegation_amount'] = from_wei(
+                validator['minimum_delegation_amount'])
+        fee_rate_percent = permille_to_percent(validator['fee_rate'])
         rows.append([
             validator['name'],
             validator['id'],
             validator['validator_address'],
             validator['description'],
-            validator['fee_rate'],
-            date,
+            fee_rate_percent,
+            strtime,
             validator['minimum_delegation_amount'],
             status
         ])
@@ -121,7 +129,7 @@ def print_linked_addresses(addresses):
     print(Formatter().table(headers, rows))
 
 
-def print_node_metrics(rows, total):
+def print_node_metrics(rows, total, wei):
     headers = [
         'Date',
         'Bounty',
@@ -130,17 +138,20 @@ def print_node_metrics(rows, total):
     ]
     table = texttable.Texttable(max_width=get_tty_width())
     table.set_cols_align(["l", "r", "r", "r"])
-    table.set_cols_dtype(["t", "a", "i", "f"])
+    if wei:
+        table.set_cols_dtype(["t", "t", "i", "f"])
+    else:
+        table.set_cols_dtype(["t", "a", "i", "f"])
     table.set_precision(1)
     table.add_rows([headers] + rows)
     table.set_deco(table.HEADER)
     table.set_chars(['-', '|', '+', '-'])
     print('\n')
     print(table.draw())
-    print_total_info(total)
+    print_total_info(total, wei)
 
 
-def print_validator_metrics(rows, total):
+def print_validator_metrics(rows, wei):
     headers = [
         'Date',
         'Node ID',
@@ -150,26 +161,53 @@ def print_validator_metrics(rows, total):
     ]
     table = texttable.Texttable(max_width=get_tty_width())
     table.set_cols_align(["l", "r", "r", "r", "r"])
-    table.set_cols_dtype(["t", "i", "f", "i", "f"])
+    if wei:
+        table.set_cols_dtype(["t", "i", "t", "i", "f"])
+    else:
+        table.set_cols_dtype(["t", "i", "f", "i", "f"])
     table.set_precision(1)
     table.add_rows([headers] + rows)
     table.set_deco(table.HEADER)
     table.set_chars(['-', '|', '+', '-'])
     print('\n')
     print(table.draw())
-    print_total_info(total)
 
 
-def print_bounties(nodes, bounties):
+def print_validator_node_totals(rows, total, wei):
+    headers = [
+        'Node ID',
+        'Total Bounty',
+        'Downtime',
+        'Latency'
+    ]
+    table = texttable.Texttable(max_width=get_tty_width())
+    table.set_cols_align(["r", "r", "r", "r"])
+    if wei:
+        table.set_cols_dtype(["i", "t", "i", "f"])
+    else:
+        table.set_cols_dtype(["i", "f", "i", "f"])
+    table.set_precision(1)
+    table.add_rows([headers] + rows)
+    table.set_deco(table.HEADER)
+    table.set_chars(['-', '|', '+', '-'])
+    print('\n')
+    print(table.draw())
+    print_total_info(total, wei)
+
+
+def print_bounties(nodes, bounties, wei):
     headers = ['Date', 'All nodes']
     node_headers = [f'Node ID = {node}' for node in nodes]
     headers.extend(node_headers)
     table = texttable.Texttable(max_width=get_tty_width())
     format_string = ['t']
-    format_string.extend(['f' for h in range(len(headers) - 1)])
+    if wei:
+        format_string.extend(['t' for h in range(len(headers) - 1)])
+    else:
+        format_string.extend(['f' for h in range(len(headers) - 1)])
+        table.set_precision(3)
     table.set_cols_dtype(format_string)
     table.set_cols_align(['r' for h in headers])
-    table.set_precision(3)
     table.add_rows([headers] + bounties)
     table.set_deco(table.HEADER)
     table.set_chars(['-', '|', '+', '-'])
@@ -177,6 +215,31 @@ def print_bounties(nodes, bounties):
     print(table.draw())
 
 
-def print_total_info(total):
-    total_string = f'Total bounty per the given period: {total:.3f} SKL'
+def print_total_info(total, wei):
+    if wei:
+        total_string = f'Total bounty per the given period: {total:} wei'
+    else:
+        total_string = f'Total bounty per the given period: {total:.3f} SKL'
     print('\n', total_string)
+
+
+def print_sgx_info(info):
+    table_data = [
+        ('KEY', 'VALUE'),
+        ('Server url', info['server_url']),
+        ('SSL port', info['ssl_port']),
+        ('Address', info['address']),
+        ('Key', info['key'])
+    ]
+    table = SingleTable(table_data)
+    print(table.table)
+
+
+def print_bond_amount(validator_id, bond_amount, wei=False):
+    if wei:
+        print(f'Bond amount for validator with id '
+              f'{validator_id} - {bond_amount} WEI')
+    else:
+        bond_amount = from_wei(bond_amount)
+        print(f'Bond amount for validator with id '
+              f'{validator_id} - {bond_amount} SKL')
