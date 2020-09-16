@@ -18,8 +18,7 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from yaspin import yaspin
-from skale.utils.web3_utils import (wait_receipt, check_receipt,
-                                    to_checksum_address)
+from skale.utils.web3_utils import to_checksum_address
 from skale.transactions.result import TransactionError
 
 from utils.helper import to_skl
@@ -55,9 +54,10 @@ def delegate(validator_id, amount, delegation_period, info, pk_file):
             info=info,
             raise_for_status=False
         )
-        receipt = wait_receipt(skale.web3, tx_res.tx_hash)
-        if not check_receipt(receipt, raise_error=False):
-            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+        try:
+            tx_res.raise_for_status()
+        except TransactionError as err:
+            sp.write(str(err))
             return
         sp.write("✔ Delegation request sent")
 
@@ -71,9 +71,10 @@ def cancel_pending_delegation(delegation_id: int, pk_file: str) -> None:
             delegation_id=delegation_id,
             raise_for_status=False
         )
-        receipt = wait_receipt(skale.web3, tx_res.tx_hash)
-        if not check_receipt(receipt, raise_error=False):
-            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+        try:
+            tx_res.raise_for_status()
+        except TransactionError as err:
+            sp.write(str(err))
             return
         sp.write("✔ Delegation request canceled")
 
@@ -87,9 +88,10 @@ def undelegate(delegation_id: int, pk_file: str) -> None:
             delegation_id=delegation_id,
             raise_for_status=False
         )
-        receipt = wait_receipt(skale.web3, tx_res.tx_hash)
-        if not check_receipt(receipt, raise_error=False):
-            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+        try:
+            tx_res.raise_for_status()
+        except TransactionError as err:
+            sp.write(str(err))
             return
         sp.write("✔ Successfully undelegated")
 

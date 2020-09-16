@@ -6,7 +6,7 @@ from yaspin import yaspin
 
 from utils.constants import SPIN_COLOR
 from utils.web3_utils import init_skale_w_wallet_from_config
-
+from utils.helper import print_err_with_log_path
 
 logger = logging.getLogger(__name__)
 
@@ -34,3 +34,4 @@ def _send_funds(receiver_address, amount, pk_file, token_type):
         except Exception as err:
             logger.error('Funds were not sent due to error', exc_info=err)
             sp.write('❌ Funds sending failed')
+            print_err_with_log_path()

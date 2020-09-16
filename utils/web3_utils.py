@@ -19,17 +19,20 @@
 
 import os
 import sys
+import logging
 
 from core.sgx_tools import get_sgx_info, sgx_inited
 from skale import Skale
 from skale.utils.exceptions import IncompatibleAbiError
 from skale.utils.web3_utils import init_web3
 from skale.wallets import LedgerWallet, SgxWallet, Web3Wallet
+from skale.wallets.ledger_wallet import LedgerCommunicationError
 from utils.constants import SGX_SSL_CERTS_PATH, SKALE_VAL_ABI_FILE, SPIN_COLOR
-from utils.helper import get_config
+from utils.helper import get_config, print_err_with_log_path
 from yaspin import yaspin
 
 DISABLE_SPIN = os.getenv('DISABLE_SPIN')
+logger = logging.getLogger(__name__)
 
 
 def init_skale(endpoint, wallet=None, disable_spin=DISABLE_SPIN):
@@ -50,7 +53,12 @@ def init_skale_w_wallet(endpoint, wallet_type, pk_file=None, disable_spin=DISABL
     """Init instance of SKALE library with wallet"""
     web3 = init_web3(endpoint)
     if wallet_type == 'ledger':
-        wallet = LedgerWallet(web3)
+        try:
+            wallet = LedgerWallet(web3)
+        except LedgerCommunicationError as e:
+            logger.exception(e)
+            print_err_with_log_path(e)
+            sys.exit(1)
     elif wallet_type == 'sgx':
         info = get_sgx_info()
         wallet = SgxWallet(info['server_url'],
