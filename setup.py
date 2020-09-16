@@ -40,20 +40,25 @@ def find_version(*file_paths):
 extras_require = {
     'linter': [
         "flake8==3.7.9",
-        "isort>=4.2.15,<4.3.22",
+        "isort>=4.2.15,<5.4.3",
     ],
     'dev': [
         "PyInstaller==3.6",
-        "pytest==5.4.1",
+        "pytest==5.4.2",
         "pytest-cov==2.8.1",
         "twine==3.1.1",
         "mock==4.0.2",
-        "boto3==1.12.47"
+        "boto3==1.13.7",
+        "pytest-cov==2.9.0",
+        "codecov==2.1.7"
+    ],
+    'hw-wallet': [
+        "ledgerblue==0.1.31"
     ]
 }
 
 extras_require['dev'] = (
-    extras_require['linter'] + extras_require['dev']
+    extras_require['linter'] + extras_require['dev'] + extras_require['hw-wallet']
 )
 
 
@@ -67,13 +72,15 @@ setup(
     long_description_markdown_filename='README.md',
     author='SKALE Labs',
     author_email='support@skalelabs.com',
-    url='https://github.com/skalenetwork/validators-cli',
+    url='https://github.com/skalenetwork/validator-cli',
     install_requires=[
-        "click==7.0",
-        "skale.py==3.5dev2",
+        "click==7.1.2",
+        "skale.py==4.0dev17",
         "terminaltables==3.1.0",
         "yaspin==0.16.0",
         "texttable==1.6.2",
+        "pandas==1.0.4",
+        "terminaltables==3.1.0"
     ],
     python_requires='>=3.6,<4',
     extras_require=extras_require,
@@ -83,7 +90,7 @@ setup(
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
+        'License :: OSI Approved :: GNU Affero General Public License v3 (AGPLv3)',
         'Natural Language :: English',
         'Programming Language :: Python :: 3.6',
     ],

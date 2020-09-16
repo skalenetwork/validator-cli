@@ -21,15 +21,16 @@ import click
 from web3 import Web3
 
 from core.validator import (register, validators_list, delegations, accept_pending_delegation,
-                            link_node_address, unlink_node_address, linked_addresses, info,
-                            withdraw_bounty, withdraw_fee)
+                            get_bond_amount, link_node_address, unlink_node_address,
+                            linked_addresses, info, withdraw_fee, set_mda, change_address,
+                            confirm_address, earned_fees, accept_all_delegations)
 from utils.helper import abort_if_false
-from utils.validations import EthAddressType, PercentageType, UrlType
+from utils.validations import EthAddressType, UrlType, FloatPercentageType
 from utils.texts import Texts
 
 
 ETH_ADDRESS_TYPE = EthAddressType()
-PERCENTAGE_TYPE = PercentageType()
+FLOAT_PERCENTAGE_TYPE = FloatPercentageType()
 URL_TYPE = UrlType()
 
 G_TEXTS = Texts()
@@ -61,7 +62,7 @@ def validator():
 )
 @click.option(
     '--commission-rate', '-c',
-    type=PERCENTAGE_TYPE,
+    type=FLOAT_PERCENTAGE_TYPE,
     help=TEXTS['register']['commission_rate']['help'],
     prompt=TEXTS['register']['commission_rate']['prompt']
 )
@@ -81,16 +82,17 @@ def _register(name, description, commission_rate, min_delegation, pk_file):
     register(
         name=name,
         description=description,
-        commission_rate=int(commission_rate),
+        commission_rate=float(commission_rate),
         min_delegation=int(min_delegation),
         pk_file=pk_file
     )
 
 
 @validator.command('ls', help=TEXTS['ls']['help'])
+@click.option('--wei', '-w', is_flag=True, help=TEXTS['ls']['wei']['help'])
 @click.option('--all', is_flag=True)
-def _ls(all):
-    validators_list(all)
+def _ls(wei, all):
+    validators_list(wei, all)
 
 
 @validator.command('delegations', help=TEXTS['delegations']['help'])
@@ -117,6 +119,17 @@ def _delegations(validator_id, wei):
 def _accept_delegation(delegation_id, pk_file):
     accept_pending_delegation(
         delegation_id=int(delegation_id),
+        pk_file=pk_file
+    )
+
+
+@validator.command('accept-all-delegations', help=TEXTS['accept_all_delegations']['help'])
+@click.option(
+    '--pk-file',
+    help=G_TEXTS['pk_file']['help']
+)
+def _accept_all_delegations(pk_file):
+    accept_all_delegations(
         pk_file=pk_file
     )
 
@@ -163,20 +176,6 @@ def _info(validator_id):
     )
 
 
-@validator.command('withdraw-bounty', help=TEXTS['withdraw_bounty']['help'])
-@click.argument('validator_id')
-@click.argument('recipient_address')
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option('--yes', is_flag=True, callback=abort_if_false,
-              expose_value=False,
-              prompt=TEXTS['withdraw_bounty']['confirm'])
-def _withdraw_bounty(validator_id, recipient_address, pk_file):
-    withdraw_bounty(int(validator_id), recipient_address, pk_file)
-
-
 @validator.command('withdraw-fee', help=TEXTS['withdraw_fee']['help'])
 @click.argument('recipient_address')
 @click.option(
@@ -188,3 +187,67 @@ def _withdraw_bounty(validator_id, recipient_address, pk_file):
               prompt=TEXTS['withdraw_fee']['confirm'])
 def _withdraw_fee(recipient_address, pk_file):
     withdraw_fee(recipient_address, pk_file)
+
+
+@validator.command('bond-amount', help=TEXTS['bond_amount']['help'])
+@click.option('--wei', '-w', is_flag=True,
+              help=TEXTS['bond_amount']['wei']['help'])
+@click.argument('validator_id', type=int)
+def _bond_amount(validator_id, wei):
+    get_bond_amount(validator_id, wei)
+
+
+@validator.command('set-mda', help=TEXTS['set_mda']['help'])
+@click.argument('new_mda')
+@click.option(
+    '--pk-file',
+    help=G_TEXTS['pk_file']['help']
+)
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=G_TEXTS['yes_opt']['prompt'])
+def _set_mda(new_mda, pk_file):
+    set_mda(float(new_mda), pk_file)
+
+
+@validator.command('change-address', help=TEXTS['change_address']['help'])
+@click.argument(
+    'address',
+    type=ETH_ADDRESS_TYPE
+)
+@click.option(
+    '--pk-file',
+    help=G_TEXTS['pk_file']['help']
+)
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=G_TEXTS['yes_opt']['prompt'])
+def _change_address(address, pk_file):
+    change_address(address, pk_file)
+
+
+@validator.command('confirm-address', help=TEXTS['confirm_address']['help'])
+@click.argument(
+    'validator_id',
+    type=int
+)
+@click.option(
+    '--pk-file',
+    help=G_TEXTS['pk_file']['help']
+)
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=G_TEXTS['yes_opt']['prompt'])
+def _confirm_address(validator_id, pk_file):
+    confirm_address(validator_id, pk_file)
+
+
+@validator.command('earned-fees', help=TEXTS['earned_fees']['help'])
+@click.argument(
+    'address',
+    type=ETH_ADDRESS_TYPE
+)
+@click.option('--wei', '-w', is_flag=True,
+              help=G_TEXTS['wei']['help'])
+def _earned_fees(address, wei):
+    earned_fees(address, wei)
