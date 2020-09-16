@@ -104,6 +104,8 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
         txs = block_data["transactions"]
         for tx in txs:
             rec = skale.web3.eth.getTransactionReceipt(tx)
+            if rec["to"] != skale.manager.contract.address:
+                continue
             h_receipt = skale.manager.contract.events.BountyGot().processReceipt(
                 rec, errors=DISCARD)
             if len(h_receipt) == 0:
