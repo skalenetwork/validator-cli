@@ -91,7 +91,7 @@ def init_skale_w_wallet_from_config(pk_file=None, address_index=None):
         print('Please specify path to the private key file to use software wallet with `--pk-file`\
             option')
         return
-    if config['wallet'] == 'ledger' and not address_index:
+    if config['wallet'] == 'ledger' and address_index is None:
         print('Please specify Ledger address index with `--address-index` option')
         return
     if config['wallet'] == 'sgx' and not sgx_inited():

@@ -96,7 +96,7 @@ Register as a new SKALE validator
 
 ```bash
 sk-val validator register
-``` 
+```
 
 Required arguments:
 
