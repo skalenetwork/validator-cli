@@ -108,7 +108,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--address-index` - Index of the address to use (only for `ledger` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 Usage example:
@@ -156,7 +156,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--address-index` - Index of the address to use (only for `ledger` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 #### Accept all pending delegations
@@ -171,7 +171,7 @@ sk-val validator accept-all-delegations --pk-file ./pk.txt
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--address-index` - Index of the address to use (only for `ledger` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 
 #### Validator linked addresses
 
@@ -200,7 +200,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--address-index` - Index of the address to use (only for `ledger` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 #### Unlink address
@@ -218,7 +218,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--address-index` - Index of the address to use (only for `ledger` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 #### Validator info
@@ -258,7 +258,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--address-index` - Index of the address to use (only for `ledger` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 #### Withdraw fee
@@ -276,7 +276,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--address-index` - Index of the address to use (only for `ledger` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 #### Set MDA
@@ -294,7 +294,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--address-index` - Index of the address to use (only for `ledger` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 #### Request address change
@@ -312,7 +312,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--address-index` - Index of the address to use (only for `ledger` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 #### Confirm address change
@@ -330,7 +330,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--address-index` - Index of the address to use (only for `ledger` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 #### Earned fees
@@ -369,7 +369,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--address-index` - Index of the address to use (only for `ledger` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 
 #### Delegations
 
@@ -402,7 +402,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--address-index` - Index of the address to use (only for `ledger` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 
 #### Request undelegation
 
@@ -419,7 +419,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--address-index` - Index of the address to use (only for `ledger` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 
 #### Locked
 
@@ -528,7 +528,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--address-index` - Index of the address to use (only for `ledger` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 Usage example:
@@ -553,7 +553,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--address-index` - Index of the address to use (only for `ledger` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 Usage example:
