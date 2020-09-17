@@ -109,8 +109,12 @@ holder:
       help: Show delegation amount in wei
   cancel_delegation:
     help: Cancel pending delegation request
+    confirm: |-
+      Are you sure you want to cancel delegation?
   undelegate:
     help: Request undelegation in the end of delegation period
+    confirm: |-
+      Are you sure you want to undelegate?
   locked:
     help: Show amount of locked tokens for address
     wei:
@@ -137,6 +141,8 @@ msg:
 
 pk_file:
   help: Path to file with private key (only for `software` wallet type)
+address_index:
+  help: Index of the address to use (only for `ledger` wallet type)
 yes_opt:
   prompt: Are you sure?
 wei:

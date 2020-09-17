@@ -28,10 +28,14 @@ def wallet():
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
 )
+@click.option(
+    '--address-index',
+    help=G_TEXTS['address_index']['help']
+)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False, prompt=TEXTS['send_eth']['confirm'])
-def _send_eth(receiver_address, amount, pk_file):
-    send_eth(receiver_address, amount, pk_file)
+def _send_eth(receiver_address, amount, pk_file, address_index):
+    send_eth(receiver_address, amount, pk_file, address_index)
 
 
 @wallet.command('send-skl', help=TEXTS['send_skl']['help'])
@@ -41,7 +45,11 @@ def _send_eth(receiver_address, amount, pk_file):
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
 )
+@click.option(
+    '--address-index',
+    help=G_TEXTS['address_index']['help']
+)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False, prompt=TEXTS['send_skl']['confirm'])
-def _send_skl(receiver_address, amount, pk_file):
-    send_skl(receiver_address, amount, pk_file)
+def _send_skl(receiver_address, amount, pk_file, address_index):
+    send_skl(receiver_address, amount, pk_file, address_index)

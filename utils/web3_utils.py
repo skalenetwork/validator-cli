@@ -49,12 +49,13 @@ def init_skale(endpoint, wallet=None, disable_spin=DISABLE_SPIN):
         sys.exit(0)
 
 
-def init_skale_w_wallet(endpoint, wallet_type, pk_file=None, disable_spin=DISABLE_SPIN):
+def init_skale_w_wallet(endpoint, wallet_type, pk_file=None, address_index=None,
+                        disable_spin=DISABLE_SPIN):
     """Init instance of SKALE library with wallet"""
     web3 = init_web3(endpoint)
     if wallet_type == 'ledger':
         try:
-            wallet = LedgerWallet(web3)
+            wallet = LedgerWallet(web3, address_index)
         except LedgerCommunicationError as e:
             logger.exception(e)
             print_err_with_log_path(e)
@@ -69,6 +70,7 @@ def init_skale_w_wallet(endpoint, wallet_type, pk_file=None, disable_spin=DISABL
         with open(pk_file, 'r') as f:
             pk = str(f.read()).strip()
         wallet = Web3Wallet(pk, web3)
+    print(f'Wallet address that will be used for signing the transaction: {wallet.address}\n')
     return init_skale(endpoint, wallet, disable_spin)
 
 
@@ -80,7 +82,7 @@ def init_skale_from_config():
     return init_skale(config['endpoint'])
 
 
-def init_skale_w_wallet_from_config(pk_file=None):
+def init_skale_w_wallet_from_config(pk_file=None, address_index=None):
     config = get_config()
     if not config:
         print('You should run < init > first')
@@ -89,11 +91,14 @@ def init_skale_w_wallet_from_config(pk_file=None):
         print('Please specify path to the private key file to use software wallet with `--pk-file`\
             option')
         return
+    if config['wallet'] == 'ledger' and not address_index:
+        print('Please specify Ledger address index with `--address-index` option')
+        return
     if config['wallet'] == 'sgx' and not sgx_inited():
         print('You should initialize sgx wallet first with <sk-val sgx init>')
         return
 
-    return init_skale_w_wallet(config['endpoint'], config['wallet'], pk_file)
+    return init_skale_w_wallet(config['endpoint'], config['wallet'], pk_file, address_index)
 
 
 def get_data_from_config():

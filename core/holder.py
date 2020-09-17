@@ -41,8 +41,8 @@ def delegations(address, wei):
     print_delegations(delegations_list, wei)
 
 
-def delegate(validator_id, amount, delegation_period, info, pk_file):
-    skale = init_skale_w_wallet_from_config(pk_file)
+def delegate(validator_id, amount, delegation_period, info, pk_file, address_index):
+    skale = init_skale_w_wallet_from_config(pk_file, address_index)
     if not skale:
         return
     with yaspin(text='Sending delegation request', color=SPIN_COLOR) as sp:
@@ -62,8 +62,8 @@ def delegate(validator_id, amount, delegation_period, info, pk_file):
         sp.write("✔ Delegation request sent")
 
 
-def cancel_pending_delegation(delegation_id: int, pk_file: str) -> None:
-    skale = init_skale_w_wallet_from_config(pk_file)
+def cancel_pending_delegation(delegation_id: int, pk_file: str, address_index) -> None:
+    skale = init_skale_w_wallet_from_config(pk_file, address_index)
     if not skale:
         return
     with yaspin(text='Canceling delegation request', color=SPIN_COLOR) as sp:
@@ -79,8 +79,8 @@ def cancel_pending_delegation(delegation_id: int, pk_file: str) -> None:
         sp.write("✔ Delegation request canceled")
 
 
-def undelegate(delegation_id: int, pk_file: str) -> None:
-    skale = init_skale_w_wallet_from_config(pk_file)
+def undelegate(delegation_id: int, pk_file: str, address_index) -> None:
+    skale = init_skale_w_wallet_from_config(pk_file, address_index)
     if not skale:
         return
     with yaspin(text='Requesting undelegation', color=SPIN_COLOR) as sp:
@@ -96,8 +96,8 @@ def undelegate(delegation_id: int, pk_file: str) -> None:
         sp.write("✔ Successfully undelegated")
 
 
-def withdraw_bounty(validator_id, recipient_address, pk_file):
-    skale = init_skale_w_wallet_from_config(pk_file)
+def withdraw_bounty(validator_id, recipient_address, pk_file, address_index):
+    skale = init_skale_w_wallet_from_config(pk_file, address_index)
     if not skale:
         return
     with yaspin(text='Withdrawing bounty', color=SPIN_COLOR) as sp:

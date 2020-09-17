@@ -11,16 +11,16 @@ from utils.helper import print_err_with_log_path
 logger = logging.getLogger(__name__)
 
 
-def send_eth(receiver_address, amount, pk_file):
-    _send_funds(receiver_address, amount, pk_file, 'eth')
+def send_eth(receiver_address, amount, pk_file, address_index):
+    _send_funds(receiver_address, amount, pk_file, 'eth', address_index)
 
 
-def send_skl(receiver_address, amount, pk_file):
-    _send_funds(receiver_address, amount, pk_file, 'skl')
+def send_skl(receiver_address, amount, pk_file, address_index):
+    _send_funds(receiver_address, amount, pk_file, 'skl', address_index)
 
 
-def _send_funds(receiver_address, amount, pk_file, token_type):
-    skale = init_skale_w_wallet_from_config(pk_file)
+def _send_funds(receiver_address, amount, pk_file, token_type, address_index):
+    skale = init_skale_w_wallet_from_config(pk_file, address_index)
     receiver_address = to_checksum_address(receiver_address)
     with yaspin(text='Transferring funds', color=SPIN_COLOR) as sp:
         try:
