@@ -27,6 +27,7 @@ from core.validator import (register, validators_list, delegations, accept_pendi
 from utils.helper import abort_if_false
 from utils.validations import EthAddressType, UrlType, FloatPercentageType
 from utils.texts import Texts
+from utils.constants import D_ADDRESS_INDEX
 
 
 ETH_ADDRESS_TYPE = EthAddressType()
@@ -78,6 +79,8 @@ def validator():
 )
 @click.option(
     '--address-index',
+    default=D_ADDRESS_INDEX,
+    type=int,
     help=G_TEXTS['address_index']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
@@ -120,6 +123,8 @@ def _delegations(validator_id, wei):
 )
 @click.option(
     '--address-index',
+    default=D_ADDRESS_INDEX,
+    type=int,
     help=G_TEXTS['address_index']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
@@ -140,6 +145,8 @@ def _accept_delegation(delegation_id, pk_file, address_index):
 )
 @click.option(
     '--address-index',
+    default=D_ADDRESS_INDEX,
+    type=int,
     help=G_TEXTS['address_index']['help']
 )
 def _accept_all_delegations(pk_file, address_index):
@@ -158,6 +165,8 @@ def _accept_all_delegations(pk_file, address_index):
 )
 @click.option(
     '--address-index',
+    default=D_ADDRESS_INDEX,
+    type=int,
     help=G_TEXTS['address_index']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
@@ -176,6 +185,8 @@ def _link_address(node_address, signature, pk_file, address_index):
 )
 @click.option(
     '--address-index',
+    default=D_ADDRESS_INDEX,
+    type=int,
     help=G_TEXTS['address_index']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
@@ -207,6 +218,8 @@ def _info(validator_id):
 )
 @click.option(
     '--address-index',
+    default=D_ADDRESS_INDEX,
+    type=int,
     help=G_TEXTS['address_index']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
@@ -232,6 +245,8 @@ def _bond_amount(validator_id, wei):
 )
 @click.option(
     '--address-index',
+    default=D_ADDRESS_INDEX,
+    type=int,
     help=G_TEXTS['address_index']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
@@ -252,6 +267,8 @@ def _set_mda(new_mda, pk_file, address_index):
 )
 @click.option(
     '--address-index',
+    default=D_ADDRESS_INDEX,
+    type=int,
     help=G_TEXTS['address_index']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
@@ -272,6 +289,8 @@ def _change_address(address, pk_file, address_index):
 )
 @click.option(
     '--address-index',
+    default=D_ADDRESS_INDEX,
+    type=int,
     help=G_TEXTS['address_index']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,

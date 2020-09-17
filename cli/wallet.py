@@ -4,6 +4,7 @@ import click
 from core.wallet import send_eth, send_skl
 from utils.helper import abort_if_false
 from utils.texts import Texts
+from utils.constants import D_ADDRESS_INDEX
 
 G_TEXTS = Texts()
 TEXTS = G_TEXTS['wallet']
@@ -30,6 +31,8 @@ def wallet():
 )
 @click.option(
     '--address-index',
+    default=D_ADDRESS_INDEX,
+    type=int,
     help=G_TEXTS['address_index']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
@@ -47,6 +50,8 @@ def _send_eth(receiver_address, amount, pk_file, address_index):
 )
 @click.option(
     '--address-index',
+    default=D_ADDRESS_INDEX,
+    type=int,
     help=G_TEXTS['address_index']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,

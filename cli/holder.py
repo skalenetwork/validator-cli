@@ -24,7 +24,7 @@ from utils.helper import abort_if_false
 from core.holder import (delegate, delegations,
                          cancel_pending_delegation, locked,
                          undelegate, withdraw_bounty, earned_bounties)
-from utils.constants import DELEGATION_PERIOD_OPTIONS
+from utils.constants import DELEGATION_PERIOD_OPTIONS, D_ADDRESS_INDEX
 from utils.validations import EthAddressType
 
 
@@ -75,6 +75,8 @@ def holder():
 )
 @click.option(
     '--address-index',
+    default=D_ADDRESS_INDEX,
+    type=int,
     help=G_TEXTS['address_index']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
@@ -106,6 +108,8 @@ def _delegations(address, wei):
 )
 @click.option(
     '--address-index',
+    default=D_ADDRESS_INDEX,
+    type=int,
     help=G_TEXTS['address_index']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
@@ -127,6 +131,8 @@ def _cancel_delegation(delegation_id, pk_file, address_index):
 )
 @click.option(
     '--address-index',
+    default=D_ADDRESS_INDEX,
+    type=int,
     help=G_TEXTS['address_index']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
@@ -149,6 +155,8 @@ def _undelegate(delegation_id, pk_file, address_index):
 )
 @click.option(
     '--address-index',
+    default=D_ADDRESS_INDEX,
+    type=int,
     help=G_TEXTS['address_index']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
