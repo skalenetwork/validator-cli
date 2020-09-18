@@ -24,7 +24,7 @@ from utils.helper import abort_if_false
 from core.holder import (delegate, delegations,
                          cancel_pending_delegation, locked,
                          undelegate, withdraw_bounty, earned_bounties)
-from utils.constants import DELEGATION_PERIOD_OPTIONS, D_ADDRESS_INDEX
+from utils.constants import DELEGATION_PERIOD_OPTIONS
 from utils.validations import EthAddressType
 
 
@@ -73,23 +73,16 @@ def holder():
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
 )
-@click.option(
-    '--address-index',
-    default=D_ADDRESS_INDEX,
-    type=int,
-    help=G_TEXTS['address_index']['help']
-)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=TEXTS['delegate']['confirm'])
-def _delegate(validator_id, amount, delegation_period, info, pk_file, address_index):
+def _delegate(validator_id, amount, delegation_period, info, pk_file):
     delegate(
         validator_id=validator_id,
         amount=amount,
         delegation_period=int(delegation_period),
         info=info,
-        pk_file=pk_file,
-        address_index=address_index
+        pk_file=pk_file
     )
 
 
@@ -106,20 +99,13 @@ def _delegations(address, wei):
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
 )
-@click.option(
-    '--address-index',
-    default=D_ADDRESS_INDEX,
-    type=int,
-    help=G_TEXTS['address_index']['help']
-)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=TEXTS['cancel_delegation']['confirm'])
-def _cancel_delegation(delegation_id, pk_file, address_index):
+def _cancel_delegation(delegation_id, pk_file):
     cancel_pending_delegation(
         delegation_id=int(delegation_id),
-        pk_file=pk_file,
-        address_index=address_index
+        pk_file=pk_file
     )
 
 
@@ -129,20 +115,13 @@ def _cancel_delegation(delegation_id, pk_file, address_index):
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
 )
-@click.option(
-    '--address-index',
-    default=D_ADDRESS_INDEX,
-    type=int,
-    help=G_TEXTS['address_index']['help']
-)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=TEXTS['undelegate']['confirm'])
-def _undelegate(delegation_id, pk_file, address_index):
+def _undelegate(delegation_id, pk_file):
     undelegate(
         delegation_id=int(delegation_id),
-        pk_file=pk_file,
-        address_index=address_index
+        pk_file=pk_file
     )
 
 
@@ -153,17 +132,11 @@ def _undelegate(delegation_id, pk_file, address_index):
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
 )
-@click.option(
-    '--address-index',
-    default=D_ADDRESS_INDEX,
-    type=int,
-    help=G_TEXTS['address_index']['help']
-)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=TEXTS['withdraw_bounty']['confirm'])
-def _withdraw_bounty(validator_id, recipient_address, pk_file, address_index):
-    withdraw_bounty(int(validator_id), recipient_address, pk_file, address_index)
+def _withdraw_bounty(validator_id, recipient_address, pk_file):
+    withdraw_bounty(int(validator_id), recipient_address, pk_file)
 
 
 @holder.command('locked', help=TEXTS['locked']['help'])
