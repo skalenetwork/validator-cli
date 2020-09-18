@@ -242,25 +242,6 @@ Output info:
 5) Minimum delegation amount (SKL)
 6) Accepting new delegation requests
 
-#### Withdraw bounty
-
-Withdraw earned bounty to specified address
-
-```bash
-sk-val validator withdraw-bounty [VALIDATOR_ID] [RECIPIENT_ADDRESS] --pk-file ./pk.txt
-```
-
-Required params:
-
-1) VALIDATOR_ID - ID of the validator
-2) RECIPIENT_ADDRESS - Address to transfer bounty
-
-Optional arguments:
-
--   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
--   `--yes` - Confirmation flag
-
 #### Withdraw fee
 
 Withdraw earned fee to specified address
@@ -420,6 +401,25 @@ Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
 -   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
+
+#### Withdraw bounty
+
+Withdraw earned bounty to specified address
+
+```bash
+sk-val holder withdraw-bounty [VALIDATOR_ID] [RECIPIENT_ADDRESS] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) VALIDATOR_ID - ID of the validator
+2) RECIPIENT_ADDRESS - Address to transfer bounty
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
+-   `--yes` - Confirmation flag
 
 #### Locked
 
