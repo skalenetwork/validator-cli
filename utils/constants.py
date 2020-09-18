@@ -68,3 +68,5 @@ LOG_BACKUP_COUNT = 2
 LOG_DATA_PATH = os.path.join(SKALE_VAL_CONFIG_FOLDER, 'log')
 LOG_FILEPATH = os.path.join(LOG_DATA_PATH, 'sk-val.log')
 DEBUG_LOG_FILEPATH = os.path.join(LOG_DATA_PATH, 'debug-sk-val.log')
+
+D_ADDRESS_INDEX = 0

@@ -23,7 +23,8 @@ import urllib
 import logging
 
 from web3 import Web3
-from utils.constants import SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE, PERMILLE_MULTIPLIER
+from utils.constants import (SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE, PERMILLE_MULTIPLIER,
+                             DEBUG_LOG_FILEPATH)
 
 logger = logging.getLogger(__name__)
 
@@ -90,3 +91,7 @@ def permille_to_percent(val):
 
 def percent_to_permille(val):
     return int(val * PERMILLE_MULTIPLIER)
+
+
+def print_err_with_log_path(e=''):
+    print(e, f'\nPlease check logs: {DEBUG_LOG_FILEPATH}')
