@@ -47,12 +47,14 @@ DISABLE_SPIN = os.getenv('DISABLE_SPIN')
 HOME_DIR = str(Path.home())
 SKALE_VAL_CONFIG_FOLDER = os.path.join(HOME_DIR, '.skale-val-cli')
 SKALE_VAL_CONFIG_FILE = os.path.join(SKALE_VAL_CONFIG_FOLDER, 'config.json')
+SKALE_VAL_LEDGER_INFO_FILE = os.path.join(SKALE_VAL_CONFIG_FOLDER, 'ledger_info.json')
 SKALE_VAL_ABI_FILE = os.path.join(SKALE_VAL_CONFIG_FOLDER, 'abi.json')
 SGX_DATA_DIR = os.getenv('SGX_DATA_DIR') or os.path.join(SKALE_VAL_CONFIG_FOLDER, 'sgx')
 SGX_INFO_PATH = os.path.join(SGX_DATA_DIR, 'info.json')
 SGX_SSL_CERTS_PATH = os.path.join(SGX_DATA_DIR, 'ssl')
 
 WALLET_TYPES = ['software', 'ledger', 'sgx']
+LEDGER_KEYS_TYPES = ['legacy', 'live']
 # DELEGATION_PERIOD_OPTIONS = ['3', '6', '9', '12']  # strings because of click.Choice design
 DELEGATION_PERIOD_OPTIONS = ['2']  # strings because of click.Choice design
 

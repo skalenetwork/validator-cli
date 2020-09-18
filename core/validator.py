@@ -32,8 +32,8 @@ from utils.constants import SPIN_COLOR
 
 
 def register(name: str, description: str, commission_rate: float, min_delegation: int,
-             pk_file: str, address_index):
-    skale = init_skale_w_wallet_from_config(pk_file, address_index)
+             pk_file: str):
+    skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
     with yaspin(text='Registering new validator', color=SPIN_COLOR) as sp:
@@ -74,8 +74,8 @@ def delegations(validator_id, wei):
     print_delegations(delegations_list, wei)
 
 
-def accept_pending_delegation(delegation_id, pk_file: str, address_index) -> None:
-    skale = init_skale_w_wallet_from_config(pk_file, address_index)
+def accept_pending_delegation(delegation_id, pk_file: str) -> None:
+    skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
     with yaspin(text='Accepting delegation request', color=SPIN_COLOR) as sp:
@@ -92,8 +92,8 @@ def accept_pending_delegation(delegation_id, pk_file: str, address_index) -> Non
         sp.write(f'✔ Delegation request with ID {delegation_id} accepted')
 
 
-def accept_all_delegations(pk_file: str, address_index) -> None:
-    skale = init_skale_w_wallet_from_config(pk_file, address_index)
+def accept_all_delegations(pk_file: str) -> None:
+    skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
     validator_id = skale.validator_service.validator_id_by_address(skale.wallet.address)
@@ -129,8 +129,8 @@ def accept_all_delegations(pk_file: str, address_index) -> None:
             sp.write(f'✔ Delegation request with ID {delegation["id"]} accepted')
 
 
-def link_node_address(node_address: str, signature: str, pk_file: str, address_index) -> None:
-    skale = init_skale_w_wallet_from_config(pk_file, address_index)
+def link_node_address(node_address: str, signature: str, pk_file: str) -> None:
+    skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
     with yaspin(text='Linking node address', color=SPIN_COLOR) as sp:
@@ -148,8 +148,8 @@ def link_node_address(node_address: str, signature: str, pk_file: str, address_i
         sp.write(f'✔ Node address {node_address} linked to your validator address')
 
 
-def unlink_node_address(node_address: str, pk_file: str, address_index) -> None:
-    skale = init_skale_w_wallet_from_config(pk_file, address_index)
+def unlink_node_address(node_address: str, pk_file: str) -> None:
+    skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
     with yaspin(text='Unlinking node address', color=SPIN_COLOR) as sp:
@@ -210,8 +210,8 @@ def info(validator_id):
     print(table.table)
 
 
-def withdraw_fee(recipient_address, pk_file, address_index):
-    skale = init_skale_w_wallet_from_config(pk_file, address_index)
+def withdraw_fee(recipient_address, pk_file):
+    skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
     with yaspin(text='Withdrawing fee', color=SPIN_COLOR) as sp:
@@ -236,8 +236,8 @@ def get_bond_amount(validator_id, wei=False):
     print_bond_amount(validator_id, bond_amount, wei)
 
 
-def set_mda(new_mda, pk_file, address_index):
-    skale = init_skale_w_wallet_from_config(pk_file, address_index)
+def set_mda(new_mda, pk_file):
+    skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
     with yaspin(text='Changing minimum delegation amount', color=SPIN_COLOR) as sp:
@@ -255,8 +255,8 @@ def set_mda(new_mda, pk_file, address_index):
         sp.write(f'✔ Minimum delegation amount for your validator ID changed to {new_mda}')
 
 
-def change_address(address, pk_file, address_index):
-    skale = init_skale_w_wallet_from_config(pk_file, address_index)
+def change_address(address, pk_file):
+    skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
     with yaspin(text='Requesting new validator address', color=SPIN_COLOR) as sp:
@@ -277,8 +277,8 @@ def change_address(address, pk_file, address_index):
         )
 
 
-def confirm_address(validator_id, pk_file, address_index):
-    skale = init_skale_w_wallet_from_config(pk_file, address_index)
+def confirm_address(validator_id, pk_file):
+    skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
     with yaspin(text='Confirming validator address change', color=SPIN_COLOR) as sp:
