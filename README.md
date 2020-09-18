@@ -96,7 +96,7 @@ Register as a new SKALE validator
 
 ```bash
 sk-val validator register
-``` 
+```
 
 Required arguments:
 
@@ -108,6 +108,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 Usage example:
@@ -155,6 +156,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 #### Accept all pending delegations
@@ -169,6 +171,7 @@ sk-val validator accept-all-delegations --pk-file ./pk.txt
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 
 #### Validator linked addresses
 
@@ -197,6 +200,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 #### Unlink address
@@ -214,6 +218,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 #### Validator info
@@ -237,24 +242,6 @@ Output info:
 5) Minimum delegation amount (SKL)
 6) Accepting new delegation requests
 
-#### Withdraw bounty
-
-Withdraw earned bounty to specified address
-
-```bash
-sk-val validator withdraw-bounty [VALIDATOR_ID] [RECIPIENT_ADDRESS] --pk-file ./pk.txt
-```
-
-Required params:
-
-1) VALIDATOR_ID - ID of the validator
-2) RECIPIENT_ADDRESS - Address to transfer bounty
-
-Optional arguments:
-
--   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--yes` - Confirmation flag
-
 #### Withdraw fee
 
 Withdraw earned fee to specified address
@@ -270,6 +257,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 #### Set MDA
@@ -287,6 +275,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 #### Request address change
@@ -304,6 +293,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 #### Confirm address change
@@ -321,6 +311,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 #### Earned fees
@@ -359,6 +350,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 
 #### Delegations
 
@@ -391,6 +383,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 
 #### Request undelegation
 
@@ -407,6 +400,26 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
+
+#### Withdraw bounty
+
+Withdraw earned bounty to specified address
+
+```bash
+sk-val holder withdraw-bounty [VALIDATOR_ID] [RECIPIENT_ADDRESS] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) VALIDATOR_ID - ID of the validator
+2) RECIPIENT_ADDRESS - Address to transfer bounty
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
+-   `--yes` - Confirmation flag
 
 #### Locked
 
@@ -515,6 +528,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 Usage example:
@@ -539,6 +553,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--address-index` - Index of the address to use (only for `ledger` wallet type - `0` by default)
 -   `--yes` - Confirmation flag
 
 Usage example:

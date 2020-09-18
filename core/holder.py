@@ -18,8 +18,7 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from yaspin import yaspin
-from skale.utils.web3_utils import (wait_receipt, check_receipt,
-                                    to_checksum_address)
+from skale.utils.web3_utils import to_checksum_address
 from skale.transactions.result import TransactionError
 
 from utils.helper import to_skl
@@ -42,8 +41,8 @@ def delegations(address, wei):
     print_delegations(delegations_list, wei)
 
 
-def delegate(validator_id, amount, delegation_period, info, pk_file):
-    skale = init_skale_w_wallet_from_config(pk_file)
+def delegate(validator_id, amount, delegation_period, info, pk_file, address_index):
+    skale = init_skale_w_wallet_from_config(pk_file, address_index)
     if not skale:
         return
     with yaspin(text='Sending delegation request', color=SPIN_COLOR) as sp:
@@ -55,15 +54,16 @@ def delegate(validator_id, amount, delegation_period, info, pk_file):
             info=info,
             raise_for_status=False
         )
-        receipt = wait_receipt(skale.web3, tx_res.tx_hash)
-        if not check_receipt(receipt, raise_error=False):
-            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+        try:
+            tx_res.raise_for_status()
+        except TransactionError as err:
+            sp.write(str(err))
             return
         sp.write("✔ Delegation request sent")
 
 
-def cancel_pending_delegation(delegation_id: int, pk_file: str) -> None:
-    skale = init_skale_w_wallet_from_config(pk_file)
+def cancel_pending_delegation(delegation_id: int, pk_file: str, address_index) -> None:
+    skale = init_skale_w_wallet_from_config(pk_file, address_index)
     if not skale:
         return
     with yaspin(text='Canceling delegation request', color=SPIN_COLOR) as sp:
@@ -71,15 +71,16 @@ def cancel_pending_delegation(delegation_id: int, pk_file: str) -> None:
             delegation_id=delegation_id,
             raise_for_status=False
         )
-        receipt = wait_receipt(skale.web3, tx_res.tx_hash)
-        if not check_receipt(receipt, raise_error=False):
-            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+        try:
+            tx_res.raise_for_status()
+        except TransactionError as err:
+            sp.write(str(err))
             return
         sp.write("✔ Delegation request canceled")
 
 
-def undelegate(delegation_id: int, pk_file: str) -> None:
-    skale = init_skale_w_wallet_from_config(pk_file)
+def undelegate(delegation_id: int, pk_file: str, address_index) -> None:
+    skale = init_skale_w_wallet_from_config(pk_file, address_index)
     if not skale:
         return
     with yaspin(text='Requesting undelegation', color=SPIN_COLOR) as sp:
@@ -87,15 +88,16 @@ def undelegate(delegation_id: int, pk_file: str) -> None:
             delegation_id=delegation_id,
             raise_for_status=False
         )
-        receipt = wait_receipt(skale.web3, tx_res.tx_hash)
-        if not check_receipt(receipt, raise_error=False):
-            sp.write(f'Transaction failed, hash: {tx_res.tx_hash}')
+        try:
+            tx_res.raise_for_status()
+        except TransactionError as err:
+            sp.write(str(err))
             return
         sp.write("✔ Successfully undelegated")
 
 
-def withdraw_bounty(validator_id, recipient_address, pk_file):
-    skale = init_skale_w_wallet_from_config(pk_file)
+def withdraw_bounty(validator_id, recipient_address, pk_file, address_index):
+    skale = init_skale_w_wallet_from_config(pk_file, address_index)
     if not skale:
         return
     with yaspin(text='Withdrawing bounty', color=SPIN_COLOR) as sp:

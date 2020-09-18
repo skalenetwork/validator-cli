@@ -112,6 +112,7 @@ def test_cancel_delegation(runner, skale):
         _cancel_delegation,
         [
             str(delegation_id),
+            '--yes',
             '--pk-file', TEST_PK_FILE
         ]
     )
@@ -147,6 +148,7 @@ def test_undelegate(runner, skale):
         _undelegate,
         [
             str(delegation_id),
+            '--yes',
             '--pk-file', TEST_PK_FILE
         ]
     )
