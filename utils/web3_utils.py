@@ -29,6 +29,7 @@ from skale.wallets import LedgerWallet, SgxWallet, Web3Wallet
 from skale.wallets.ledger_wallet import LedgerCommunicationError
 from utils.constants import SGX_SSL_CERTS_PATH, SKALE_VAL_ABI_FILE, SPIN_COLOR
 from utils.helper import get_config, print_err_with_log_path
+from core.wallet_tools import get_ledger_wallet_info
 from yaspin import yaspin
 
 DISABLE_SPIN = os.getenv('DISABLE_SPIN')
@@ -49,13 +50,14 @@ def init_skale(endpoint, wallet=None, disable_spin=DISABLE_SPIN):
         sys.exit(0)
 
 
-def init_skale_w_wallet(endpoint, wallet_type, pk_file=None, address_index=None,
+def init_skale_w_wallet(endpoint, wallet_type, pk_file=None, ledger_config={},
                         disable_spin=DISABLE_SPIN):
     """Init instance of SKALE library with wallet"""
     web3 = init_web3(endpoint)
     if wallet_type == 'ledger':
         try:
-            wallet = LedgerWallet(web3, address_index)
+            legacy = ledger_config['keys_type'] == 'legacy'
+            wallet = LedgerWallet(web3, ledger_config['address_index'], legacy)
         except LedgerCommunicationError as e:
             logger.exception(e)
             print_err_with_log_path(e)
@@ -82,8 +84,9 @@ def init_skale_from_config():
     return init_skale(config['endpoint'])
 
 
-def init_skale_w_wallet_from_config(pk_file=None, address_index=None):
+def init_skale_w_wallet_from_config(pk_file=None):
     config = get_config()
+    ledger_config = get_ledger_wallet_info()
     if not config:
         print('You should run < init > first')
         return
@@ -91,14 +94,14 @@ def init_skale_w_wallet_from_config(pk_file=None, address_index=None):
         print('Please specify path to the private key file to use software wallet with `--pk-file`\
             option')
         return
-    if config['wallet'] == 'ledger' and address_index is None:
-        print('Please specify Ledger address index with `--address-index` option')
+    if config['wallet'] == 'ledger' and not ledger_config.get('keys_type'):
+        print('Please setup Ledger wallet with < sk-val wallet setup-ledger >')
         return
     if config['wallet'] == 'sgx' and not sgx_inited():
         print('You should initialize sgx wallet first with <sk-val sgx init>')
         return
 
-    return init_skale_w_wallet(config['endpoint'], config['wallet'], pk_file, address_index)
+    return init_skale_w_wallet(config['endpoint'], config['wallet'], pk_file, ledger_config)
 
 
 def get_data_from_config():
