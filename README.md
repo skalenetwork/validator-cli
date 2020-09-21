@@ -11,8 +11,8 @@
     2.1 [Init](#init)  
     2.2 [Validator commands](#validator-commands)  
     2.3 [Holder commands](#holder-commands)  
-    2.4 [Metrics commands](#metrics-commands)
-    2.5 [Wallet commands](#)
+    2.4 [Metrics commands](#metrics-commands)  
+    2.5 [Wallet commands](#wallet-commands)
 3.  [Development](#development)  
 
 ## Installation
