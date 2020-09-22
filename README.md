@@ -187,12 +187,14 @@ Required params:
 Link node address to the validator account
 
 ```bash
-sk-val validator link-address [ADDRESS] --pk-file ./pk.txt
+sk-val validator link-address [ADDRESS] [NODE_SIGNATURE] --pk-file ./pk.txt
 ```
 
 Required params:
 
 1) Address - Ethereum address that will be linked
+2) Node signature - Signature of the node that you can get using `skale node signature`
+   command from skale-node-cli
 
 Optional arguments:
 
