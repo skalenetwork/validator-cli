@@ -75,14 +75,20 @@ def abort_if_false(ctx, param, value):
 
 
 def to_skl(wei, type='ether'):  # todo: replace with from_wei()
+    if wei is None:
+        return None
     return Web3.fromWei(Decimal(wei), type)
 
 
 def from_wei(val, type='ether'):
+    if val is None:
+        return None
     return Web3.fromWei(Decimal(val), type)
 
 
 def to_wei(val, type='ether'):
+    if val is None:
+        return None
     return Web3.toWei(Decimal(val), type)
 
 
