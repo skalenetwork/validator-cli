@@ -20,9 +20,7 @@
 import os
 import sys
 import logging
-from decimal import Decimal
 
-from web3 import Web3
 from yaspin import yaspin
 
 from skale import Skale
