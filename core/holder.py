@@ -41,7 +41,8 @@ def delegations(address, wei):
     print_delegations(delegations_list, wei)
 
 
-def delegate(validator_id, amount, delegation_period, info, pk_file):
+def delegate(validator_id: int, amount: int, delegation_period: int, info: str,
+             pk_file: str, gas_price: int) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
@@ -52,6 +53,7 @@ def delegate(validator_id, amount, delegation_period, info, pk_file):
             amount=amount_wei,
             delegation_period=delegation_period,
             info=info,
+            gas_price=gas_price,
             raise_for_status=False
         )
         try:
@@ -62,13 +64,15 @@ def delegate(validator_id, amount, delegation_period, info, pk_file):
         sp.write("✔ Delegation request sent")
 
 
-def cancel_pending_delegation(delegation_id: int, pk_file: str) -> None:
+def cancel_pending_delegation(delegation_id: int, pk_file: str,
+                              gas_price: int) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
     with yaspin(text='Canceling delegation request', color=SPIN_COLOR) as sp:
         tx_res = skale.delegation_controller.cancel_pending_delegation(
             delegation_id=delegation_id,
+            gas_price=gas_price,
             raise_for_status=False
         )
         try:
@@ -79,13 +83,14 @@ def cancel_pending_delegation(delegation_id: int, pk_file: str) -> None:
         sp.write("✔ Delegation request canceled")
 
 
-def undelegate(delegation_id: int, pk_file: str) -> None:
+def undelegate(delegation_id: int, pk_file: str, gas_price: int) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
     with yaspin(text='Requesting undelegation', color=SPIN_COLOR) as sp:
         tx_res = skale.delegation_controller.request_undelegation(
             delegation_id=delegation_id,
+            gas_price=gas_price,
             raise_for_status=False
         )
         try:
@@ -96,7 +101,8 @@ def undelegate(delegation_id: int, pk_file: str) -> None:
         sp.write("✔ Successfully undelegated")
 
 
-def withdraw_bounty(validator_id, recipient_address, pk_file):
+def withdraw_bounty(validator_id: int, recipient_address: str,
+                    pk_file: str, gas_price: int) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
@@ -105,6 +111,7 @@ def withdraw_bounty(validator_id, recipient_address, pk_file):
             validator_id=validator_id,
             to=recipient_address,
             raise_for_status=False,
+            gas_price=gas_price,
             wait_for=True
         )
         try:

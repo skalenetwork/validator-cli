@@ -20,17 +20,21 @@
 import os
 import sys
 import logging
+from decimal import Decimal
 
-from core.sgx_tools import get_sgx_info, sgx_inited
+from web3 import Web3
+from yaspin import yaspin
+
 from skale import Skale
 from skale.utils.exceptions import IncompatibleAbiError
 from skale.utils.web3_utils import init_web3
 from skale.wallets import LedgerWallet, SgxWallet, Web3Wallet
 from skale.wallets.ledger_wallet import LedgerCommunicationError
+
+from core.wallet_tools import get_ledger_wallet_info
+from core.sgx_tools import get_sgx_info, sgx_inited
 from utils.constants import SGX_SSL_CERTS_PATH, SKALE_VAL_ABI_FILE, SPIN_COLOR
 from utils.helper import get_config, print_err_with_log_path
-from core.wallet_tools import get_ledger_wallet_info
-from yaspin import yaspin
 
 DISABLE_SPIN = os.getenv('DISABLE_SPIN')
 logger = logging.getLogger(__name__)
@@ -107,3 +111,9 @@ def init_skale_w_wallet_from_config(pk_file=None):
 def get_data_from_config():
     config = get_config()
     return config['endpoint'], config['wallet']
+
+
+def to_wei(gas_price_gwei: int) -> int:
+    if gas_price_gwei is None:
+        return None
+    return Web3.toWei(Decimal(gas_price_gwei), 'gwei')

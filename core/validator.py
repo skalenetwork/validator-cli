@@ -32,7 +32,7 @@ from utils.constants import SPIN_COLOR
 
 
 def register(name: str, description: str, commission_rate: float, min_delegation: int,
-             pk_file: str):
+             pk_file: str, gas_price: int) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
@@ -45,7 +45,8 @@ def register(name: str, description: str, commission_rate: float, min_delegation
             fee_rate=commission_rate_permille,
             min_delegation_amount=min_delegation_wei,
             raise_for_status=False,
-            wait_for=True
+            wait_for=True,
+            gas_price=gas_price
         )
         try:
             tx_res.raise_for_status()
@@ -74,7 +75,7 @@ def delegations(validator_id, wei):
     print_delegations(delegations_list, wei)
 
 
-def accept_pending_delegation(delegation_id, pk_file: str) -> None:
+def accept_pending_delegation(delegation_id, pk_file: str, gas_price: int) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
@@ -82,7 +83,8 @@ def accept_pending_delegation(delegation_id, pk_file: str) -> None:
         tx_res = skale.delegation_controller.accept_pending_delegation(
             delegation_id=delegation_id,
             raise_for_status=False,
-            wait_for=True
+            wait_for=True,
+            gas_price=gas_price
         )
         try:
             tx_res.raise_for_status()
@@ -92,7 +94,7 @@ def accept_pending_delegation(delegation_id, pk_file: str) -> None:
         sp.write(f'✔ Delegation request with ID {delegation_id} accepted')
 
 
-def accept_all_delegations(pk_file: str) -> None:
+def accept_all_delegations(pk_file: str, gas_price: int) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
@@ -119,7 +121,8 @@ def accept_all_delegations(pk_file: str) -> None:
             tx_res = skale.delegation_controller.accept_pending_delegation(
                 delegation_id=delegation['id'],
                 raise_for_status=False,
-                wait_for=True
+                wait_for=True,
+                gas_price=gas_price
             )
             try:
                 tx_res.raise_for_status()
@@ -129,7 +132,8 @@ def accept_all_delegations(pk_file: str) -> None:
             sp.write(f'✔ Delegation request with ID {delegation["id"]} accepted')
 
 
-def link_node_address(node_address: str, signature: str, pk_file: str) -> None:
+def link_node_address(node_address: str, signature: str, pk_file: str,
+                      gas_price: int) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
@@ -138,7 +142,8 @@ def link_node_address(node_address: str, signature: str, pk_file: str) -> None:
             node_address=node_address,
             signature=signature,
             raise_for_status=False,
-            wait_for=True
+            wait_for=True,
+            gas_price=gas_price
         )
         try:
             tx_res.raise_for_status()
@@ -148,7 +153,7 @@ def link_node_address(node_address: str, signature: str, pk_file: str) -> None:
         sp.write(f'✔ Node address {node_address} linked to your validator address')
 
 
-def unlink_node_address(node_address: str, pk_file: str) -> None:
+def unlink_node_address(node_address: str, pk_file: str, gas_price: int) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
@@ -156,7 +161,8 @@ def unlink_node_address(node_address: str, pk_file: str) -> None:
         tx_res = skale.validator_service.unlink_node_address(
             node_address=node_address,
             raise_for_status=False,
-            wait_for=True
+            wait_for=True,
+            gas_price=gas_price
         )
         try:
             tx_res.raise_for_status()
@@ -210,7 +216,7 @@ def info(validator_id):
     print(table.table)
 
 
-def withdraw_fee(recipient_address, pk_file):
+def withdraw_fee(recipient_address: str, pk_file: str, gas_price: int) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
@@ -218,7 +224,8 @@ def withdraw_fee(recipient_address, pk_file):
         tx_res = skale.distributor.withdraw_fee(
             to=recipient_address,
             raise_for_status=False,
-            wait_for=True
+            wait_for=True,
+            gas_price=gas_price
         )
         try:
             tx_res.raise_for_status()
@@ -236,7 +243,7 @@ def get_bond_amount(validator_id, wei=False):
     print_bond_amount(validator_id, bond_amount, wei)
 
 
-def set_mda(new_mda, pk_file):
+def set_mda(new_mda: int, pk_file: str, gas_price: int) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
@@ -245,7 +252,8 @@ def set_mda(new_mda, pk_file):
         tx_res = skale.validator_service.set_validator_mda(
             minimum_delegation_amount=new_mda_wei,
             raise_for_status=False,
-            wait_for=True
+            wait_for=True,
+            gas_price=gas_price
         )
         try:
             tx_res.raise_for_status()
@@ -255,7 +263,7 @@ def set_mda(new_mda, pk_file):
         sp.write(f'✔ Minimum delegation amount for your validator ID changed to {new_mda}')
 
 
-def change_address(address, pk_file):
+def change_address(address: str, pk_file: str, gas_price: int) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
@@ -263,7 +271,8 @@ def change_address(address, pk_file):
         tx_res = skale.validator_service.request_for_new_address(
             new_validator_address=address,
             raise_for_status=False,
-            wait_for=True
+            wait_for=True,
+            gas_price=gas_price
         )
         try:
             tx_res.raise_for_status()
@@ -277,7 +286,7 @@ def change_address(address, pk_file):
         )
 
 
-def confirm_address(validator_id, pk_file):
+def confirm_address(validator_id: int, pk_file: str, gas_price: int) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
@@ -285,14 +294,15 @@ def confirm_address(validator_id, pk_file):
         tx_res = skale.validator_service.confirm_new_address(
             validator_id=validator_id,
             raise_for_status=False,
-            wait_for=True
+            wait_for=True,
+            gas_price=gas_price
         )
         try:
             tx_res.raise_for_status()
         except TransactionError as err:
             sp.write(str(err))
             return
-        sp.write(f'✔ Validator address changed')
+        sp.write('✔ Validator address changed')
 
 
 def earned_fees(validator_address, wei):
