@@ -543,7 +543,6 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 Usage example:
@@ -568,7 +567,6 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
--   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 Usage example:
