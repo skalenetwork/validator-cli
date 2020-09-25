@@ -36,6 +36,7 @@ def create_new_validator(skale, runner, pk_file_path):
             '-c', D_VALIDATOR_FEE,
             '--min-delegation', D_VALIDATOR_MIN_DEL,
             '--pk-file', pk_file_path,
+            '--gas-price', 1,
             '--yes'
         ]
     )
@@ -62,6 +63,7 @@ def test_register(runner, skale):
             '-c', D_VALIDATOR_FEE,
             '--min-delegation', D_VALIDATOR_MIN_DEL,
             '--pk-file', SECOND_TEST_PK_FILE,
+            '--gas-price', 1,
             '--yes'
         ]
     )
@@ -205,6 +207,7 @@ def test_accept_delegation(runner, skale):
         [
             '--delegation-id', delegation_id,
             '--pk-file', TEST_PK_FILE,
+            '--gas-price', 1,
             '--yes'
         ]
     )
@@ -243,7 +246,8 @@ def test_accept_all_delegations(runner, skale):
         result = runner.invoke(
             _accept_all_delegations,
             [
-                '--pk-file', TEST_PK_FILE
+                '--pk-file', TEST_PK_FILE,
+                '--gas-price', 1
             ]
         )
 
@@ -319,6 +323,7 @@ def test_unlink_address(runner, skale):
         [
             wallet.address,
             '--pk-file', TEST_PK_FILE,
+            '--gas-price', 1,
             '--yes'
         ]
     )
@@ -367,6 +372,7 @@ def test_withdraw_fee(runner, skale):
         [
             recipient_address,
             '--pk-file', TEST_PK_FILE,
+            '--gas-price', 1,
             '--yes'
         ]
     )
@@ -403,6 +409,7 @@ def test_set_mda(runner):
         [
             minimum_delegation_amount,
             '--pk-file', TEST_PK_FILE,
+            '--gas-price', 1,
             '--yes'
         ]
     )
@@ -418,6 +425,7 @@ def test_change_address(runner, skale):
         [
             wallet.address,
             '--pk-file', TEST_PK_FILE,
+            '--gas-price', 1,
             '--yes'
         ]
     )
@@ -445,6 +453,7 @@ def test_confirm_address(runner, skale):
         [
             str(latest_validator_id),
             '--pk-file', ADDRESS_CHANGE_PK_FILE_2,
+            '--gas-price', 1,
             '--yes'
         ]
     )
