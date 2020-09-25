@@ -24,6 +24,7 @@ from core.validator import (register, validators_list, delegations, accept_pendi
                             get_bond_amount, link_node_address, unlink_node_address,
                             linked_addresses, info, withdraw_fee, set_mda, change_address,
                             confirm_address, earned_fees, accept_all_delegations)
+from utils.helper import to_wei
 from utils.helper import abort_if_false
 from utils.validations import EthAddressType, UrlType, FloatPercentageType
 from utils.texts import Texts
@@ -76,15 +77,22 @@ def validator():
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
 )
+@click.option(
+    '--gas-price',
+    type=float,
+    help=G_TEXTS['gas_price']['help']
+)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False, prompt=TEXTS['register']['confirm'])
-def _register(name, description, commission_rate, min_delegation, pk_file):
+def _register(name, description, commission_rate, min_delegation, pk_file,
+              gas_price):
     register(
         name=name,
         description=description,
         commission_rate=float(commission_rate),
         min_delegation=int(min_delegation),
         pk_file=pk_file,
+        gas_price=to_wei(gas_price, 'gwei')
     )
 
 
@@ -113,13 +121,19 @@ def _delegations(validator_id, wei):
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
 )
+@click.option(
+    '--gas-price',
+    type=float,
+    help=G_TEXTS['gas_price']['help']
+)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=TEXTS['accept_delegation']['confirm'])
-def _accept_delegation(delegation_id, pk_file):
+def _accept_delegation(delegation_id, pk_file, gas_price):
     accept_pending_delegation(
         delegation_id=int(delegation_id),
         pk_file=pk_file,
+        gas_price=to_wei(gas_price, 'gwei')
     )
 
 
@@ -128,9 +142,15 @@ def _accept_delegation(delegation_id, pk_file):
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
 )
-def _accept_all_delegations(pk_file):
+@click.option(
+    '--gas-price',
+    type=float,
+    help=G_TEXTS['gas_price']['help']
+)
+def _accept_all_delegations(pk_file, gas_price):
     accept_all_delegations(
-        pk_file=pk_file
+        pk_file=pk_file,
+        gas_price=to_wei(gas_price, 'gwei')
     )
 
 
@@ -141,12 +161,18 @@ def _accept_all_delegations(pk_file):
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
 )
+@click.option(
+    '--gas-price',
+    type=float,
+    help=G_TEXTS['gas_price']['help']
+)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=TEXTS['link_address']['confirm'])
-def _link_address(node_address, signature, pk_file):
+def _link_address(node_address, signature, pk_file, gas_price):
     node_address = Web3.toChecksumAddress(node_address)
-    link_node_address(node_address, signature, pk_file)
+    link_node_address(node_address, signature,
+                      pk_file=pk_file, gas_price=to_wei(gas_price, 'gwei'))
 
 
 @validator.command('unlink-address', help=TEXTS['unlink_address']['help'])
@@ -155,11 +181,17 @@ def _link_address(node_address, signature, pk_file):
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
 )
+@click.option(
+    '--gas-price',
+    type=float,
+    help=G_TEXTS['gas_price']['help']
+)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=TEXTS['unlink_address']['confirm'])
-def _unlink_address(node_address, pk_file):
-    unlink_node_address(node_address, pk_file)
+def _unlink_address(node_address, pk_file, gas_price):
+    unlink_node_address(node_address, pk_file=pk_file,
+                        gas_price=to_wei(gas_price, 'gwei'))
 
 
 @validator.command('linked-addresses', help=TEXTS['linked_addresses']['help'])
@@ -182,11 +214,17 @@ def _info(validator_id):
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
 )
+@click.option(
+    '--gas-price',
+    type=float,
+    help=G_TEXTS['gas_price']['help']
+)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=TEXTS['withdraw_fee']['confirm'])
-def _withdraw_fee(recipient_address, pk_file):
-    withdraw_fee(recipient_address, pk_file)
+def _withdraw_fee(recipient_address, pk_file, gas_price):
+    withdraw_fee(recipient_address, pk_file=pk_file,
+                 gas_price=to_wei(gas_price, 'gwei'))
 
 
 @validator.command('bond-amount', help=TEXTS['bond_amount']['help'])
@@ -203,11 +241,17 @@ def _bond_amount(validator_id, wei):
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
 )
+@click.option(
+    '--gas-price',
+    type=float,
+    help=G_TEXTS['gas_price']['help']
+)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=G_TEXTS['yes_opt']['prompt'])
-def _set_mda(new_mda, pk_file):
-    set_mda(float(new_mda), pk_file)
+def _set_mda(new_mda, pk_file, gas_price):
+    set_mda(float(new_mda), pk_file=pk_file,
+            gas_price=to_wei(gas_price, 'gwei'))
 
 
 @validator.command('change-address', help=TEXTS['change_address']['help'])
@@ -219,11 +263,17 @@ def _set_mda(new_mda, pk_file):
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
 )
+@click.option(
+    '--gas-price',
+    type=float,
+    help=G_TEXTS['gas_price']['help']
+)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=G_TEXTS['yes_opt']['prompt'])
-def _change_address(address, pk_file):
-    change_address(address, pk_file)
+def _change_address(address, pk_file, gas_price):
+    change_address(address, pk_file=pk_file,
+                   gas_price=to_wei(gas_price, 'gwei'))
 
 
 @validator.command('confirm-address', help=TEXTS['confirm_address']['help'])
@@ -235,11 +285,17 @@ def _change_address(address, pk_file):
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
 )
+@click.option(
+    '--gas-price',
+    type=float,
+    help=G_TEXTS['gas_price']['help']
+)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=G_TEXTS['yes_opt']['prompt'])
-def _confirm_address(validator_id, pk_file):
-    confirm_address(validator_id, pk_file)
+def _confirm_address(validator_id, pk_file, gas_price):
+    confirm_address(validator_id, pk_file=pk_file,
+                    gas_price=to_wei(gas_price, 'gwei'))
 
 
 @validator.command('earned-fees', help=TEXTS['earned_fees']['help'])
