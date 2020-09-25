@@ -33,7 +33,7 @@ def test_delegate(runner, skale):
             '--delegation-period', str(D_DELEGATION_PERIOD),
             '--info', D_DELEGATION_INFO,
             '--pk-file', TEST_PK_FILE,
-            '--gas-price', 1,
+            '--gas-price', 1.5,
             '--yes'
         ]
     )
@@ -114,7 +114,7 @@ def test_cancel_delegation(runner, skale):
         [
             str(delegation_id),
             '--yes',
-            '--gas-price', 1,
+            '--gas-price', 3.23,
             '--pk-file', TEST_PK_FILE,
         ]
     )
@@ -151,7 +151,7 @@ def test_undelegate(runner, skale):
         [
             str(delegation_id),
             '--yes',
-            '--gas-price', 1,
+            '--gas-price', 1.28,
             '--pk-file', TEST_PK_FILE
         ]
     )

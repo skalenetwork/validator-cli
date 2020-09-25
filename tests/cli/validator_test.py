@@ -207,7 +207,7 @@ def test_accept_delegation(runner, skale):
         [
             '--delegation-id', delegation_id,
             '--pk-file', TEST_PK_FILE,
-            '--gas-price', 1,
+            '--gas-price', 1.7,
             '--yes'
         ]
     )
@@ -409,7 +409,7 @@ def test_set_mda(runner):
         [
             minimum_delegation_amount,
             '--pk-file', TEST_PK_FILE,
-            '--gas-price', 1,
+            '--gas-price', 2.9,
             '--yes'
         ]
     )

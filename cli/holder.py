@@ -76,6 +76,7 @@ def holder():
 )
 @click.option(
     '--gas-price',
+    type=float,
     help=G_TEXTS['gas_price']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
@@ -108,6 +109,7 @@ def _delegations(address, wei):
 )
 @click.option(
     '--gas-price',
+    type=float,
     help=G_TEXTS['gas_price']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
@@ -129,6 +131,7 @@ def _cancel_delegation(delegation_id, pk_file, gas_price):
 )
 @click.option(
     '--gas-price',
+    type=float,
     help=G_TEXTS['gas_price']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
@@ -151,6 +154,7 @@ def _undelegate(delegation_id, pk_file, gas_price):
 )
 @click.option(
     '--gas-price',
+    type=float,
     help=G_TEXTS['gas_price']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
