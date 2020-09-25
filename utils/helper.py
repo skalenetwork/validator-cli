@@ -21,6 +21,7 @@ import os
 import json
 import urllib
 import logging
+from decimal import Decimal
 
 from web3 import Web3
 from utils.constants import (SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE, PERMILLE_MULTIPLIER,
@@ -73,16 +74,22 @@ def abort_if_false(ctx, param, value):
         ctx.abort()
 
 
-def to_skl(wei):  # todo: replace with from_wei()
-    return Web3.fromWei(wei, 'ether')
+def to_skl(wei, type='ether'):  # todo: replace with from_wei()
+    if wei is None:
+        return None
+    return Web3.fromWei(Decimal(wei), type)
 
 
-def from_wei(val):
-    return Web3.fromWei(val, 'ether')
+def from_wei(val, type='ether'):
+    if val is None:
+        return None
+    return Web3.fromWei(Decimal(val), type)
 
 
-def to_wei(val):
-    return Web3.toWei(val, 'ether')
+def to_wei(val, type='ether'):
+    if val is None:
+        return None
+    return Web3.toWei(Decimal(val), type)
 
 
 def permille_to_percent(val):
