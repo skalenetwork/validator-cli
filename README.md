@@ -7,13 +7,13 @@
 ## Table of Contents
 
 1.  [Installation](#installation)
-2.  [CLI usage](#cli-usage)  
-    2.1 [Init](#init)  
-    2.2 [Validator commands](#validator-commands)  
-    2.3 [Holder commands](#holder-commands)  
-    2.4 [Metrics commands](#metrics-commands)  
+2.  [CLI usage](#cli-usage)
+    2.1 [Init](#init)
+    2.2 [Validator commands](#validator-commands)
+    2.3 [Holder commands](#holder-commands)
+    2.4 [Metrics commands](#metrics-commands)
     2.5 [Wallet commands](#wallet-commands)
-3.  [Development](#development)  
+3.  [Development](#development)
 
 ## Installation
 
@@ -71,8 +71,8 @@ sk-val init -e ws://geth.test.com:8546 -c https://test.com/manager.json --wallet
 
 ### SGX commands
 
-#### Init 
- Initialize sgx wallet  
+#### Init
+ Initialize sgx wallet
  ```bash
 sk-val sgx init [SGX_SERVER_URL]
 ```
@@ -83,7 +83,7 @@ Optional arguments:
 #### Info
 Print sgx wallet information
 ```bash
-sk-val sgx info 
+sk-val sgx info
 ```
 Optional arguments:
 -   `--raw` - Print info in plain json
@@ -108,6 +108,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 Usage example:
@@ -155,11 +156,12 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Accept all pending delegations
 
-Accept ALL pending delegations request for the address.  
+Accept ALL pending delegations request for the address.
 List with all pending delegations to be accepted will be shown. After this user should confirm the operation.
 
 ```bash
@@ -169,6 +171,7 @@ sk-val validator accept-all-delegations --pk-file ./pk.txt
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 
 #### Validator linked addresses
 
@@ -199,6 +202,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Unlink address
@@ -216,6 +220,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Validator info
@@ -254,6 +259,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Set MDA
@@ -271,6 +277,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Request address change
@@ -288,6 +295,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Confirm address change
@@ -305,6 +313,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Earned fees
@@ -343,6 +352,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 
 #### Delegations
 
@@ -375,6 +385,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 
 #### Request undelegation
 
@@ -391,6 +402,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 
 #### Withdraw bounty
 
@@ -408,6 +420,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Locked
@@ -530,6 +543,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 Usage example:
@@ -554,6 +568,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 Usage example:
