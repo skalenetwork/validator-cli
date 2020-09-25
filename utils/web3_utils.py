@@ -111,9 +111,3 @@ def init_skale_w_wallet_from_config(pk_file=None):
 def get_data_from_config():
     config = get_config()
     return config['endpoint'], config['wallet']
-
-
-def to_wei(gas_price_gwei: int) -> int:
-    if gas_price_gwei is None:
-        return None
-    return Web3.toWei(Decimal(gas_price_gwei), 'gwei')
