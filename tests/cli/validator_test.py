@@ -16,12 +16,13 @@ from utils.helper import from_wei, permille_to_percent
 from cli.validator import (_bond_amount, _register, _ls, _delegations, _accept_delegation,
                            _link_address, _unlink_address, _linked_addresses,
                            _info, _withdraw_fee, _set_mda, _change_address, _confirm_address,
-                           _earned_fees, _accept_all_delegations)
+                           _earned_fees, _accept_all_delegations, _edit)
 from tests.conftest import str_contains
 from tests.constants import (
     D_VALIDATOR_NAME, D_VALIDATOR_DESC, D_VALIDATOR_FEE, D_VALIDATOR_ID,
     D_VALIDATOR_MIN_DEL, SECOND_TEST_PK_FILE, D_DELEGATION_AMOUNT, D_DELEGATION_PERIOD,
-    D_DELEGATION_INFO, TEST_PK_FILE, ADDRESS_CHANGE_PK_FILE_1, ADDRESS_CHANGE_PK_FILE_2
+    D_DELEGATION_INFO, TEST_PK_FILE, ADDRESS_CHANGE_PK_FILE_1, ADDRESS_CHANGE_PK_FILE_2,
+    EDIT_PK_FILE_2
 )
 from tests.prepare_data import set_test_mda
 
@@ -471,3 +472,38 @@ def test_earned_fees(runner, skale):
     output = result.output
     assert result.exit_code == 0
     assert output == f'Earned fee for {skale.wallet.address}: {earned_fee["earned"]} WEI\nEnd month: {earned_fee["end_month"]}\n'  # noqa
+
+
+def test_edit(runner, skale):
+    wallet_1 = create_new_validator(skale, runner, EDIT_PK_FILE_2)
+    skale.wallet = wallet_1
+
+    new_test_name = 'test_123'
+    new_test_description = 'test_description'
+
+    latest_id = skale.validator_service.number_of_validators()
+    validator = skale.validator_service.get(latest_id)
+
+    assert validator['name'] == D_VALIDATOR_NAME
+    assert validator['name'] != new_test_name
+    assert validator['description'] == D_VALIDATOR_DESC
+    assert validator['description'] != new_test_description
+
+    result = runner.invoke(
+        _edit,
+        [
+            '--name', new_test_name,
+            '--description', new_test_description,
+            '--pk-file', EDIT_PK_FILE_2,
+            '--gas-price', 1,
+            '--yes'
+        ]
+    )
+
+    validator = skale.validator_service.get(latest_id)
+    assert validator['name'] != D_VALIDATOR_NAME
+    assert validator['name'] == new_test_name
+    assert validator['description'] != D_VALIDATOR_DESC
+    assert validator['description'] == new_test_description
+
+    assert result.exit_code == 0
