@@ -63,7 +63,7 @@ extras_require['dev'] = (
 
 
 setup(
-    name='skale-validators-cli',
+    name='validator-cli',
     # *IMPORTANT*: Don't manually change the version here.
     # Use the 'bumpversion' utility instead.
     version=find_version("cli", "__init__.py"),
@@ -75,14 +75,14 @@ setup(
     url='https://github.com/skalenetwork/validator-cli',
     install_requires=[
         "click==7.1.2",
-        "skale.py==4.1dev4",
+        "skale.py==4.1dev11",
         "terminaltables==3.1.0",
         "yaspin==0.16.0",
         "texttable==1.6.2",
         "pandas==1.0.4",
         "terminaltables==3.1.0"
     ],
-    python_requires='>=3.6,<4',
+    python_requires='>=3.7,<4',
     extras_require=extras_require,
 
     keywords=['skale', 'cli'],
@@ -92,6 +92,6 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU Affero General Public License v3 (AGPLv3)',
         'Natural Language :: English',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
 )

@@ -23,7 +23,7 @@ from web3 import Web3
 from core.validator import (register, validators_list, delegations, accept_pending_delegation,
                             get_bond_amount, link_node_address, unlink_node_address,
                             linked_addresses, info, withdraw_fee, set_mda, change_address,
-                            confirm_address, earned_fees, accept_all_delegations)
+                            confirm_address, earned_fees, accept_all_delegations, edit)
 from utils.helper import to_wei
 from utils.helper import abort_if_false
 from utils.validations import EthAddressType, UrlType, FloatPercentageType
@@ -307,3 +307,35 @@ def _confirm_address(validator_id, pk_file, gas_price):
               help=G_TEXTS['wei']['help'])
 def _earned_fees(address, wei):
     earned_fees(address, wei)
+
+
+@validator.command('edit', help=TEXTS['edit']['help'])
+@click.option(
+    '--name', '-n',
+    type=str,
+    help=TEXTS['edit']['name']['help']
+)
+@click.option(
+    '--description', '-d',
+    type=str,
+    help=TEXTS['edit']['description']['help']
+)
+@click.option(
+    '--pk-file',
+    help=G_TEXTS['pk_file']['help']
+)
+@click.option(
+    '--gas-price',
+    type=float,
+    help=G_TEXTS['gas_price']['help']
+)
+@click.option('--yes', is_flag=True, callback=abort_if_false,
+              expose_value=False,
+              prompt=G_TEXTS['yes_opt']['prompt'])
+def _edit(name, description, pk_file, gas_price):
+    edit(
+        name=name,
+        description=description,
+        pk_file=pk_file,
+        gas_price=to_wei(gas_price, 'gwei')
+    )

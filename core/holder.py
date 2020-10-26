@@ -25,7 +25,7 @@ from utils.helper import to_skl
 from utils.web3_utils import (init_skale_from_config,
                               init_skale_w_wallet_from_config)
 from utils.print_formatters import print_delegations
-from utils.helper import to_wei, from_wei
+from utils.helper import to_wei, from_wei, print_gas_price
 from utils.constants import SPIN_COLOR
 
 
@@ -46,6 +46,9 @@ def delegate(validator_id: int, amount: int, delegation_period: int, info: str,
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
+    if gas_price is None:
+        gas_price = skale.gas_price
+        print_gas_price(gas_price)
     with yaspin(text='Sending delegation request', color=SPIN_COLOR) as sp:
         amount_wei = to_wei(amount)
         tx_res = skale.delegation_controller.delegate(
@@ -62,6 +65,7 @@ def delegate(validator_id: int, amount: int, delegation_period: int, info: str,
             sp.write(str(err))
             return
         sp.write("✔ Delegation request sent")
+        print(f'Transaction hash: {tx_res.tx_hash}')
 
 
 def cancel_pending_delegation(delegation_id: int, pk_file: str,
@@ -69,6 +73,9 @@ def cancel_pending_delegation(delegation_id: int, pk_file: str,
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
+    if gas_price is None:
+        gas_price = skale.gas_price
+        print_gas_price(gas_price)
     with yaspin(text='Canceling delegation request', color=SPIN_COLOR) as sp:
         tx_res = skale.delegation_controller.cancel_pending_delegation(
             delegation_id=delegation_id,
@@ -81,12 +88,16 @@ def cancel_pending_delegation(delegation_id: int, pk_file: str,
             sp.write(str(err))
             return
         sp.write("✔ Delegation request canceled")
+        print(f'Transaction hash: {tx_res.tx_hash}')
 
 
 def undelegate(delegation_id: int, pk_file: str, gas_price: int) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
+    if gas_price is None:
+        gas_price = skale.gas_price
+        print_gas_price(gas_price)
     with yaspin(text='Requesting undelegation', color=SPIN_COLOR) as sp:
         tx_res = skale.delegation_controller.request_undelegation(
             delegation_id=delegation_id,
@@ -99,6 +110,7 @@ def undelegate(delegation_id: int, pk_file: str, gas_price: int) -> None:
             sp.write(str(err))
             return
         sp.write("✔ Successfully undelegated")
+        print(f'Transaction hash: {tx_res.tx_hash}')
 
 
 def withdraw_bounty(validator_id: int, recipient_address: str,
@@ -106,6 +118,9 @@ def withdraw_bounty(validator_id: int, recipient_address: str,
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
+    if gas_price is None:
+        gas_price = skale.gas_price
+        print_gas_price(gas_price)
     with yaspin(text='Withdrawing bounty', color=SPIN_COLOR) as sp:
         tx_res = skale.distributor.withdraw_bounty(
             validator_id=validator_id,
@@ -120,6 +135,7 @@ def withdraw_bounty(validator_id: int, recipient_address: str,
             sp.write(str(err))
             return
         sp.write(f'✔ Bounty successfully transferred to {recipient_address}')
+        print(f'Transaction hash: {tx_res.tx_hash}')
 
 
 def locked(address, wei):
