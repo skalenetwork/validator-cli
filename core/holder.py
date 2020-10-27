@@ -57,6 +57,8 @@ def delegate(validator_id: int, amount: int, delegation_period: int, info: str,
             delegation_period=delegation_period,
             info=info,
             gas_price=gas_price,
+            skip_dry_run=True,
+            gas_limit=8000000,
             raise_for_status=False
         )
         try:
