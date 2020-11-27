@@ -74,22 +74,22 @@ def abort_if_false(ctx, param, value):
         ctx.abort()
 
 
-def to_skl(wei, uint='ether'):  # todo: replace with from_wei()
+def to_skl(wei, unit='ether'):  # todo: replace with from_wei()
     if wei is None:
         return None
-    return Web3.fromWei(Decimal(wei), uint)
+    return Web3.fromWei(Decimal(wei), unit)
 
 
-def from_wei(val, uint='ether'):
+def from_wei(val, unit='ether'):
     if val is None:
         return None
-    return Web3.fromWei(Decimal(val), uint)
+    return Web3.fromWei(Decimal(val), unit)
 
 
-def to_wei(val, uint='ether'):
+def to_wei(val, unit='ether'):
     if val is None:
         return None
-    return Web3.toWei(Decimal(val), uint)
+    return Web3.toWei(Decimal(val), unit)
 
 
 def permille_to_percent(val):
