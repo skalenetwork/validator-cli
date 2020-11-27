@@ -102,3 +102,7 @@ def percent_to_permille(val):
 
 def print_err_with_log_path(e=''):
     print(e, f'\nPlease check logs: {DEBUG_LOG_FILEPATH}')
+
+
+def print_gas_price(gas_price):
+    print(f'Transaction gas price: {from_wei(gas_price, type="gwei")} Gwei ({gas_price} wei)\n')
