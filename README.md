@@ -7,13 +7,13 @@
 ## Table of Contents
 
 1.  [Installation](#installation)
-2.  [CLI usage](#cli-usage)
-    2.1 [Init](#init)
-    2.2 [Validator commands](#validator-commands)
-    2.3 [Holder commands](#holder-commands)
-    2.4 [Metrics commands](#metrics-commands)
+2.  [CLI usage](#cli-usage)  
+    2.1 [Init](#init)  
+    2.2 [Validator commands](#validator-commands)  
+    2.3 [Holder commands](#holder-commands)  
+    2.4 [Metrics commands](#metrics-commands)  
     2.5 [Wallet commands](#wallet-commands)
-3.  [Development](#development)
+3.  [Development](#development)  
 
 ## Installation
 
@@ -63,8 +63,8 @@ sk-val init -e ws://geth.test.com:8546 -c https://test.com/manager.json --wallet
 
 ### SGX commands
 
-#### Init
- Initialize sgx wallet
+#### Init 
+ Initialize sgx wallet  
  ```bash
 sk-val sgx init [SGX_SERVER_URL]
 ```
@@ -75,7 +75,7 @@ Optional arguments:
 #### Info
 Print sgx wallet information
 ```bash
-sk-val sgx info
+sk-val sgx info 
 ```
 Optional arguments:
 -   `--raw` - Print info in plain json
@@ -153,7 +153,7 @@ Optional arguments:
 
 #### Accept all pending delegations
 
-Accept ALL pending delegations request for the address.
+Accept ALL pending delegations request for the address.  
 List with all pending delegations to be accepted will be shown. After this user should confirm the operation.
 
 ```bash
