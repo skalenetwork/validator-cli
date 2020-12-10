@@ -105,4 +105,4 @@ def print_err_with_log_path(e=''):
 
 
 def print_gas_price(gas_price):
-    print(f'Transaction gas price: {from_wei(gas_price, type="gwei")} Gwei ({gas_price} wei)\n')
+    print(f'Transaction gas price: {from_wei(gas_price, unit="gwei")} Gwei ({gas_price} wei)\n')
