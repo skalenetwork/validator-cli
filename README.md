@@ -100,6 +100,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 Usage example:
@@ -147,6 +148,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Accept all pending delegations
@@ -161,6 +163,7 @@ sk-val validator accept-all-delegations --pk-file ./pk.txt
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 
 #### Validator linked addresses
 
@@ -191,6 +194,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Unlink address
@@ -208,6 +212,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Validator info
@@ -246,6 +251,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Set MDA
@@ -263,6 +269,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Request address change
@@ -280,6 +287,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Confirm address change
@@ -297,6 +305,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Earned fees
@@ -335,6 +344,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 
 #### Delegations
 
@@ -367,6 +377,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 
 #### Request undelegation
 
@@ -383,6 +394,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 
 #### Withdraw bounty
 
@@ -400,6 +412,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Locked
