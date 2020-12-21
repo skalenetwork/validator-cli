@@ -16,7 +16,8 @@ from utils.helper import from_wei, permille_to_percent
 from cli.validator import (_bond_amount, _register, _ls, _delegations, _accept_delegation,
                            _link_address, _unlink_address, _linked_addresses,
                            _info, _withdraw_fee, _set_mda, _change_address, _confirm_address,
-                           _earned_fees, _accept_all_delegations, _edit)
+                           _earned_fees, _accept_all_delegations, _edit, _enable_auto_accepting,
+                           _disable_auto_accepting)
 from tests.conftest import str_contains
 from tests.constants import (
     D_VALIDATOR_NAME, D_VALIDATOR_DESC, D_VALIDATOR_FEE, D_VALIDATOR_ID,
@@ -507,3 +508,31 @@ def test_edit(runner, skale):
     assert validator['description'] == new_test_description
 
     assert result.exit_code == 0
+
+
+def test_enable_auto_accepting(runner):
+    result = runner.invoke(
+        _enable_auto_accepting,
+        [
+            '--pk-file', TEST_PK_FILE,
+            '--gas-price', 2.9,
+            '--yes'
+        ]
+    )
+    output_list = result.output.splitlines()
+    assert result.exit_code == 0
+    assert f'\x1b[K✔ Delegations auto accepting enabled for {skale.wallet.address}' in output_list  # noqa
+
+
+def test_disable_auto_accepting(runner):
+    result = runner.invoke(
+        _disable_auto_accepting,
+        [
+            '--pk-file', TEST_PK_FILE,
+            '--gas-price', 2.9,
+            '--yes'
+        ]
+    )
+    output_list = result.output.splitlines()
+    assert result.exit_code == 0
+    assert f'\x1b[K✔ Delegations auto accepting disabled for {skale.wallet.address}' in output_list  # noqa

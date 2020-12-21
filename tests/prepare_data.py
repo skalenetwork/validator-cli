@@ -3,7 +3,7 @@
 import random
 import string
 import time
-import datetime
+from datetime import datetime
 
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
 from skale.utils.contracts_provision.main import (
