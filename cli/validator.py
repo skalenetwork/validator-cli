@@ -342,6 +342,7 @@ def _edit(name, description, pk_file, gas_price):
     )
 
 
+@validator.command('enable_auto_accepting', help=TEXTS['enable_auto_accepting']['help'])
 @click.option(
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
@@ -361,6 +362,7 @@ def _enable_auto_accepting(pk_file, gas_price):
     )
 
 
+@validator.command('disable_auto_accepting', help=TEXTS['disable_auto_accepting']['help'])
 @click.option(
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
