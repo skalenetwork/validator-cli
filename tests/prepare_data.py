@@ -3,6 +3,7 @@
 import random
 import string
 import time
+from datetime import datetime
 
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
 from skale.utils.contracts_provision.main import (
@@ -57,14 +58,31 @@ def create_nodes(skale, nodes_count):
 
 
 def get_bounties(skale):
-    time.sleep(TEST_EPOCH + 5)
     tx_res = skale.manager.get_bounty(NODE_ID, wait_for=True)
     tx_res.raise_for_status()
     tx_res = skale.manager.get_bounty(NODE_ID + 1, wait_for=True)
     tx_res.raise_for_status()
-    time.sleep(TEST_EPOCH + 5)
+    reward_date = skale.nodes.contract.functions.getNodeNextRewardDate(NODE_ID).call()
+    print(f'Reward date: {reward_date}')
+    go_to_date(skale.web3, reward_date)
+    time.sleep(5)
     tx_res = skale.manager.get_bounty(NODE_ID, wait_for=True)
     tx_res.raise_for_status()
+
+
+def go_to_date(web3, date):
+    block_timestamp = get_block_timestamp(web3)
+    print(f'Block timestamp before: {datetime.utcfromtimestamp(block_timestamp)}')
+    delta = date - block_timestamp
+    _skip_evm_time(web3, delta)
+    block_timestamp = get_block_timestamp(web3)
+    print(f'Block timestamp after: {datetime.utcfromtimestamp(block_timestamp)}')
+
+
+def get_block_timestamp(web3):
+    last_block_number = web3.eth.blockNumber
+    block_data = web3.eth.getBlock(last_block_number)
+    return block_data['timestamp']
 
 
 def set_test_msr(msr=D_VALIDATOR_MIN_DEL):
