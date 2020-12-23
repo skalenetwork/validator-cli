@@ -22,6 +22,7 @@ import sys
 import json
 import urllib
 import logging
+import traceback
 from decimal import Decimal
 
 from web3 import Web3
@@ -110,5 +111,8 @@ def print_gas_price(gas_price):
     print(f'Transaction gas price: {from_wei(gas_price, unit="gwei")} Gwei ({gas_price} wei)\n')
 
 
-def error_exit(exit_code=CLIExitCodes.FAILURE):
+def error_exit(err, exit_code=CLIExitCodes.FAILURE):
+    print(f'Command execution failed with {err}. Recheck your inputs')
+    traceback.print_exc()
+    logger.error(err)
     sys.exit(exit_code.value)

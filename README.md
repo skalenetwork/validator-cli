@@ -576,7 +576,7 @@ Exit codes conventions for SKALE CLI tools
 - `1` - General error exit code
 - `3` - Bad API response
 - `4` - Script execution error
-- `5` - Smart contract revert
+- `5` - Transaction error
 
 ## Development
 
