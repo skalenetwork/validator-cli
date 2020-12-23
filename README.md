@@ -13,7 +13,8 @@
     2.3 [Holder commands](#holder-commands)  
     2.4 [Metrics commands](#metrics-commands)  
     2.5 [Wallet commands](#wallet-commands)
-3.  [Development](#development)  
+3.  [Exit codes](#exit-codes)
+4.  [Development](#development)
 
 ## Installation
 
@@ -566,6 +567,16 @@ Usage example:
 ```bash
 sk-val wallet send-skl 0x01C19c5d3Ad1C3014145fC82263Fbae09e23924A 0.01 --pk-file ./pk.txt --yes
 ```
+
+## Exit codes
+
+Exit codes conventions for SKALE CLI tools
+
+- `0` - Everything is OK
+- `1` - General error exit code
+- `3` - Bad API response
+- `4` - Script execution error
+- `5` - Transaction error
 
 ## Development
 

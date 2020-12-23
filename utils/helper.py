@@ -18,12 +18,15 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
+import sys
 import json
 import urllib
 import logging
+import traceback
 from decimal import Decimal
 
 from web3 import Web3
+from utils.exit_codes import CLIExitCodes
 from utils.constants import (SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE, PERMILLE_MULTIPLIER,
                              DEBUG_LOG_FILEPATH)
 
@@ -106,3 +109,10 @@ def print_err_with_log_path(e=''):
 
 def print_gas_price(gas_price):
     print(f'Transaction gas price: {from_wei(gas_price, unit="gwei")} Gwei ({gas_price} wei)\n')
+
+
+def error_exit(err, exit_code=CLIExitCodes.FAILURE):
+    print(f'Command execution failed with {err}. Recheck your inputs')
+    traceback.print_exc()
+    logger.error(err)
+    sys.exit(exit_code.value)
