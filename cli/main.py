@@ -34,7 +34,7 @@ from cli.wallet import wallet_cli
 from utils.validations import UrlType
 from utils.texts import Texts
 from utils.logs import init_logger, init_log_dir
-from utils.helper import safe_mk_dirs, write_json, download_file
+from utils.helper import safe_mk_dirs, write_json, download_file, error_exit
 from utils.constants import (SKALE_VAL_CONFIG_FOLDER, SKALE_VAL_CONFIG_FILE,
                              SKALE_VAL_ABI_FILE, LONG_LINE, WALLET_TYPES)
 
@@ -111,7 +111,10 @@ if __name__ == '__main__':
                                                       metrics_cli, sgx_cli, wallet_cli])
     try:
         cmd_collection()
+    except SystemExit as err:
+        raise err
     except Exception as err:
         print(f'Command execution failed with {err}. Recheck your inputs')
         traceback.print_exc()
         logger.error(err)
+        error_exit()
