@@ -23,8 +23,7 @@ from web3 import Web3
 from core.validator import (register, validators_list, delegations, accept_pending_delegation,
                             get_bond_amount, link_node_address, unlink_node_address,
                             linked_addresses, info, withdraw_fee, set_mda, change_address,
-                            confirm_address, earned_fees, accept_all_delegations, edit,
-                            enable_auto_accepting, disable_auto_accepting)
+                            confirm_address, earned_fees, accept_all_delegations, edit)
 from utils.helper import to_wei
 from utils.helper import abort_if_false
 from utils.validations import EthAddressType, UrlType, FloatPercentageType
@@ -337,46 +336,6 @@ def _edit(name, description, pk_file, gas_price):
     edit(
         name=name,
         description=description,
-        pk_file=pk_file,
-        gas_price=to_wei(gas_price, 'gwei')
-    )
-
-
-@validator.command('enable_auto_accepting', help=TEXTS['enable_auto_accepting']['help'])
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
-)
-@click.option('--yes', is_flag=True, callback=abort_if_false,
-              expose_value=False,
-              prompt=G_TEXTS['yes_opt']['prompt'])
-def _enable_auto_accepting(pk_file, gas_price):
-    enable_auto_accepting(
-        pk_file=pk_file,
-        gas_price=to_wei(gas_price, 'gwei')
-    )
-
-
-@validator.command('disable_auto_accepting', help=TEXTS['disable_auto_accepting']['help'])
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
-)
-@click.option('--yes', is_flag=True, callback=abort_if_false,
-              expose_value=False,
-              prompt=G_TEXTS['yes_opt']['prompt'])
-def _disable_auto_accepting(pk_file, gas_price):
-    disable_auto_accepting(
         pk_file=pk_file,
         gas_price=to_wei(gas_price, 'gwei')
     )

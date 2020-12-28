@@ -16,8 +16,7 @@ from utils.helper import from_wei, permille_to_percent
 from cli.validator import (_bond_amount, _register, _ls, _delegations, _accept_delegation,
                            _link_address, _unlink_address, _linked_addresses,
                            _info, _withdraw_fee, _set_mda, _change_address, _confirm_address,
-                           _earned_fees, _accept_all_delegations, _edit, _enable_auto_accepting,
-                           _disable_auto_accepting)
+                           _earned_fees, _accept_all_delegations, _edit)
 from tests.conftest import str_contains
 from tests.constants import (
     D_VALIDATOR_NAME, D_VALIDATOR_DESC, D_VALIDATOR_FEE, D_VALIDATOR_ID,
@@ -26,11 +25,6 @@ from tests.constants import (
     EDIT_PK_FILE_2
 )
 from tests.prepare_data import set_test_mda
-
-
-VALIDATOR_FIELDS = ['name', 'id', 'validator_address', 'description', 'fee_rate',
-                    'registration_time', 'minimum_delegation_amount', 'auto_accept_delegations',
-                    'status']
 
 
 def create_new_validator(skale, runner, pk_file_path):
@@ -118,10 +112,13 @@ def test_ls(runner, skale):
     pos = output_list.index(header[0])
     actual_info = output_list[pos + 2:]
 
+    fields = ['name', 'id', 'validator_address', 'description', 'fee_rate',
+              'registration_time', 'minimum_delegation_amount',
+              'status']
     assert len(actual_info) == len(expected_info)
     for plain_actual, expected in zip(actual_info, expected_info):
         actual = plain_actual.split()
-        check_validator_fields(expected, actual, VALIDATOR_FIELDS)
+        check_validator_fields(expected, actual, fields)
 
     assert result.exit_code == 0
 
@@ -141,10 +138,13 @@ def test_ls_all(runner, skale):
     pos = output_list.index(header[0])
     actual_info = output_list[pos + 2:]
 
+    fields = ['name', 'id', 'validator_address', 'description', 'fee_rate',
+              'registration_time', 'minimum_delegation_amount',
+              'status']
     assert len(actual_info) == len(expected_info)
     for plain_actual, expected in zip(actual_info, expected_info):
         actual = plain_actual.split()
-        check_validator_fields(expected, actual, VALIDATOR_FIELDS)
+        check_validator_fields(expected, actual, fields)
 
     assert result.exit_code == 0
 
@@ -507,33 +507,3 @@ def test_edit(runner, skale):
     assert validator['description'] == new_test_description
 
     assert result.exit_code == 0
-
-
-def test_enable_auto_accepting(runner, skale):
-    result = runner.invoke(
-        _enable_auto_accepting,
-        [
-            '--pk-file', TEST_PK_FILE,
-            '--gas-price', 2.9,
-            '--yes'
-        ]
-    )
-    output_list = result.output.splitlines()
-    assert result.exit_code == 0
-    assert f'\x1b[K✔ Delegations auto accepting enabled for {skale.wallet.address}' in output_list  # noqa
-    skale.validator_service.disable_auto_accepting(wait_for=True)
-
-
-def test_disable_auto_accepting(runner, skale):
-    skale.validator_service.enable_auto_accepting(wait_for=True)
-    result = runner.invoke(
-        _disable_auto_accepting,
-        [
-            '--pk-file', TEST_PK_FILE,
-            '--gas-price', 2.9,
-            '--yes'
-        ]
-    )
-    output_list = result.output.splitlines()
-    assert result.exit_code == 0
-    assert f'\x1b[K✔ Delegations auto accepting disabled for {skale.wallet.address}' in output_list  # noqa

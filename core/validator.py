@@ -231,8 +231,8 @@ def info(validator_id):
         ['Name', validator_info['name']],
         ['Address', validator_info['validator_address']],
         ['Fee rate (percent %)', fee_rate_percent],
-        ['Minimum delegation amount (SKL)', minimum_delegation_amount],
-        ['Auto accept', validator_info['auto_accept_delegations']],
+        ['Minimum delegation amount (SKL)', minimum_delegation_amount]
+        # ['Auto accept', validator_info['auto_accept_delegations']],
         # ['Accepting delegation requests', accepting_delegation_requests]
     ])
     print(table.table)
@@ -418,48 +418,4 @@ def change_validator_description(description, skale, validator, gas_price):
             sp.write(str(err))
             return
         sp.write(f'✔ Validator description for ID {validator["id"]} changed to {description}')
-        print(f'Transaction hash: {tx_res.tx_hash}')
-
-
-def enable_auto_accepting(pk_file: str, gas_price: int) -> None:
-    skale = init_skale_w_wallet_from_config(pk_file)
-    if not skale:
-        return
-    if gas_price is None:
-        gas_price = skale.gas_price
-        print_gas_price(gas_price)
-    with yaspin(text='Enabling auto accepting', color=SPIN_COLOR) as sp:
-        tx_res = skale.validator_service.enable_auto_accepting(
-            raise_for_status=False,
-            wait_for=True,
-            gas_price=gas_price
-        )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
-        sp.write(f'✔ Delegations auto accepting enabled for {skale.wallet.address}')
-        print(f'Transaction hash: {tx_res.tx_hash}')
-
-
-def disable_auto_accepting(pk_file: str, gas_price: int) -> None:
-    skale = init_skale_w_wallet_from_config(pk_file)
-    if not skale:
-        return
-    if gas_price is None:
-        gas_price = skale.gas_price
-        print_gas_price(gas_price)
-    with yaspin(text='Disabling auto accepting', color=SPIN_COLOR) as sp:
-        tx_res = skale.validator_service.disable_auto_accepting(
-            raise_for_status=False,
-            wait_for=True,
-            gas_price=gas_price
-        )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
-        sp.write(f'✔ Delegations auto accepting disabled for {skale.wallet.address}')
         print(f'Transaction hash: {tx_res.tx_hash}')
