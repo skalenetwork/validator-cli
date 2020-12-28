@@ -58,7 +58,7 @@ def print_validators(validators, wei):
         'Fee rate (percent %)',
         'Registration time',
         f'Minimum delegation ({m_type})',
-        f'Auto accept',
+        # f'Auto accept',
         'Validator status'
     ]
     rows = []
@@ -78,7 +78,7 @@ def print_validators(validators, wei):
             fee_rate_percent,
             strtime,
             validator['minimum_delegation_amount'],
-            validator['auto_accept_delegations'],
+            # validator['auto_accept_delegations'],
             status
         ])
     print(Formatter().table(headers, rows))

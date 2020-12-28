@@ -27,11 +27,6 @@ from tests.constants import (
 from tests.prepare_data import set_test_mda
 
 
-VALIDATOR_FIELDS = ['name', 'id', 'validator_address', 'description', 'fee_rate',
-                    'registration_time', 'minimum_delegation_amount', 'auto_accept_delegations',
-                    'status']
-
-
 def create_new_validator(skale, runner, pk_file_path):
     wallet = _generate_new_pk_file(skale, pk_file_path)
     runner.invoke(
@@ -117,10 +112,13 @@ def test_ls(runner, skale):
     pos = output_list.index(header[0])
     actual_info = output_list[pos + 2:]
 
+    fields = ['name', 'id', 'validator_address', 'description', 'fee_rate',
+              'registration_time', 'minimum_delegation_amount',
+              'status']
     assert len(actual_info) == len(expected_info)
     for plain_actual, expected in zip(actual_info, expected_info):
         actual = plain_actual.split()
-        check_validator_fields(expected, actual, VALIDATOR_FIELDS)
+        check_validator_fields(expected, actual, fields)
 
     assert result.exit_code == 0
 
@@ -140,10 +138,13 @@ def test_ls_all(runner, skale):
     pos = output_list.index(header[0])
     actual_info = output_list[pos + 2:]
 
+    fields = ['name', 'id', 'validator_address', 'description', 'fee_rate',
+              'registration_time', 'minimum_delegation_amount',
+              'status']
     assert len(actual_info) == len(expected_info)
     for plain_actual, expected in zip(actual_info, expected_info):
         actual = plain_actual.split()
-        check_validator_fields(expected, actual, VALIDATOR_FIELDS)
+        check_validator_fields(expected, actual, fields)
 
     assert result.exit_code == 0
 

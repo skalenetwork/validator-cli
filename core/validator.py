@@ -231,8 +231,8 @@ def info(validator_id):
         ['Name', validator_info['name']],
         ['Address', validator_info['validator_address']],
         ['Fee rate (percent %)', fee_rate_percent],
-        ['Minimum delegation amount (SKL)', minimum_delegation_amount],
-        ['Auto accept', validator_info['auto_accept_delegations']],
+        ['Minimum delegation amount (SKL)', minimum_delegation_amount]
+        # ['Auto accept', validator_info['auto_accept_delegations']],
         # ['Accepting delegation requests', accepting_delegation_requests]
     ])
     print(table.table)
