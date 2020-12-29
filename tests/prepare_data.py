@@ -58,16 +58,20 @@ def create_nodes(skale, nodes_count):
 
 
 def get_bounties(skale):
+    go_to_next_reward_date(skale)
     tx_res = skale.manager.get_bounty(NODE_ID, wait_for=True)
     tx_res.raise_for_status()
     tx_res = skale.manager.get_bounty(NODE_ID + 1, wait_for=True)
     tx_res.raise_for_status()
-    reward_date = skale.nodes.contract.functions.getNodeNextRewardDate(NODE_ID).call()
-    print(f'Reward date: {reward_date}')
-    go_to_date(skale.web3, reward_date)
-    time.sleep(5)
+    go_to_next_reward_date(skale)
     tx_res = skale.manager.get_bounty(NODE_ID, wait_for=True)
     tx_res.raise_for_status()
+
+
+def go_to_next_reward_date(skale):
+    reward_date = skale.nodes.contract.functions.getNodeNextRewardDate(NODE_ID).call()
+    go_to_date(skale.web3, reward_date)
+    time.sleep(5)
 
 
 def go_to_date(web3, date):
