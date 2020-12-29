@@ -91,6 +91,10 @@ validator:
       help: Validator name
     description:
       help: Validator description
+  enable_auto_accepting:
+    help: Automatically accept all new delegation requests
+  disable_auto_accepting:
+    help: Disable automatic acceptance of new delegation requests
 holder:
   help: Token holder commands
   delegate:
