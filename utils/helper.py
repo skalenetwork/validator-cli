@@ -112,7 +112,10 @@ def print_gas_price(gas_price):
 
 
 def error_exit(err, exit_code=CLIExitCodes.FAILURE):
-    print(f'Command execution failed with {err}. Recheck your inputs')
+    if exit_code == CLIExitCodes.REVERT_ERROR:
+        print(f'Reverted: {err}. Recheck your inputs')
+    else:
+        print(f'Command execution failed with {err}. Recheck your inputs')
     traceback.print_exc()
     logger.error(err)
     sys.exit(exit_code.value)

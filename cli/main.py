@@ -22,7 +22,7 @@ import logging
 import inspect
 
 import click
-from skale.transactions.result import TransactionError
+from skale.transactions.result import TransactionError, RevertError
 
 from cli import __version__
 from cli.info import BUILD_DATETIME, COMMIT, BRANCH, OS, VERSION
@@ -114,6 +114,8 @@ if __name__ == '__main__':
         cmd_collection()
     except SystemExit as err:
         raise err
+    except RevertError as err:
+        error_exit(err, exit_code=CLIExitCodes.REVERT_ERROR)
     except TransactionError as err:
         error_exit(err, exit_code=CLIExitCodes.TRANSACTION_ERROR)
     except Exception as err:
