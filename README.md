@@ -50,7 +50,7 @@ sk-val init
 
 Required arguments:
 
--   `--endpoint/-e` - RPC endpoint of the node in the network where SKALE manager is deployed (`ws` or `wss`)
+-   `--endpoint/-e` - RPC endpoint of the node in the network where SKALE manager is deployed (`http` or `https`)
 -   `--contracts-url/-c` - - URL to SKALE Manager contracts ABI and addresses
 -   `-w/--wallet` - Type of the wallet that will be used for signing transactions (software, sgx or hardware)
 
