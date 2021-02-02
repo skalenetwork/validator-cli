@@ -109,9 +109,10 @@ def main():
     cleanup_nodes_schains(skale)
     setup_validator(skale)
     accelerate_skale_manager(skale)
+    _skip_evm_time(skale.web3, MONTH_IN_SECONDS)
     create_nodes(skale, TEST_NODES_COUNT)
     skale.constants_holder.set_launch_timestamp(int(time.time()))
-    _skip_evm_time(skale.web3, MONTH_IN_SECONDS * 3)
+    _skip_evm_time(skale.web3, MONTH_IN_SECONDS * 2)
     get_bounties(skale)
 
 
