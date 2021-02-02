@@ -12,22 +12,9 @@ from skale.utils.contracts_provision.main import (
 )
 from skale.utils.helper import init_default_logger
 
-from tests.constants import (NODE_ID, TEST_CHECKTIME, TEST_DELTA, TEST_EPOCH,
-                             TEST_NODE_NAME, TEST_PK_FILE,
+from tests.constants import (NODE_ID, TEST_NODE_NAME, TEST_PK_FILE,
                              D_VALIDATOR_MIN_DEL, TEST_NODES_COUNT)
 from utils.web3_utils import init_skale_w_wallet_from_config
-
-
-def accelerate_skale_manager(skale):
-    reward_period = skale.constants_holder.get_reward_period()
-    delta_period = skale.constants_holder.get_delta_period()
-    print(f'Existing times for SM: {reward_period}, {delta_period}')
-
-    skale.constants_holder.set_check_time(TEST_CHECKTIME, wait_for=True)
-    skale.constants_holder.set_periods(TEST_EPOCH, TEST_DELTA, wait_for=True)
-    reward_period = skale.constants_holder.get_reward_period()
-    delta_period = skale.constants_holder.get_delta_period()
-    print(f'New times for SM: {reward_period}, {delta_period}')
 
 
 def generate_random_ip():
@@ -108,7 +95,7 @@ def main():
     skale = init_skale_w_wallet_from_config(pk_file=TEST_PK_FILE)
     cleanup_nodes_schains(skale)
     setup_validator(skale)
-    accelerate_skale_manager(skale)
+    # accelerate_skale_manager(skale)
     _skip_evm_time(skale.web3, MONTH_IN_SECONDS)
     create_nodes(skale, TEST_NODES_COUNT)
     skale.constants_holder.set_launch_timestamp(int(time.time()))
