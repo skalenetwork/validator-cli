@@ -60,7 +60,7 @@ def test_metrics_since_empty(runner):
     result = runner.invoke(node, ['-id', str(NODE_ID), '-s', start_date])
     output_list = result.output.splitlines()
 
-    assert NO_DATA_MSG == output_list[-1]
+    assert NO_DATA_MSG in output_list[-1]
 
 
 def test_metrics_till_not_empty(skale, runner):
@@ -83,7 +83,7 @@ def test_metrics_till_empty(runner):
     result = runner.invoke(node, ['-id', str(NODE_ID), '-t', end_date])
     output_list = result.output.splitlines()
 
-    assert NO_DATA_MSG == output_list[-1]
+    assert NO_DATA_MSG in output_list[-1]
 
 
 def test_metrics_since_till_not_empty(skale, runner):
@@ -110,7 +110,7 @@ def test_metrics_since_till_empty(runner):
     result = runner.invoke(node, ['-id', str(NODE_ID),
                                   '-s', start_date, '-t', end_date])
     output_list = result.output.splitlines()
-    assert NO_DATA_MSG == output_list[-1]
+    assert NO_DATA_MSG in output_list[-1]
 
 
 def test_metrics_with_csv_export(skale, runner):
