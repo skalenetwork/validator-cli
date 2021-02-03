@@ -91,6 +91,7 @@ def get_metrics_for_node(skale, node_id, start_date=None, end_date=None, wei=Non
     metrics_rows = df.values.tolist()
     if to_file:
         df.to_csv(to_file, index=False)
+    print(f'debug in core: {metrics_rows}')
     return metrics_rows, total_bounty
 
 
