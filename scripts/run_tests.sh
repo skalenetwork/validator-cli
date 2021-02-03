@@ -10,5 +10,6 @@ export SGX_DATA_DIR='tests/tmp-test-sgx'
 
 bash scripts/run_sgx_simulator.sh
 
+export PYTHONPATH=$PYTHONPATH:.
 python $PROJECT_DIR/tests/prepare_data.py
 py.test -v -s --cov=$PROJECT_DIR/ $PROJECT_DIR/tests/
