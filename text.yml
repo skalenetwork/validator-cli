@@ -223,3 +223,9 @@ wallet:
 
 srw:
   help: Self-recharging wallet commands
+  recharge:
+    help: Recharge validator SRW wallet
+  withdraw:
+    help: Withdraw money from SRW wallet
+  balance:
+    help: Show balance of SRW wallet

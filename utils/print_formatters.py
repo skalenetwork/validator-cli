@@ -245,3 +245,11 @@ def print_bond_amount(validator_id, bond_amount, wei=False):
         bond_amount = from_wei(bond_amount)
         print(f'Bond amount for validator with id '
               f'{validator_id} - {bond_amount} SKL')
+
+
+def print_srw_balance(validator_id, amount, wei=False):
+    symbol = 'WEI'
+    if not wei:
+        symbol = 'ETH'
+        amount = from_wei(amount)
+    print(f'SRW balance for validator with id {validator_id} - {amount} {symbol}')
