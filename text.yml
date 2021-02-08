@@ -220,3 +220,6 @@ wallet:
     keys_type:
       help: Type of the Ledger keys (live or legacy)
       prompt: Enter type of the Ledger keys (live or legacy)
+
+srw:
+  help: Self-recharging wallet commands
