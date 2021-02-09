@@ -33,7 +33,7 @@ def validator_id_by_address(skale, address):
     try:
         return skale.validator_service.validator_id_by_address(address)
     except ValueError:
-        print(f'Validator ID is not found for the address: {address}')
+        print(f'Error occurred when trying to get validator ID by address ({address})')
         sys.exit(2)
 
 
