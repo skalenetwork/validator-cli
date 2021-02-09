@@ -17,6 +17,9 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import sys
+
+import click
 from yaspin import yaspin
 from skale.transactions.result import TransactionError
 
@@ -26,6 +29,14 @@ from utils.print_formatters import print_srw_balance
 from utils.constants import SPIN_COLOR
 
 
+def validator_id_by_address(skale, address):
+    try:
+        return skale.validator_service.validator_id_by_address(address)
+    except ValueError:
+        print(f'Validator ID is not found for the address: {address}')
+        sys.exit(2)
+
+
 def recharge(amount: str, pk_file: str, gas_price: int) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
@@ -33,11 +44,19 @@ def recharge(amount: str, pk_file: str, gas_price: int) -> None:
     if gas_price is None:
         gas_price = skale.gas_price
         print_gas_price(gas_price)
+
+    validator_id = validator_id_by_address(skale, skale.wallet.address)
+    amount_wei = to_wei(amount)
+
+    print(f'Validator ID {validator_id} will be recharged with {amount} ETH ({amount_wei} WEI)')
+    if not click.confirm('Do you want to continue?'):
+        print('Operation canceled')
+        return
+
     with yaspin(text='Recharging ETH from validator SRW wallet', color=SPIN_COLOR) as sp:
-        # amount_wei = to_wei(amount)
-        _ = to_wei(amount)
-        # todo!
-        tx_res = skale.wallets.recharge(
+        tx_res = skale.wallets.recharge_validator_wallet(
+            validator_id=validator_id,
+            value=amount_wei,
             gas_price=gas_price,
             raise_for_status=False
         )
@@ -57,11 +76,17 @@ def withdraw(amount: str, pk_file: str, gas_price: int) -> None:
     if gas_price is None:
         gas_price = skale.gas_price
         print_gas_price(gas_price)
+
+    validator_id = validator_id_by_address(skale, skale.wallet.address)
+    amount_wei = to_wei(amount)
+    print(f'{amount} ETH ({amount_wei} WEI) will be withdrawn from validator ID {validator_id}')
+    if not click.confirm('Do you want to continue?'):
+        print('Operation canceled')
+        return
+
     with yaspin(text='Withdrawing ETH from validator SRW wallet', color=SPIN_COLOR) as sp:
-        # amount_wei = to_wei(amount)
-        _ = to_wei(amount)
-        # todo
-        tx_res = skale.wallets.recharge(
+        tx_res = skale.wallets.withdraw_funds_from_validator_wallet(
+            amount=amount_wei,
             gas_price=gas_price,
             raise_for_status=False
         )

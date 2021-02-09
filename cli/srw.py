@@ -21,7 +21,6 @@ import logging
 import click
 
 from core.srw import recharge, withdraw, balance
-from utils.helper import abort_if_false
 from utils.texts import Texts
 
 
@@ -52,8 +51,6 @@ def srw():
     type=float,
     help=G_TEXTS['gas_price']['help']
 )
-@click.option('--yes', is_flag=True, callback=abort_if_false,
-              expose_value=False, prompt=G_TEXTS['yes_opt']['prompt'])
 def _recharge(amount, pk_file, gas_price):
     recharge(amount, pk_file, gas_price)
 
@@ -69,8 +66,6 @@ def _recharge(amount, pk_file, gas_price):
     type=float,
     help=G_TEXTS['gas_price']['help']
 )
-@click.option('--yes', is_flag=True, callback=abort_if_false,
-              expose_value=False, prompt=G_TEXTS['yes_opt']['prompt'])
 def _withdraw(amount, pk_file, gas_price):
     withdraw(amount, pk_file, gas_price)
 
