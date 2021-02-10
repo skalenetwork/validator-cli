@@ -82,21 +82,15 @@ def get_metrics_for_validator(skale, val_id, start_date=None, end_date=None, wei
 
 
 def get_metrics_for_node(skale, node_id, start_date=None, end_date=None, wei=None, to_file=None):
-    print(f'In get_metrics_for_node')
     metrics = get_metrics_from_events(skale, node_id, start_date, end_date)
-    print(f'Metrics after call: {metrics}')
     columns = ['Date', 'Bounty', 'Downtime', 'Latency']
     df = pd.DataFrame(metrics, columns=columns)
-    print(f'DF: {df}')
     if not wei:
         df['Bounty'] = df['Bounty'].apply(to_skl)
     total_bounty = df['Bounty'].sum()
-    print(f'Total bounty: {total_bounty}')
     metrics_rows = df.values.tolist()
-    print(f'Metrics1: {metrics_rows}')
     if to_file:
         df.to_csv(to_file, index=False)
-    print(f'Metrics2: {metrics_rows}')
     return metrics_rows, total_bounty
 
 
@@ -136,5 +130,4 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
 
         if block_number is None or block_number == 0:
             break
-    print(f'Metrics Inside Events: {metrics_rows}')
     return metrics_rows

@@ -82,7 +82,6 @@ def node(node_id, since, till, wei, to_file):
     with yaspin(text="Loading", color=SPIN_COLOR) as sp:
         sp.text = TEXTS['node']['index']['wait_msg']
         metrics, total_bounty = get_metrics_for_node(skale, int(node_id), since, till, wei, to_file)
-    print(f'debug in cli: {metrics}')
     if metrics:
         print_node_metrics(metrics, total_bounty, wei)
     else:
