@@ -220,3 +220,12 @@ wallet:
     keys_type:
       help: Type of the Ledger keys (live or legacy)
       prompt: Enter type of the Ledger keys (live or legacy)
+
+srw:
+  help: Self-recharging wallet commands
+  recharge:
+    help: Recharge validator SRW wallet
+  withdraw:
+    help: Withdraw money from SRW wallet
+  balance:
+    help: Show balance of SRW wallet
