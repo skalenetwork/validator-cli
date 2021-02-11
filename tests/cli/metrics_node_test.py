@@ -4,6 +4,7 @@ import os.path
 from datetime import datetime
 
 import pandas
+
 from cli.metrics import node
 from core.metrics import get_metrics_for_node
 from tests.constants import NODE_ID, SERVICE_ROW_COUNT
@@ -82,8 +83,6 @@ def test_metrics_till_empty(runner):
     end_date = '2000-01-01'
     result = runner.invoke(node, ['-id', str(NODE_ID), '-t', end_date])
     output_list = result.output.splitlines()
-    for line in output_list:  # TODO: remove this debug output
-        print(line)
     assert NO_DATA_MSG in output_list[-1]
 
 

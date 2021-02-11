@@ -4,6 +4,7 @@ import os.path
 from datetime import datetime
 
 import pandas
+
 from cli.metrics import validator
 from core.metrics import get_metrics_for_validator
 from tests.constants import D_VALIDATOR_ID, SERVICE_ROW_COUNT
