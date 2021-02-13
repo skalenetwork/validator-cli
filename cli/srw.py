@@ -22,6 +22,7 @@ import click
 
 from core.srw import recharge, withdraw, balance
 from utils.texts import Texts
+from utils.helper import to_wei
 
 
 G_TEXTS = Texts()
@@ -52,7 +53,11 @@ def srw():
     help=G_TEXTS['gas_price']['help']
 )
 def _recharge(amount, pk_file, gas_price):
-    recharge(amount, pk_file, gas_price)
+    recharge(
+        amount=amount,
+        pk_file=pk_file,
+        gas_price=to_wei(gas_price, 'gwei')
+    )
 
 
 @srw.command('withdraw', help=TEXTS['withdraw']['help'])
@@ -67,7 +72,11 @@ def _recharge(amount, pk_file, gas_price):
     help=G_TEXTS['gas_price']['help']
 )
 def _withdraw(amount, pk_file, gas_price):
-    withdraw(amount, pk_file, gas_price)
+    withdraw(
+        amount=amount,
+        pk_file=pk_file,
+        gas_price=to_wei(gas_price, 'gwei')
+    )
 
 
 @srw.command('balance', help=TEXTS['balance']['help'])

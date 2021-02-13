@@ -45,6 +45,18 @@ def test_recharge(runner, skale):
     assert '✔ Wallet recharged' in result.output
     assert result.exit_code == 0
 
+    with mock.patch('click.confirm', return_value=True):
+        result = runner.invoke(
+            _recharge,
+            [
+                str(TEST_RECHARGE_VALUE_ETH),
+                '--pk-file', TEST_PK_FILE,
+                '--gas-price', 1.67
+            ]
+        )
+    assert '✔ Wallet recharged' in result.output
+    assert result.exit_code == 0
+
 
 def test_withdraw(runner, skale):
     test_recharge_value_wei = to_wei(TEST_RECHARGE_VALUE_ETH)
