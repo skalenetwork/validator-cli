@@ -85,7 +85,7 @@ def node(node_id, since, till, wei, to_file):
     if metrics:
         print_node_metrics(metrics, total_bounty, wei)
     else:
-        print('\n' + MSGS['no_data'])
+        print(f"\n{MSGS['no_data']}")
 
 
 @metrics.command(help=TEXTS['validator']['help'])
