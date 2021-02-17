@@ -39,7 +39,7 @@ jobs:
         bash scripts/build.sh 0.0.0 test-branch
     - name: Deploy manager contracts
       run: |
-        bash ./scripts/deploy_manager.sh
+        bash ./helper-scripts/deploy_test_manager.sh
     - name: Prepare configs
       run: |
         bash ./scripts/prepare_configs.sh

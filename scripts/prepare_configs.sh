@@ -13,7 +13,7 @@ CLI_ABI_CONFIG=$CLI_CONFIG_FOLDER/config.json
 TEST_PK_FILE=$DIR/../tests/test-pk.txt
 
 mkdir -p $CLI_CONFIG_FOLDER
-cp $DIR/../test_abi.json $CLI_ABI_FILE
+cp $DIR/../helper-scripts/contracts_data/manager.json $CLI_ABI_FILE
 
 ENDPOINT='http://localhost:8545'
 echo {\"endpoint\": \"${ENDPOINT}\",\"wallet\": \"software\"} > $CLI_ABI_CONFIG
