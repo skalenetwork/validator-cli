@@ -37,7 +37,7 @@ def validator_id_by_address(skale, address):
         sys.exit(2)
 
 
-def recharge(amount: str, pk_file: str, gas_price: int) -> None:
+def recharge(amount: str, validator_id: int, pk_file: str, gas_price: int) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
@@ -45,7 +45,8 @@ def recharge(amount: str, pk_file: str, gas_price: int) -> None:
         gas_price = skale.gas_price
         print_gas_price(gas_price)
 
-    validator_id = validator_id_by_address(skale, skale.wallet.address)
+    if not validator_id:
+        validator_id = validator_id_by_address(skale, skale.wallet.address)
     amount_wei = to_wei(amount)
 
     print(f'Validator ID {validator_id} will be recharged with {amount} ETH ({amount_wei} WEI)')

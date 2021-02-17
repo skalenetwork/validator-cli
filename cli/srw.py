@@ -44,6 +44,11 @@ def srw():
 @srw.command('recharge', help=TEXTS['recharge']['help'])
 @click.argument('amount')
 @click.option(
+    '--validator-id',
+    type=int,
+    help=TEXTS['recharge']['validator_id']['help'],
+)
+@click.option(
     '--pk-file',
     help=G_TEXTS['pk_file']['help']
 )
@@ -52,9 +57,10 @@ def srw():
     type=float,
     help=G_TEXTS['gas_price']['help']
 )
-def _recharge(amount, pk_file, gas_price):
+def _recharge(amount, validator_id, pk_file, gas_price):
     recharge(
         amount=amount,
+        validator_id=validator_id,
         pk_file=pk_file,
         gas_price=to_wei(gas_price, 'gwei')
     )
