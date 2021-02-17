@@ -120,6 +120,7 @@ test_abi.json
 ch-test-pk-1.txt
 ch-test-pk-2.txt
 edit-test-pk-2.txt
+recharge-test-pk.txt
 
 node_metrics.csv
 validator_metrics.csv

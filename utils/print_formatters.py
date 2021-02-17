@@ -117,16 +117,14 @@ def print_linked_addresses(addresses):
     headers = [
         'Address',
         'Status',
-        'Balance (ETH)',
-        'Nodes'
+        'Balance (ETH)'
     ]
     rows = []
     for address_info in addresses:
         rows.append([
             address_info['address'],
             address_info['status'],
-            address_info['balance'],
-            address_info['nodes'],
+            address_info['balance']
         ])
     print(Formatter().table(headers, rows))
 

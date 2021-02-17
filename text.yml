@@ -225,6 +225,8 @@ srw:
   help: Self-recharging wallet commands
   recharge:
     help: Recharge validator SRW wallet
+    validator_id:
+      help: ID of the validator to delegate
   withdraw:
     help: Withdraw money from SRW wallet
   balance:
