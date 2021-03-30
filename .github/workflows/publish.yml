@@ -12,7 +12,7 @@ jobs:
   create_release:
     if: github.event.pull_request.merged
     name: Create release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
       version: ${{ steps.export_outputs.outputs.version }}
@@ -48,7 +48,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-18.04
             asset_name: sk-val-${{ needs.create_release.outputs.version }}-Linux-x86_64
           - os: macos-latest
             asset_name: sk-val-${{ needs.create_release.outputs.version }}-Darwin-x86_64
@@ -59,7 +59,7 @@ jobs:
       with:
         python-version: 3.7
     - name: Install ubuntu dependencies
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-18.04'
       run: |
         sudo apt-get update
         sudo apt-get install libudev-dev
