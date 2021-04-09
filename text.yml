@@ -85,6 +85,16 @@ validator:
     help: Confirm address change for the validator
   earned_fees:
     help: Get earned fee amount for the validator address
+  edit:
+    help: Edit name or description of your validator
+    name:
+      help: Validator name
+    description:
+      help: Validator description
+  enable_auto_accepting:
+    help: Automatically accept all new delegation requests
+  disable_auto_accepting:
+    help: Disable automatic acceptance of new delegation requests
 holder:
   help: Token holder commands
   delegate:
@@ -210,3 +220,14 @@ wallet:
     keys_type:
       help: Type of the Ledger keys (live or legacy)
       prompt: Enter type of the Ledger keys (live or legacy)
+
+srw:
+  help: Self-recharging wallet commands
+  recharge:
+    help: Recharge validator SRW wallet
+    validator_id:
+      help: ID of the validator to delegate
+  withdraw:
+    help: Withdraw money from SRW wallet
+  balance:
+    help: Show balance of SRW wallet

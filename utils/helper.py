@@ -74,22 +74,24 @@ def abort_if_false(ctx, param, value):
         ctx.abort()
 
 
-def to_skl(wei, type='ether'):  # todo: replace with from_wei()
+def to_skl(wei, unit='ether'):  # todo: replace with from_wei()
     if wei is None:
         return None
-    return Web3.fromWei(Decimal(wei), type)
+    if wei == 0:
+        return Decimal(wei)
+    return Web3.fromWei(Decimal(wei), unit)
 
 
-def from_wei(val, type='ether'):
+def from_wei(val, unit='ether'):
     if val is None:
         return None
-    return Web3.fromWei(Decimal(val), type)
+    return Web3.fromWei(Decimal(val), unit)
 
 
-def to_wei(val, type='ether'):
+def to_wei(val, unit='ether'):
     if val is None:
         return None
-    return Web3.toWei(Decimal(val), type)
+    return Web3.toWei(Decimal(val), unit)
 
 
 def permille_to_percent(val):
@@ -102,3 +104,7 @@ def percent_to_permille(val):
 
 def print_err_with_log_path(e=''):
     print(e, f'\nPlease check logs: {DEBUG_LOG_FILEPATH}')
+
+
+def print_gas_price(gas_price):
+    print(f'Transaction gas price: {from_wei(gas_price, unit="gwei")} Gwei ({gas_price} wei)\n')

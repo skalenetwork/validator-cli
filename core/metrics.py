@@ -106,7 +106,7 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
             rec = skale.web3.eth.getTransactionReceipt(tx)
             if rec["to"] != skale.manager.contract.address:
                 continue
-            h_receipt = skale.manager.contract.events.BountyGot().processReceipt(
+            h_receipt = skale.manager.contract.events.BountyReceived().processReceipt(
                 rec, errors=DISCARD)
             if len(h_receipt) == 0:
                 continue

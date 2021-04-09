@@ -12,7 +12,8 @@
     2.2 [Validator commands](#validator-commands)  
     2.3 [Holder commands](#holder-commands)  
     2.4 [Metrics commands](#metrics-commands)  
-    2.5 [Wallet commands](#wallet-commands)
+    2.5 [Wallet commands](#wallet-commands)  
+    2.6 [Self-recharging wallet commands](#self-recharging-wallet-commands)
 3.  [Development](#development)  
 
 ## Installation
@@ -22,14 +23,6 @@
 -   Linux x86_64 machine
 
 -   Download executable
-
-Up to `0.6.2-develop.9`:
-
-```bash
-VERSION_NUM={put the version number here} && sudo -E bash -c "curl -L https://validator-cli.sfo2.digitaloceanspaces.com/develop/sk-val-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/sk-val"
-```
-
-After `0.6.2-develop.10`:
 
 ```bash
 VERSION_NUM={put the version number here} && sudo -E bash -c "curl -L https://github.com/skalenetwork/validator-cli/releases/download/$VERSION_NUM/sk-val-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/sk-val"
@@ -108,6 +101,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 Usage example:
@@ -155,6 +149,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Accept all pending delegations
@@ -169,6 +164,7 @@ sk-val validator accept-all-delegations --pk-file ./pk.txt
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 
 #### Validator linked addresses
 
@@ -199,6 +195,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Unlink address
@@ -216,6 +213,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Validator info
@@ -254,6 +252,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Set MDA
@@ -271,6 +270,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Request address change
@@ -288,6 +288,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Confirm address change
@@ -305,6 +306,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Earned fees
@@ -343,6 +345,7 @@ Required arguments:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 
 #### Delegations
 
@@ -375,6 +378,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 
 #### Request undelegation
 
@@ -391,6 +395,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 
 #### Withdraw bounty
 
@@ -408,6 +413,7 @@ Required params:
 Optional arguments:
 
 -   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
 -   `--yes` - Confirmation flag
 
 #### Locked
@@ -443,61 +449,6 @@ Optional arguments:
 
 -   `--wei` - Show amount in wei
 
-### Metrics commands
-
-#### Node metrics
-
-Shows a list of metrics and bounties for a given node ID
-
-```bash
-sk-val metrics node
-```
-
-Required arguments:
-
--   `--index/-id` - Node ID
-
-Collecting metrics from the SKALE Manager may take a long time. It is therefore recommended to use optional arguments to limit output by filtering by time period or limiting the number of records to show.
-
-Optional arguments:
-
--   `--since/-s` - Show requested data since a given date inclusively (e.g. 2020-01-20)
--   `--till/-t` - Show requested data before a given date not inclusively (e.g. 2020-01-21)
--   `--wei/-w` - Show bounty amount in wei
--   `--to-file/-f` - Export metrics to .csv file (with a given file pathname)
-
-Usage example:
-
-```bash
-sk-val metrics node -id 1 --since 2020-04-30 --till 2020-05-01 -w -f /home/user/filename.csv
-```
-
-#### Validator metrics
-
-Shows a list of metrics and bounties for all nodes for a given validator ID
-
-```bash
-sk-val metrics validator
-```
-
-Required arguments:
-
--   `--index/-id` - Validator ID
-
-Collecting metrics from the SKALE Manager may take a long time. It is therefore recommended to use optional arguments to limit output by filtering by time period or limiting the number of records to show.
-
-Optional arguments:
-
--   `--since/-s` - Show requested data since a given date inclusively (e.g. 2020-01-20)
--   `--till/-t` - Show requested data before a given date not inclusively (e.g. 2020-01-21)
--   `--wei/-w` - Show bounty amount in wei
--   `--to-file/-f` - Export metrics to .csv file (with a given file pathname)
-
-Usage example:
-
-```bash
-sk-val metrics validator -id 1 --since 2020-04-30 --till 2020-05-01 -w -f /home/user/filename.csv
-```
 
 ### Wallet commands
 
@@ -560,6 +511,76 @@ Usage example:
 
 ```bash
 sk-val wallet send-skl 0x01C19c5d3Ad1C3014145fC82263Fbae09e23924A 0.01 --pk-file ./pk.txt --yes
+```
+
+### Self-recharging wallet commands
+
+#### Balance
+
+Show balance of the validator self-recharging wallet
+
+```bash
+sk-val srw balance [VALIDATOR_ID]
+```
+
+Required arguments:
+
+1) VALIDATOR_ID - ID if the validator
+
+Optional arguments:
+
+-   `--wei/-w` - Show amount in wei
+
+Usage example:
+
+```bash
+sk-val srw balance 1 --wei
+```
+
+#### Recharge
+
+Recharge validator SRW wallet (amount in ETH)
+
+```bash
+sk-val srw recharge [AMOUNT]
+```
+
+Required arguments:
+
+1) AMOUNT - Amount of ETH to recharge
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
+
+Usage example:
+
+```bash
+sk-val srw recharge 0.1 --pk-file ./tests/test-pk.txt
+```
+
+#### Withdraw
+
+Withdraw ETH from validator SRW wallet (amount in ETH)
+
+```bash
+sk-val srw withdraw [AMOUNT]
+```
+
+Required arguments:
+
+1) AMOUNT - Amount of ETH to withdraw
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
+
+Usage example:
+
+```bash
+sk-val srw withdraw 0.1 --pk-file ./tests/test-pk.txt
 ```
 
 ## Development

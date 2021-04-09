@@ -58,6 +58,7 @@ def print_validators(validators, wei):
         'Fee rate (percent %)',
         'Registration time',
         f'Minimum delegation ({m_type})',
+        # f'Auto accept',
         'Validator status'
     ]
     rows = []
@@ -77,6 +78,7 @@ def print_validators(validators, wei):
             fee_rate_percent,
             strtime,
             validator['minimum_delegation_amount'],
+            # validator['auto_accept_delegations'],
             status
         ])
     print(Formatter().table(headers, rows))
@@ -115,16 +117,14 @@ def print_linked_addresses(addresses):
     headers = [
         'Address',
         'Status',
-        'Balance (ETH)',
-        'Nodes'
+        'Balance (ETH)'
     ]
     rows = []
     for address_info in addresses:
         rows.append([
             address_info['address'],
             address_info['status'],
-            address_info['balance'],
-            address_info['nodes'],
+            address_info['balance']
         ])
     print(Formatter().table(headers, rows))
 
@@ -243,3 +243,11 @@ def print_bond_amount(validator_id, bond_amount, wei=False):
         bond_amount = from_wei(bond_amount)
         print(f'Bond amount for validator with id '
               f'{validator_id} - {bond_amount} SKL')
+
+
+def print_srw_balance(validator_id, amount, wei=False):
+    symbol = 'WEI'
+    if not wei:
+        symbol = 'ETH'
+        amount = from_wei(amount)
+    print(f'SRW balance for validator with id {validator_id} - {amount} {symbol}')
