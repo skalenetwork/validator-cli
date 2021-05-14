@@ -19,7 +19,6 @@
 
 from yaspin import yaspin
 from skale.utils.web3_utils import to_checksum_address
-from skale.transactions.result import TransactionError
 
 from utils.helper import to_skl
 from utils.web3_utils import (init_skale_from_config,
@@ -56,14 +55,8 @@ def delegate(validator_id: int, amount: int, delegation_period: int, info: str,
             amount=amount_wei,
             delegation_period=delegation_period,
             info=info,
-            gas_price=gas_price,
-            raise_for_status=False
+            gas_price=gas_price
         )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
         sp.write("✔ Delegation request sent")
         print(f'Transaction hash: {tx_res.tx_hash}')
 
@@ -79,14 +72,8 @@ def cancel_pending_delegation(delegation_id: int, pk_file: str,
     with yaspin(text='Canceling delegation request', color=SPIN_COLOR) as sp:
         tx_res = skale.delegation_controller.cancel_pending_delegation(
             delegation_id=delegation_id,
-            gas_price=gas_price,
-            raise_for_status=False
+            gas_price=gas_price
         )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
         sp.write("✔ Delegation request canceled")
         print(f'Transaction hash: {tx_res.tx_hash}')
 
@@ -101,14 +88,8 @@ def undelegate(delegation_id: int, pk_file: str, gas_price: int) -> None:
     with yaspin(text='Requesting undelegation', color=SPIN_COLOR) as sp:
         tx_res = skale.delegation_controller.request_undelegation(
             delegation_id=delegation_id,
-            gas_price=gas_price,
-            raise_for_status=False
+            gas_price=gas_price
         )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
         sp.write("✔ Successfully undelegated")
         print(f'Transaction hash: {tx_res.tx_hash}')
 
@@ -125,15 +106,9 @@ def withdraw_bounty(validator_id: int, recipient_address: str,
         tx_res = skale.distributor.withdraw_bounty(
             validator_id=validator_id,
             to=recipient_address,
-            raise_for_status=False,
             gas_price=gas_price,
             wait_for=True
         )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
         sp.write(f'✔ Bounty successfully transferred to {recipient_address}')
         print(f'Transaction hash: {tx_res.tx_hash}')
 
