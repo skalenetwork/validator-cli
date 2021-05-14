@@ -21,7 +21,6 @@ import sys
 
 import click
 from yaspin import yaspin
-from skale.transactions.result import TransactionError
 
 from utils.web3_utils import init_skale_from_config, init_skale_w_wallet_from_config
 from utils.helper import to_wei, print_gas_price
@@ -58,14 +57,8 @@ def recharge(amount: str, validator_id: int, pk_file: str, gas_price: int) -> No
         tx_res = skale.wallets.recharge_validator_wallet(
             validator_id=validator_id,
             value=amount_wei,
-            gas_price=gas_price,
-            raise_for_status=False
+            gas_price=gas_price
         )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
         sp.write("✔ Wallet recharged")
         print(f'Transaction hash: {tx_res.tx_hash}')
 
@@ -88,14 +81,8 @@ def withdraw(amount: str, pk_file: str, gas_price: int) -> None:
     with yaspin(text='Withdrawing ETH from validator SRW wallet', color=SPIN_COLOR) as sp:
         tx_res = skale.wallets.withdraw_funds_from_validator_wallet(
             amount=amount_wei,
-            gas_price=gas_price,
-            raise_for_status=False
+            gas_price=gas_price
         )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
         sp.write("✔ ETH withdrawn")
         print(f'Transaction hash: {tx_res.tx_hash}')
 

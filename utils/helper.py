@@ -22,7 +22,6 @@ import sys
 import json
 import urllib
 import logging
-import traceback
 from decimal import Decimal
 
 from web3 import Web3
@@ -118,6 +117,5 @@ def error_exit(err, exit_code=CLIExitCodes.FAILURE):
         print(f'Reverted: {err}. Recheck your inputs')
     else:
         print(f'Command execution failed with {err}. Recheck your inputs')
-    traceback.print_exc()
-    logger.error(err)
+    logger.exception(err)
     sys.exit(exit_code.value)
