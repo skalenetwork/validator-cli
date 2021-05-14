@@ -75,8 +75,8 @@ setup(
     url='https://github.com/skalenetwork/validator-cli',
     install_requires=[
         "click==7.1.2",
-        "skale.py==5.0dev17",
-        "numpy==1.19.2",
+        "skale.py==5.0dev19",
+        "numpy==1.20.3",
         "yaspin==0.16.0",
         "texttable==1.6.2",
         "pandas==1.2.2",
