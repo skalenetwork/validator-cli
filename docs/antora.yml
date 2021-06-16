@@ -1,0 +1,5 @@
+name: validator-cli
+title: Validator CLI
+version: v1.2.x
+nav:
+  - modules/ROOT/nav.adoc

@@ -1,0 +1,578 @@
+= Validator CLI
+
+== Installation
+
+=== Requirements
+
+* Linux x86_64 machine
+* Download executable
+
+```shell
+VERSION_NUM={put the version number here} && sudo -E bash -c "curl -L https://github.com/skalenetwork/validator-cli/releases/download/$VERSION_NUM/sk-val-$VERSION_NUM-`uname -s`-`uname -m` >  /usr/local/bin/sk-val"
+```
+
+* Apply executable permissions to the binary:
+
+```shell
+sudo chmod +x /usr/local/bin/sk-val
+```
+
+=== Where to find out the latest version?
+
+All validator-cli version numbers are available here: https://github.com/skalenetwork/validator-cli/releases
+
+## CLI Usage
+
+=== Init
+
+Download SKALE Manager contracts info and set the endpoint.
+
+```shell
+sk-val init
+```
+
+Required arguments:
+
+-   `--endpoint/-e` - RPC endpoint of the node in the network where SKALE manager is deployed (`http` or `https`)
+-   `--contracts-url/-c` - - URL to SKALE Manager contracts ABI and addresses
+-   `-w/--wallet` - Type of the wallet that will be used for signing transactions (software, sgx or hardware)
+
+If you want to use sgx wallet you need to initialize it first (see **SGX commands**)
+
+Usage example:
+
+```shell
+sk-val init -e ws://geth.test.com:8546 -c https://test.com/manager.json --wallet software
+```
+
+===  SGX commands
+
+==== Init 
+ Initialize sgx wallet  
+ ```shell
+sk-val sgx init [SGX_SERVER_URL]
+```
+Optional arguments:
+-   `--force/-f` - Rewrite current sgx wallet data
+-  `--ssl-port` - Port that is used by sgx server to establish tls connection
+
+==== Info
+Print sgx wallet information
+```shell
+sk-val sgx info 
+```
+Optional arguments:
+-   `--raw` - Print info in plain json
+
+===  Validator commands
+
+==== Register
+
+Register as a new SKALE validator
+
+```shell
+sk-val validator register
+```
+
+Required arguments:
+
+-   `--name/-n` - Validator name
+-   `--description/-d` - Validator description
+-   `--commission-rate/-c` - Commission rate (percentage)
+-   `--min-delegation` - Validator minimum delegation amount
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
+-   `--yes` - Confirmation flag
+
+Usage example:
+
+```shell
+sk-val validator register -n test -d "test description" -c 20 --min-delegation 1000 --pk-file ./pk.txt
+```
+
+==== List
+
+List of available validators
+
+```shell
+sk-val validator ls
+```
+
+Options:
+
+-   `--wei/-w` - Show tokens amount in wei
+
+==== Delegations
+
+List of delegations for validator ID
+
+```shell
+sk-val validator delegations [VALIDATOR_ID]
+```
+
+Required params:
+
+1) VALIDATOR_ID - ID of the validator
+
+==== Accept pending delegation
+
+Accept pending delegation request by delegation ID
+
+```shell
+sk-val validator accept-delegation --pk-file ./pk.txt
+```
+
+Required arguments:
+
+-   `--delegation-id` - ID of the delegation request to accept
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
+-   `--yes` - Confirmation flag
+
+==== Accept all pending delegations
+
+Accept ALL pending delegations request for the address.  
+List with all pending delegations to be accepted will be shown. After this user should confirm the operation.
+
+```shell
+sk-val validator accept-all-delegations --pk-file ./pk.txt
+```
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
+
+==== Validator linked addresses
+
+List of the linked addresses for validator address
+
+```shell
+sk-val validator linked-addresses [ADDRESS]
+```
+
+Required params:
+
+1) Address - Ethereum address of the validator
+
+==== Link address
+
+Link node address to the validator account
+
+```shell
+sk-val validator link-address [ADDRESS] [NODE_SIGNATURE] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) Address - Ethereum address that will be linked
+2) Node signature - Signature of the node that you can get using `skale node signature`
+   command from skale-node-cli
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
+-   `--yes` - Confirmation flag
+
+==== Unlink address
+
+Unlink node address from the validator account
+
+```shell
+sk-val validator unlink-address [ADDRESS] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) Address - Ethereum address that will be unlinked
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
+-   `--yes` - Confirmation flag
+
+==== Validator info
+
+Info about the validator
+
+```shell
+sk-val validator info [VALIDATOR_ID]
+```
+
+Required params:
+
+1) Address - Ethereum address of the validator
+
+Output info:
+
+1) Validator ID
+2) Name
+3) Address
+4) Fee rate (percent - %)
+5) Minimum delegation amount (SKL)
+6) Accepting new delegation requests
+
+==== Withdraw fee
+
+Withdraw earned fee to specified address
+
+```shell
+sk-val validator withdraw-fee [RECIPIENT_ADDRESS] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) RECIPIENT_ADDRESS - Address to transfer bounty
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
+-   `--yes` - Confirmation flag
+
+==== Set MDA
+
+Set a new minimum delegation amount for the validator
+
+```shell
+sk-val validator set-mda [NEW_MDA] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) NEW_MDA - New MDA value
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
+-   `--yes` - Confirmation flag
+
+==== Request address change
+
+Request address change for the validator
+
+```shell
+sk-val validator change-address [ADDRESS] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) ADDRESS - New validator address
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
+-   `--yes` - Confirmation flag
+
+==== Confirm address change
+
+Confirm address change for the validator. Should be executed using new validator key.
+
+```shell
+sk-val validator confirm-address [VALIDATOR_ID] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) VALIDATOR_ID - ID of the validator
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
+-   `--yes` - Confirmation flag
+
+==== Earned fees
+
+Get earned fee amount for the validator address
+
+```shell
+sk-val validator earned-fees [ADDRESS]
+```
+
+Required params:
+
+1) ADDRESS - Validator address
+
+Optional arguments:
+
+-   `--wei` - Show amount in wei
+
+===  Holder commands
+
+==== Delegate
+
+Delegate tokens to validator
+
+```shell
+sk-val holder delegate
+```
+
+Required arguments:
+
+-   `--validator-id` - ID of the validator to delegate
+-   `--amount` - Amount of SKALE tokens to delegate
+-   `--delegation-period` - Delegation period (in months - only `2` avaliable now)
+-   `--info` - Delegation request info
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
+
+==== Delegations
+
+List of delegations for address
+
+```shell
+sk-val holder delegations [ADDRESS]
+```
+
+Required arguments:
+
+1) ADDRESS - Ethereum address of the token holder
+
+Options:
+
+-   `--wei/-w` - Show tokens amount in wei
+
+==== Cancel pending delegation
+
+Cancel pending delegation request
+
+```shell
+sk-val holder cancel-delegation [DELEGATION_ID]
+```
+
+Required params:
+
+1) Delegation ID - ID of the delegation to cancel
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
+
+==== Request undelegation
+
+Request undelegation in the end of delegation period
+
+```shell
+sk-val holder undelegate [DELEGATION_ID]
+```
+
+Required params:
+
+1) Delegation ID - ID of the delegation
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
+
+==== Withdraw bounty
+
+Withdraw earned bounty to specified address
+
+```shell
+sk-val holder withdraw-bounty [VALIDATOR_ID] [RECIPIENT_ADDRESS] --pk-file ./pk.txt
+```
+
+Required params:
+
+1) VALIDATOR_ID - ID of the validator
+2) RECIPIENT_ADDRESS - Address to transfer bounty
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
+-   `--yes` - Confirmation flag
+
+==== Locked
+
+Show amount of locked tokens for address
+
+```shell
+sk-val holder locked [ADDRESS]
+```
+
+Required arguments:
+
+1) ADDRESS - Ethereum address of the token holder
+
+Options:
+
+-   `--wei/-w` - Show tokens amount in wei
+
+==== Earned bounties
+
+Get earned bounties amount by token holder for the validator ID
+
+```shell
+sk-val holder earned-bounties [VALIDATOR_ID] [ADDRESS]
+```
+
+Required params:
+
+1) VALIDATOR_ID - ID of the validator
+1) ADDRESS - Token holder address
+
+Optional arguments:
+
+-   `--wei` - Show amount in wei
+
+
+===  Wallet commands
+
+==== Setup Ledger
+
+This command works only if you're using the Ledger wallet
+
+```shell
+sk-val wallet setup-ledger
+```
+
+Required params:
+
+-   `--address-index` - Index of the address to use (starting from `0`)
+-   `--keys-type` - Type of the Ledger keys (live or legacy)
+
+==== Send ETH tokens
+
+Send ETH tokens to specific address
+
+```shell
+sk-val wallet send-eth [ADDRESS] [AMOUNT]
+```
+
+Required arguments:
+
+1) ADDRESS - Ethereum receiver address
+2) AMOUNT - Amount of ETH tokens to send
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
+
+Usage example:
+
+```shell
+sk-val wallet send-eth 0x01C19c5d3Ad1C3014145fC82263Fbae09e23924A 0.01 --pk-file ./pk.txt --yes
+```
+
+==== Send SKL tokens
+
+Send SKL tokens to specific address
+
+```shell
+sk-val wallet send-skl [ADDRESS] [AMOUNT]
+```
+
+Required arguments:
+
+1) ADDRESS - Ethereum receiver address
+2) AMOUNT - Amount of SKL tokens to send
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--yes` - Confirmation flag
+
+Usage example:
+
+```shell
+sk-val wallet send-skl 0x01C19c5d3Ad1C3014145fC82263Fbae09e23924A 0.01 --pk-file ./pk.txt --yes
+```
+
+===  Self-recharging wallet commands
+
+==== Balance
+
+Show balance of the validator self-recharging wallet
+
+```shell
+sk-val srw balance [VALIDATOR_ID]
+```
+
+Required arguments:
+
+1) VALIDATOR_ID - ID if the validator
+
+Optional arguments:
+
+-   `--wei/-w` - Show amount in wei
+
+Usage example:
+
+```shell
+sk-val srw balance 1 --wei
+```
+
+==== Recharge
+
+Recharge validator SRW wallet (amount in ETH)
+
+```shell
+sk-val srw recharge [AMOUNT]
+```
+
+Required arguments:
+
+1) AMOUNT - Amount of ETH to recharge
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
+
+Usage example:
+
+```shell
+sk-val srw recharge 0.1 --pk-file ./tests/test-pk.txt
+```
+
+==== Withdraw
+
+Withdraw ETH from validator SRW wallet (amount in ETH)
+
+```shell
+sk-val srw withdraw [AMOUNT]
+```
+
+Required arguments:
+
+1) AMOUNT - Amount of ETH to withdraw
+
+Optional arguments:
+
+-   `--pk-file` - Path to file with private key (only for `software` wallet type)
+-   `--gas-price` - Gas price value in Gwei for transaction (if not specified doubled average network value will be used)
+
+Usage example:
+
+```shell
+sk-val srw withdraw 0.1 --pk-file ./tests/test-pk.txt
+```
+
+## Exit codes
+
+Exit codes conventions for SKALE CLI tools
+
+* `0` - Everything is OK
+* `1` - General error exit code
+* `3` - Bad API response
+* `4` - Script execution error
+* `5` - Transaction error
+* `6` - Revert error
