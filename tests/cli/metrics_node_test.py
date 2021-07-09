@@ -4,6 +4,7 @@ import os.path
 from datetime import datetime
 
 import pandas
+
 from cli.metrics import node
 from core.metrics import get_metrics_for_node
 from tests.constants import NODE_ID, SERVICE_ROW_COUNT
@@ -47,10 +48,10 @@ def test_metrics(skale, runner):
     result = runner.invoke(node, ['-id', str(NODE_ID)])
     output_list = result.output.splitlines()[-row_count:]
 
-    assert '       Date           Bounty   Downtime   Latency' == output_list[0]
-    assert '-------------------------------------------------' == output_list[1]
-    assert f'{metrics[0][0]}        {metrics[0][1]}          {metrics[0][2]}       {metrics[0][3]:.1f}' == output_list[2]  # noqa
-    assert f'{metrics[1][0]}        {metrics[1][1]}          {metrics[1][2]}       {metrics[1][3]:.1f}' == output_list[3]  # noqa
+    assert '       Date            Bounty     Downtime   Latency' == output_list[0]
+    assert '----------------------------------------------------' == output_list[1]
+    assert f'{metrics[0][0]}   {metrics[0][1]:.1f}          {metrics[0][2]}       {metrics[0][3]:.1f}' == output_list[2]  # noqa
+    assert f'{metrics[1][0]}   {metrics[1][1]:.1f}          {metrics[1][2]}       {metrics[1][3]:.1f}' == output_list[3]  # noqa
     assert '' == output_list[-2]
     assert f' Total bounty per the given period: {total_bounty:.3f} SKL' == output_list[-1]  # noqa
 
@@ -60,7 +61,7 @@ def test_metrics_since_empty(runner):
     result = runner.invoke(node, ['-id', str(NODE_ID), '-s', start_date])
     output_list = result.output.splitlines()
 
-    assert NO_DATA_MSG == output_list[-1]
+    assert NO_DATA_MSG in output_list[-1]
 
 
 def test_metrics_till_not_empty(skale, runner):
@@ -71,9 +72,9 @@ def test_metrics_till_not_empty(skale, runner):
     result = runner.invoke(node, ['-id', str(NODE_ID), '-t', end_date])
     output_list = result.output.splitlines()[-row_count:]
 
-    assert '       Date           Bounty   Downtime   Latency' == output_list[0]
-    assert '-------------------------------------------------' == output_list[1]
-    assert f'{metrics[0][0]}        {metrics[0][1]}          {metrics[0][2]}       {metrics[0][3]:.1f}' == output_list[2]  # noqa
+    assert '       Date            Bounty     Downtime   Latency' == output_list[0]
+    assert '----------------------------------------------------' == output_list[1]
+    assert f'{metrics[0][0]}   {metrics[0][1]:.1f}          {metrics[0][2]}       {metrics[0][3]:.1f}' == output_list[2]  # noqa
     assert '' == output_list[-2]
     assert f' Total bounty per the given period: {total_bounty:.3f} SKL' == output_list[-1]  # noqa
 
@@ -82,8 +83,7 @@ def test_metrics_till_empty(runner):
     end_date = '2000-01-01'
     result = runner.invoke(node, ['-id', str(NODE_ID), '-t', end_date])
     output_list = result.output.splitlines()
-
-    assert NO_DATA_MSG == output_list[-1]
+    assert NO_DATA_MSG in output_list[-1]
 
 
 def test_metrics_since_till_not_empty(skale, runner):
@@ -97,9 +97,9 @@ def test_metrics_since_till_not_empty(skale, runner):
                                   '-s', start_date, '-t', end_date])
     output_list = result.output.splitlines()[-row_count:]
 
-    assert '       Date           Bounty   Downtime   Latency' == output_list[0]
-    assert '-------------------------------------------------' == output_list[1]
-    assert f'{metrics[0][0]}        {metrics[0][1]}          {metrics[0][2]}       {metrics[0][3]:.1f}' == output_list[2]  # noqa
+    assert '       Date            Bounty     Downtime   Latency' == output_list[0]
+    assert '----------------------------------------------------' == output_list[1]
+    assert f'{metrics[0][0]}   {metrics[0][1]:.1f}          {metrics[0][2]}       {metrics[0][3]:.1f}' == output_list[2]  # noqa
     assert '' == output_list[-2]
     assert f' Total bounty per the given period: {total_bounty:.3f} SKL' == output_list[-1]  # noqa
 
@@ -110,7 +110,7 @@ def test_metrics_since_till_empty(runner):
     result = runner.invoke(node, ['-id', str(NODE_ID),
                                   '-s', start_date, '-t', end_date])
     output_list = result.output.splitlines()
-    assert NO_DATA_MSG == output_list[-1]
+    assert NO_DATA_MSG in output_list[-1]
 
 
 def test_metrics_with_csv_export(skale, runner):
@@ -120,10 +120,10 @@ def test_metrics_with_csv_export(skale, runner):
     result = runner.invoke(node, ['-id', str(NODE_ID), '-f', filname])
     output_list = result.output.splitlines()[-row_count:]
 
-    assert '       Date           Bounty   Downtime   Latency' == output_list[0]
-    assert '-------------------------------------------------' == output_list[1]
-    assert f'{metrics[0][0]}        {metrics[0][1]}          {metrics[0][2]}       {metrics[0][3]:.1f}' == output_list[2]  # noqa
-    assert f'{metrics[1][0]}        {metrics[1][1]}          {metrics[1][2]}       {metrics[1][3]:.1f}' == output_list[3]  # noqa
+    assert '       Date            Bounty     Downtime   Latency' == output_list[0]
+    assert '----------------------------------------------------' == output_list[1]
+    assert f'{metrics[0][0]}   {metrics[0][1]:.1f}          {metrics[0][2]}       {metrics[0][3]:.1f}' == output_list[2]  # noqa
+    assert f'{metrics[1][0]}   {metrics[1][1]:.1f}          {metrics[1][2]}       {metrics[1][3]:.1f}' == output_list[3]  # noqa
     assert '' == output_list[-2]
     assert f' Total bounty per the given period: {total_bounty:.3f} SKL' == output_list[-1]  # noqa
 
@@ -140,10 +140,10 @@ def test_metrics_with_csv_export_in_wei(skale, runner):
     result = runner.invoke(node, ['-id', str(NODE_ID), '-w', '-f', filname])
     output_list = result.output.splitlines()[-row_count:]
 
-    assert '       Date           Bounty   Downtime   Latency' == output_list[0]
-    assert '-------------------------------------------------' == output_list[1]
-    assert f'{metrics[0][0]}        {metrics[0][1]}          {metrics[0][2]}       {metrics[0][3]}' == output_list[2]  # noqa
-    assert f'{metrics[1][0]}        {metrics[1][1]}          {metrics[1][2]}       {metrics[1][3]}' == output_list[3]  # noqa
+    assert '       Date                    Bounty             Downtime   Latency' == output_list[0]
+    assert '--------------------------------------------------------------------' == output_list[1]
+    assert f'{metrics[0][0]}   {metrics[0][1]}          {metrics[0][2]}       {metrics[0][3]}' == output_list[2]  # noqa
+    assert f'{metrics[1][0]}   {metrics[1][1]}          {metrics[1][2]}       {metrics[1][3]}' == output_list[3]  # noqa
     assert '' == output_list[-2]
     assert f' Total bounty per the given period: {total_bounty} wei' == output_list[-1]  # noqa
 

@@ -23,8 +23,6 @@ import click
 from yaspin import yaspin
 from terminaltables import SingleTable
 
-from skale.transactions.result import TransactionError
-
 from utils.web3_utils import (init_skale_from_config, init_skale_w_wallet_from_config)
 from utils.print_formatters import (print_bond_amount, print_validators,
                                     print_delegations, print_linked_addresses)
@@ -48,15 +46,9 @@ def register(name: str, description: str, commission_rate: float, min_delegation
             description=description,
             fee_rate=commission_rate_permille,
             min_delegation_amount=min_delegation_wei,
-            raise_for_status=False,
             wait_for=True,
             gas_price=gas_price
         )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
         sp.write("✔ New validator registered")
         print(f'Transaction hash: {tx_res.tx_hash}')
 
@@ -90,15 +82,9 @@ def accept_pending_delegation(delegation_id, pk_file: str, gas_price: int) -> No
     with yaspin(text='Accepting delegation request', color=SPIN_COLOR) as sp:
         tx_res = skale.delegation_controller.accept_pending_delegation(
             delegation_id=delegation_id,
-            raise_for_status=False,
             wait_for=True,
             gas_price=gas_price
         )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
         sp.write(f'✔ Delegation request with ID {delegation_id} accepted')
         print(f'Transaction hash: {tx_res.tx_hash}')
 
@@ -132,15 +118,9 @@ def accept_all_delegations(pk_file: str, gas_price: int) -> None:
         for delegation in pending_delegations:
             tx_res = skale.delegation_controller.accept_pending_delegation(
                 delegation_id=delegation['id'],
-                raise_for_status=False,
                 wait_for=True,
                 gas_price=gas_price
             )
-            try:
-                tx_res.raise_for_status()
-            except TransactionError as err:
-                sp.write(str(err))
-                return
             sp.write(f'✔ Delegation request with ID {delegation["id"]} accepted')
             print(f'Transaction hash: {tx_res.tx_hash}')
 
@@ -157,15 +137,9 @@ def link_node_address(node_address: str, signature: str, pk_file: str,
         tx_res = skale.validator_service.link_node_address(
             node_address=node_address,
             signature=signature,
-            raise_for_status=False,
             wait_for=True,
             gas_price=gas_price
         )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
         sp.write(f'✔ Node address {node_address} linked to your validator address')
         print(f'Transaction hash: {tx_res.tx_hash}')
 
@@ -180,15 +154,9 @@ def unlink_node_address(node_address: str, pk_file: str, gas_price: int) -> None
     with yaspin(text='Unlinking node address', color=SPIN_COLOR) as sp:
         tx_res = skale.validator_service.unlink_node_address(
             node_address=node_address,
-            raise_for_status=False,
             wait_for=True,
             gas_price=gas_price
         )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
         sp.write(f'✔ Node address {node_address} unlinked from your validator address')
         print(f'Transaction hash: {tx_res.tx_hash}')
 
@@ -247,15 +215,9 @@ def withdraw_fee(recipient_address: str, pk_file: str, gas_price: int) -> None:
     with yaspin(text='Withdrawing fee', color=SPIN_COLOR) as sp:
         tx_res = skale.distributor.withdraw_fee(
             to=recipient_address,
-            raise_for_status=False,
             wait_for=True,
             gas_price=gas_price
         )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
         sp.write(f'✔ Earned fees successfully transferred to {recipient_address}')
         print(f'Transaction hash: {tx_res.tx_hash}')
 
@@ -279,15 +241,9 @@ def set_mda(new_mda: int, pk_file: str, gas_price: int) -> None:
         new_mda_wei = to_wei(new_mda)
         tx_res = skale.validator_service.set_validator_mda(
             minimum_delegation_amount=new_mda_wei,
-            raise_for_status=False,
             wait_for=True,
             gas_price=gas_price
         )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
         sp.write(f'✔ Minimum delegation amount for your validator ID changed to {new_mda}')
         print(f'Transaction hash: {tx_res.tx_hash}')
 
@@ -302,15 +258,9 @@ def change_address(address: str, pk_file: str, gas_price: int) -> None:
     with yaspin(text='Requesting new validator address', color=SPIN_COLOR) as sp:
         tx_res = skale.validator_service.request_for_new_address(
             new_validator_address=address,
-            raise_for_status=False,
             wait_for=True,
             gas_price=gas_price
         )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
         sp.write(
             f'✔ Requested new address for your validator ID: {address}.\n'
             'You can finish the procedure by running < sk-val validator confirm-address > '
@@ -329,15 +279,9 @@ def confirm_address(validator_id: int, pk_file: str, gas_price: int) -> None:
     with yaspin(text='Confirming validator address change', color=SPIN_COLOR) as sp:
         tx_res = skale.validator_service.confirm_new_address(
             validator_id=validator_id,
-            raise_for_status=False,
             wait_for=True,
             gas_price=gas_price
         )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
         sp.write('✔ Validator address changed')
         print(f'Transaction hash: {tx_res.tx_hash}')
 
@@ -388,15 +332,9 @@ def change_validator_name(name, skale, validator, gas_price):
     with yaspin(text=msg, color=SPIN_COLOR) as sp:
         tx_res = skale.validator_service.set_validator_name(
             new_name=name,
-            raise_for_status=False,
             wait_for=True,
             gas_price=gas_price
         )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
         sp.write(f'✔ Validator name for ID {validator["id"]} changed to {name}')
         print(f'Transaction hash: {tx_res.tx_hash}')
 
@@ -407,14 +345,8 @@ def change_validator_description(description, skale, validator, gas_price):
     with yaspin(text=msg, color=SPIN_COLOR) as sp:
         tx_res = skale.validator_service.set_validator_description(
             new_description=description,
-            raise_for_status=False,
             wait_for=True,
             gas_price=gas_price
         )
-        try:
-            tx_res.raise_for_status()
-        except TransactionError as err:
-            sp.write(str(err))
-            return
         sp.write(f'✔ Validator description for ID {validator["id"]} changed to {description}')
         print(f'Transaction hash: {tx_res.tx_hash}')

@@ -20,9 +20,9 @@
 import sys
 import logging
 import inspect
-import traceback
 
 import click
+from skale.transactions.result import TransactionError, RevertError
 
 from cli import __version__
 from cli.info import BUILD_DATETIME, COMMIT, BRANCH, OS, VERSION
@@ -35,7 +35,8 @@ from cli.srw import srw_cli
 from utils.validations import UrlType
 from utils.texts import Texts
 from utils.logs import init_logger, init_log_dir
-from utils.helper import safe_mk_dirs, write_json, download_file
+from utils.helper import safe_mk_dirs, write_json, download_file, error_exit
+from utils.exit_codes import CLIExitCodes
 from utils.constants import (SKALE_VAL_CONFIG_FOLDER, SKALE_VAL_CONFIG_FILE,
                              SKALE_VAL_ABI_FILE, LONG_LINE, WALLET_TYPES)
 
@@ -112,7 +113,11 @@ if __name__ == '__main__':
                                                       sgx_cli, wallet_cli, srw_cli])
     try:
         cmd_collection()
+    except SystemExit as err:
+        raise err
+    except RevertError as err:
+        error_exit(err, exit_code=CLIExitCodes.REVERT_ERROR)
+    except TransactionError as err:
+        error_exit(err, exit_code=CLIExitCodes.TRANSACTION_ERROR)
     except Exception as err:
-        print(f'Command execution failed with {err}. Recheck your inputs')
-        traceback.print_exc()
-        logger.error(err)
+        error_exit(err)

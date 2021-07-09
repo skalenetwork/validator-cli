@@ -17,7 +17,6 @@ def test_init(runner):
     executable_path = get_executable_path()
     cmd = [executable_path, 'info']
     result = subprocess.run(cmd, shell=False, stdout=PIPE, stderr=PIPE, env={**os.environ})
-
     assert 'Full version: 0.0.0' in str(result.stdout)
     assert result.stderr == b''
     assert result.returncode == 0

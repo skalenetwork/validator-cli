@@ -6,28 +6,14 @@ import time
 from datetime import datetime
 
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
-from skale.utils.contracts_provision.main import (
-    setup_validator,
-    cleanup_nodes_schains, _skip_evm_time
-)
+from skale.utils.contracts_provision.main import (_skip_evm_time,
+                                                  cleanup_nodes_schains,
+                                                  setup_validator)
 from skale.utils.helper import init_default_logger
 
-from tests.constants import (NODE_ID, TEST_CHECKTIME, TEST_DELTA, TEST_EPOCH,
-                             TEST_NODE_NAME, TEST_PK_FILE,
-                             D_VALIDATOR_MIN_DEL, TEST_NODES_COUNT)
+from tests.constants import (D_VALIDATOR_MIN_DEL, NODE_ID, TEST_NODE_NAME,
+                             TEST_NODES_COUNT, TEST_PK_FILE)
 from utils.web3_utils import init_skale_w_wallet_from_config
-
-
-def accelerate_skale_manager(skale):
-    reward_period = skale.constants_holder.get_reward_period()
-    delta_period = skale.constants_holder.get_delta_period()
-    print(f'Existing times for SM: {reward_period}, {delta_period}')
-
-    skale.constants_holder.set_check_time(TEST_CHECKTIME, wait_for=True)
-    skale.constants_holder.set_periods(TEST_EPOCH, TEST_DELTA, wait_for=True)
-    reward_period = skale.constants_holder.get_reward_period()
-    delta_period = skale.constants_holder.get_delta_period()
-    print(f'New times for SM: {reward_period}, {delta_period}')
 
 
 def generate_random_ip():
@@ -58,16 +44,20 @@ def create_nodes(skale, nodes_count):
 
 
 def get_bounties(skale):
+    go_to_next_reward_date(skale)
     tx_res = skale.manager.get_bounty(NODE_ID, wait_for=True)
     tx_res.raise_for_status()
     tx_res = skale.manager.get_bounty(NODE_ID + 1, wait_for=True)
     tx_res.raise_for_status()
-    reward_date = skale.nodes.contract.functions.getNodeNextRewardDate(NODE_ID).call()
-    print(f'Reward date: {reward_date}')
-    go_to_date(skale.web3, reward_date)
-    time.sleep(5)
+    go_to_next_reward_date(skale)
     tx_res = skale.manager.get_bounty(NODE_ID, wait_for=True)
     tx_res.raise_for_status()
+
+
+def go_to_next_reward_date(skale):
+    reward_date = skale.nodes.contract.functions.getNodeNextRewardDate(NODE_ID).call()
+    go_to_date(skale.web3, reward_date)
+    time.sleep(5)
 
 
 def go_to_date(web3, date):
@@ -104,13 +94,11 @@ def main():
     skale = init_skale_w_wallet_from_config(pk_file=TEST_PK_FILE)
     cleanup_nodes_schains(skale)
     setup_validator(skale)
-    accelerate_skale_manager(skale)
-    set_test_msr(0)
+    _skip_evm_time(skale.web3, MONTH_IN_SECONDS)
     create_nodes(skale, TEST_NODES_COUNT)
     skale.constants_holder.set_launch_timestamp(int(time.time()))
-    _skip_evm_time(skale.web3, MONTH_IN_SECONDS * 3)
+    _skip_evm_time(skale.web3, MONTH_IN_SECONDS * 2)
     get_bounties(skale)
-    set_test_msr()
 
 
 if __name__ == '__main__':
