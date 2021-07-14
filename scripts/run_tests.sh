@@ -7,6 +7,7 @@ export DISABLE_SPIN=True
 export SGX_SERVER_URL='https://127.0.0.1:1026'
 
 export SGX_DATA_DIR='tests/tmp-test-sgx'
+export ENV=test
 
 bash scripts/run_sgx_simulator.sh
 

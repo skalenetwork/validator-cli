@@ -22,7 +22,7 @@ import logging
 import inspect
 
 import click
-from skale.transactions.result import TransactionError, RevertError
+from skale.transactions.exceptions import TransactionError, RevertError
 
 from cli import __version__
 from cli.info import BUILD_DATETIME, COMMIT, BRANCH, OS, VERSION
