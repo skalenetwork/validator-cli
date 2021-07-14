@@ -6,9 +6,9 @@ import time
 from datetime import datetime
 
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
-from skale.utils.contracts_provision.main import (_skip_evm_time,
-                                                  cleanup_nodes_schains,
-                                                  setup_validator)
+from skale.utils.contracts_provision.main import (
+    _skip_evm_time, cleanup_nodes_schains, setup_validator, add_test_permissions
+)
 from skale.utils.helper import init_default_logger
 
 from tests.constants import (D_VALIDATOR_MIN_DEL, NODE_ID, TEST_NODE_NAME,
@@ -92,6 +92,7 @@ def set_test_mda():
 def main():
     init_default_logger()
     skale = init_skale_w_wallet_from_config(pk_file=TEST_PK_FILE)
+    add_test_permissions(skale)
     cleanup_nodes_schains(skale)
     setup_validator(skale)
     _skip_evm_time(skale.web3, MONTH_IN_SECONDS)
