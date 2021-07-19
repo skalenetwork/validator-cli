@@ -14,7 +14,8 @@
     2.4 [Metrics commands](#metrics-commands)  
     2.5 [Wallet commands](#wallet-commands)  
     2.6 [Self-recharging wallet commands](#self-recharging-wallet-commands)
-3.  [Development](#development)  
+3.  [Exit codes](#exit-codes)
+4.  [Development](#development)
 
 ## Installation
 
@@ -50,7 +51,7 @@ sk-val init
 
 Required arguments:
 
--   `--endpoint/-e` - RPC endpoint of the node in the network where SKALE manager is deployed (`ws` or `wss`)
+-   `--endpoint/-e` - RPC endpoint of the node in the network where SKALE manager is deployed (`http` or `https`)
 -   `--contracts-url/-c` - - URL to SKALE Manager contracts ABI and addresses
 -   `-w/--wallet` - Type of the wallet that will be used for signing transactions (software, sgx or hardware)
 
@@ -582,6 +583,17 @@ Usage example:
 ```bash
 sk-val srw withdraw 0.1 --pk-file ./tests/test-pk.txt
 ```
+
+## Exit codes
+
+Exit codes conventions for SKALE CLI tools
+
+- `0` - Everything is OK
+- `1` - General error exit code
+- `3` - Bad API response
+- `4` - Script execution error
+- `5` - Transaction error
+- `6` - Revert error
 
 ## Development
 

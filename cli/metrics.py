@@ -18,6 +18,7 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import click
+from yaspin import yaspin
 
 from core.metrics import (
     check_if_node_is_registered, check_if_validator_is_registered, get_metrics_for_node,
@@ -27,7 +28,6 @@ from utils.print_formatters import (
     print_node_metrics, print_validator_metrics, print_validator_node_totals)
 from utils.texts import Texts
 from utils.web3_utils import init_skale_from_config
-from yaspin import yaspin
 
 G_TEXTS = Texts()
 TEXTS = G_TEXTS['metrics']
@@ -85,7 +85,7 @@ def node(node_id, since, till, wei, to_file):
     if metrics:
         print_node_metrics(metrics, total_bounty, wei)
     else:
-        print('\n' + MSGS['no_data'])
+        print(f"\n{MSGS['no_data']}")
 
 
 @metrics.command(help=TEXTS['validator']['help'])
