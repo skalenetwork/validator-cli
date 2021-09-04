@@ -53,7 +53,7 @@ extras_require = {
         "codecov==2.1.7"
     ],
     'hw-wallet': [
-        "ledgerblue==0.1.31"
+        "ledgerblue==0.1.37"
     ]
 }
 
