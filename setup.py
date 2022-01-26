@@ -45,7 +45,6 @@ extras_require = {
     'dev': [
         "PyInstaller==3.6",
         "pytest==5.4.2",
-        "pytest-cov==2.8.1",
         "twine==3.1.1",
         "mock==4.0.2",
         "boto3==1.13.7",
@@ -75,8 +74,7 @@ setup(
     url='https://github.com/skalenetwork/validator-cli',
     install_requires=[
         "click==7.1.2",
-        "skale.py==5.1dev6",
-        "numpy==1.19.2",
+        "skale.py==5.7dev0",
         "yaspin==0.16.0",
         "texttable==1.6.2",
         "pandas==1.2.2",
