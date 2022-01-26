@@ -18,10 +18,9 @@ jobs:
       version: ${{ steps.export_outputs.outputs.version }}
       branch: ${{ steps.export_outputs.outputs.branch }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Checkout submodules
-        run: git submodule update --init
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
       - name: Set Versions
         run: |
           bash ./scripts/set_versions_ga.sh
