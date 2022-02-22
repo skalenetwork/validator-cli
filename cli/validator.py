@@ -17,9 +17,12 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import functools
+
 import click
 from web3 import Web3
 
+from core.transaction import TxFee
 from core.validator import (register, validators_list, delegations, accept_pending_delegation,
                             get_bond_amount, link_node_address, unlink_node_address,
                             linked_addresses, info, withdraw_fee, set_mda, change_address,
@@ -41,6 +44,36 @@ TEXTS = G_TEXTS['validator']
 @click.group()
 def validator_cli():
     pass
+
+
+def transaction_cmd(func):
+    @click.option(
+      '--pk-file',
+      help=G_TEXTS['pk_file']['help']
+    )
+    @click.option(
+        '--gas-price',
+        type=float,
+        help=G_TEXTS['gas_price']['help']
+    )
+    @click.option(
+        '--max-fee',
+        type=float,
+        help=G_TEXTS['gas_price']['help']
+    )
+    @click.option(
+        '--max-tip',
+        help=G_TEXTS['gas_price']['help']
+    )
+    @functools.wraps(func)
+    def wrapper(*args, gas_price=None, max_tip=None, max_fee=None, **kwargs):
+        fee = TxFee(
+            gas_price=to_wei(gas_price, 'gwei'),
+            max_priority_fee_per_gas=to_wei(max_tip, 'gwei'),
+            max_fee_per_gas=to_wei(max_fee, 'gwei')
+        )
+        return func(*args, fee=fee, **kwargs)
+    return wrapper
 
 
 @validator_cli.group('validator', help="Validator commands")
@@ -73,17 +106,9 @@ def validator():
     help=TEXTS['register']['min_delegation']['help'],
     prompt=TEXTS['register']['min_delegation']['prompt']
 )
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
-)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False, prompt=TEXTS['register']['confirm'])
+@transaction_cmd
 def _register(name, description, commission_rate, min_delegation, pk_file,
               gas_price):
     register(
@@ -117,15 +142,6 @@ def _delegations(validator_id, wei):
     help=TEXTS['accept_delegation']['delegation_id']['help'],
     prompt=TEXTS['accept_delegation']['delegation_id']['prompt']
 )
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
-)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=TEXTS['accept_delegation']['confirm'])
@@ -138,15 +154,6 @@ def _accept_delegation(delegation_id, pk_file, gas_price):
 
 
 @validator.command('accept-all-delegations', help=TEXTS['accept_all_delegations']['help'])
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
-)
 def _accept_all_delegations(pk_file, gas_price):
     accept_all_delegations(
         pk_file=pk_file,
@@ -157,15 +164,6 @@ def _accept_all_delegations(pk_file, gas_price):
 @validator.command('link-address', help=TEXTS['link_address']['help'])
 @click.argument('node_address')
 @click.argument('signature')
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
-)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=TEXTS['link_address']['confirm'])
@@ -177,15 +175,6 @@ def _link_address(node_address, signature, pk_file, gas_price):
 
 @validator.command('unlink-address', help=TEXTS['unlink_address']['help'])
 @click.argument('node_address')
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
-)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=TEXTS['unlink_address']['confirm'])
@@ -210,15 +199,6 @@ def _info(validator_id):
 
 @validator.command('withdraw-fee', help=TEXTS['withdraw_fee']['help'])
 @click.argument('recipient_address')
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
-)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=TEXTS['withdraw_fee']['confirm'])
@@ -236,37 +216,23 @@ def _bond_amount(validator_id, wei):
 
 
 @validator.command('set-mda', help=TEXTS['set_mda']['help'])
+@transaction_cmd
 @click.argument('new_mda')
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
-)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=G_TEXTS['yes_opt']['prompt'])
-def _set_mda(new_mda, pk_file, gas_price):
-    set_mda(float(new_mda), pk_file=pk_file,
-            gas_price=to_wei(gas_price, 'gwei'))
+def _set_mda(new_mda, pk_file, fee):
+    set_mda(
+        float(new_mda),
+        pk_file=pk_file,
+        fee=fee
+    )
 
 
 @validator.command('change-address', help=TEXTS['change_address']['help'])
 @click.argument(
     'address',
     type=ETH_ADDRESS_TYPE
-)
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
@@ -280,15 +246,6 @@ def _change_address(address, pk_file, gas_price):
 @click.argument(
     'validator_id',
     type=int
-)
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
@@ -319,15 +276,6 @@ def _earned_fees(address, wei):
     '--description', '-d',
     type=str,
     help=TEXTS['edit']['description']['help']
-)
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,

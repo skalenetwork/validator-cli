@@ -17,12 +17,15 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import dataclasses
 import sys
+from typing import Optional
 
 import click
 from yaspin import yaspin
 from terminaltables import SingleTable
 
+from core.transaction import TxFee
 from utils.web3_utils import (init_skale_from_config, init_skale_w_wallet_from_config)
 from utils.print_formatters import (print_bond_amount, print_validators,
                                     print_delegations, print_linked_addresses)
@@ -31,13 +34,13 @@ from utils.constants import SPIN_COLOR
 
 
 def register(name: str, description: str, commission_rate: float, min_delegation: int,
-             pk_file: str, gas_price: int) -> None:
+             pk_file: str, fee: Optional[TxFee]) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
-    if gas_price is None:
-        gas_price = skale.gas_price
-        print_gas_price(gas_price)
+    if fee is None:
+        fee = TxFee(gas_price=skale.gas_price)
+        print_gas_price(fee.gas_price)
     with yaspin(text='Registering new validator', color=SPIN_COLOR) as sp:
         min_delegation_wei = to_wei(min_delegation)
         commission_rate_permille = percent_to_permille(commission_rate)
@@ -47,7 +50,7 @@ def register(name: str, description: str, commission_rate: float, min_delegation
             fee_rate=commission_rate_permille,
             min_delegation_amount=min_delegation_wei,
             wait_for=True,
-            gas_price=gas_price
+            **fee,
         )
         sp.write("✔ New validator registered")
         print(f'Transaction hash: {tx_res.tx_hash}')
@@ -230,19 +233,18 @@ def get_bond_amount(validator_id, wei=False):
     print_bond_amount(validator_id, bond_amount, wei)
 
 
-def set_mda(new_mda: int, pk_file: str, gas_price: int) -> None:
+def set_mda(new_mda: int, pk_file: str, fee: Optional[TxFee] = None) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
-    if gas_price is None:
-        gas_price = skale.gas_price
-        print_gas_price(gas_price)
+    fee = fee or TxFee(gas_price=skale.gas_price)
+    print(fee)
     with yaspin(text='Changing minimum delegation amount', color=SPIN_COLOR) as sp:
         new_mda_wei = to_wei(new_mda)
         tx_res = skale.validator_service.set_validator_mda(
             minimum_delegation_amount=new_mda_wei,
             wait_for=True,
-            gas_price=gas_price
+            **dataclasses.asdict(fee)
         )
         sp.write(f'✔ Minimum delegation amount for your validator ID changed to {new_mda}')
         print(f'Transaction hash: {tx_res.tx_hash}')
