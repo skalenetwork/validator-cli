@@ -9,7 +9,7 @@ export SGX_SERVER_URL='https://127.0.0.1:1026'
 export SGX_DATA_DIR='tests/tmp-test-sgx'
 export ENV=test
 
-bash scripts/run_sgx_simulator.sh
+#  bash scripts/run_sgx_simulator.sh
 
-python $PROJECT_DIR/tests/prepare_data.py
-py.test --cov=$PROJECT_DIR/ $PROJECT_DIR/tests/ --ignore=tests/cli/metrics_node_test.py --ignore=tests/cli/metrics_validator_test.py
+# python $PROJECT_DIR/tests/prepare_data.py
+py.test --maxfail=1 --cov=$PROJECT_DIR/ $PROJECT_DIR/tests/cli/validator_test.py --ignore=tests/cli/metrics_node_test.py --ignore=tests/cli/metrics_validator_test.py

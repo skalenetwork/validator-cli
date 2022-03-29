@@ -1,7 +1,9 @@
 """ Tests for cli/validator.py module """
 
 import copy
+import os
 import random
+from contextlib import contextmanager
 from datetime import datetime
 
 import mock
@@ -27,54 +29,60 @@ from tests.constants import (
 from tests.prepare_data import set_test_mda
 
 
-def create_new_validator(skale, runner, pk_file_path):
-    wallet = _generate_new_pk_file(skale, pk_file_path)
-    runner.invoke(
-        _register,
-        [
-            '-n', D_VALIDATOR_NAME,
-            '-d', D_VALIDATOR_DESC,
-            '-c', D_VALIDATOR_FEE,
-            '--min-delegation', D_VALIDATOR_MIN_DEL,
-            '--pk-file', pk_file_path,
-            '--gas-price', 1,
-            '--yes'
-        ]
-    )
-    return wallet
-
-
-def _generate_new_pk_file(skale, pk_file_path):
+@contextmanager
+def new_wallet(skale, pk_file_path):
     eth_amount = 0.1
     wallet = generate_wallet(skale.web3)
     send_ether(skale.web3, skale.wallet, wallet.address, eth_amount)
     with open(pk_file_path, "w") as text_file:
         print(wallet._private_key, file=text_file)
-    return wallet
+    try:
+        yield wallet
+    finally:
+        os.remove(pk_file_path)
 
 
-def test_register(runner, skale):
+def create_new_validator(skale, runner, pk_file_path):
+    with new_wallet(skale, pk_file_path) as wallet:
+        runner.invoke(
+            _register,
+            [
+                '-n', D_VALIDATOR_NAME,
+                '-d', D_VALIDATOR_DESC,
+                '-c', D_VALIDATOR_FEE,
+                '--min-delegation', D_VALIDATOR_MIN_DEL,
+                '--pk-file', pk_file_path,
+                '--gas-price', 1,
+                '--yes'
+            ]
+        )
+        return wallet
+
+
+def test_register(runner, skale, validator):
     n_of_validators_before = skale.validator_service.number_of_validators()
-    _generate_new_pk_file(skale, SECOND_TEST_PK_FILE)
-    result = runner.invoke(
-        _register,
-        [
-            '-n', D_VALIDATOR_NAME,
-            '-d', D_VALIDATOR_DESC,
-            '-c', D_VALIDATOR_FEE,
-            '--min-delegation', D_VALIDATOR_MIN_DEL,
-            '--pk-file', SECOND_TEST_PK_FILE,
-            '--gas-price', 1,
-            '--yes'
-        ]
-    )
-    n_of_validators_after = skale.validator_service.number_of_validators()
-    assert n_of_validators_after == n_of_validators_before + 1
+    with new_wallet(skale, SECOND_TEST_PK_FILE) as wallet:
+        result = runner.invoke(
+            _register,
+            [
+                '-n', D_VALIDATOR_NAME,
+                '-d', D_VALIDATOR_DESC,
+                '-c', D_VALIDATOR_FEE,
+                '--min-delegation', D_VALIDATOR_MIN_DEL,
+                '--pk-file', SECOND_TEST_PK_FILE,
+                '--gas-price', 1,
+                '--yes'
+            ]
+        )
+        print(result)
+        validator_id = skale.validator_service.validator_id_by_address(wallet.address)
+        vdata = skale.validator_service.get(validator_id)
+        assert vdata['name'] == D_VALIDATOR_NAME
+        assert vdata['description'] == D_VALIDATOR_DESC
 
-    validator = skale.validator_service.get(n_of_validators_after)
-    assert validator['fee_rate'] == int(D_VALIDATOR_FEE * 10)
-
-    assert result.exit_code == 0
+        n_of_validators_after = skale.validator_service.number_of_validators()
+        assert n_of_validators_after == n_of_validators_before + 1
+        assert result.exit_code == 0
 
 
 def check_validator_fields(expected, actual, fields):
@@ -438,29 +446,28 @@ def test_change_address(runner, skale):
 
 def test_confirm_address(runner, skale):
     wallet_1 = create_new_validator(skale, runner, ADDRESS_CHANGE_PK_FILE_1)
-    wallet_2 = _generate_new_pk_file(skale, ADDRESS_CHANGE_PK_FILE_2)
+    with new_wallet(skale, ADDRESS_CHANGE_PK_FILE_2) as wallet_2:
+        main_wallet = skale.wallet
+        skale.wallet = wallet_1
+        skale.validator_service.request_for_new_address(
+            new_validator_address=wallet_2.address,
+            wait_for=True
+        )
+        skale.wallet = main_wallet
+        latest_validator_id = skale.validator_service.number_of_validators()
 
-    main_wallet = skale.wallet
-    skale.wallet = wallet_1
-    skale.validator_service.request_for_new_address(
-        new_validator_address=wallet_2.address,
-        wait_for=True
-    )
-    skale.wallet = main_wallet
-    latest_validator_id = skale.validator_service.number_of_validators()
-
-    result = runner.invoke(
-        _confirm_address,
-        [
-            str(latest_validator_id),
-            '--pk-file', ADDRESS_CHANGE_PK_FILE_2,
-            '--gas-price', 1,
-            '--yes'
-        ]
-    )
-    output_list = result.output.splitlines()
-    assert result.exit_code == 0
-    assert '\x1b[K✔ Validator address changed' in output_list
+        result = runner.invoke(
+            _confirm_address,
+            [
+                str(latest_validator_id),
+                '--pk-file', ADDRESS_CHANGE_PK_FILE_2,
+                '--gas-price', 1,
+                '--yes'
+            ]
+        )
+        output_list = result.output.splitlines()
+        assert result.exit_code == 0
+        assert '\x1b[K✔ Validator address changed' in output_list
 
 
 def test_earned_fees(runner, skale):

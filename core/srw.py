@@ -18,10 +18,12 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import sys
+from typing import Optional
 
 import click
 from yaspin import yaspin
 
+from core.transaction import TxFee
 from utils.web3_utils import init_skale_from_config, init_skale_w_wallet_from_config
 from utils.helper import to_wei, print_gas_price
 from utils.print_formatters import print_srw_balance
@@ -36,13 +38,11 @@ def validator_id_by_address(skale, address):
         sys.exit(2)
 
 
-def recharge(amount: str, validator_id: int, pk_file: str, gas_price: int) -> None:
+def recharge(amount: str, validator_id: int, pk_file: str, fee: Optional[TxFee]) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
-    if gas_price is None:
-        gas_price = skale.gas_price
-        print_gas_price(gas_price)
+    fee = fee or TxFee(gas_price=skale.gas_price)
 
     if not validator_id:
         validator_id = validator_id_by_address(skale, skale.wallet.address)
@@ -57,20 +57,17 @@ def recharge(amount: str, validator_id: int, pk_file: str, gas_price: int) -> No
         tx_res = skale.wallets.recharge_validator_wallet(
             validator_id=validator_id,
             value=amount_wei,
-            gas_price=gas_price
+            **fee
         )
         sp.write("✔ Wallet recharged")
         print(f'Transaction hash: {tx_res.tx_hash}')
 
 
-def withdraw(amount: str, pk_file: str, gas_price: int) -> None:
+def withdraw(amount: str, pk_file: str, fee: Optional[TxFee]) -> None:
     skale = init_skale_w_wallet_from_config(pk_file)
     if not skale:
         return
-    if gas_price is None:
-        gas_price = skale.gas_price
-        print_gas_price(gas_price)
-
+    fee = fee or TxFee(gas_price=skale.gas_price)
     validator_id = validator_id_by_address(skale, skale.wallet.address)
     amount_wei = to_wei(amount)
     print(f'{amount} ETH ({amount_wei} WEI) will be withdrawn from validator ID {validator_id}')
@@ -81,7 +78,7 @@ def withdraw(amount: str, pk_file: str, gas_price: int) -> None:
     with yaspin(text='Withdrawing ETH from validator SRW wallet', color=SPIN_COLOR) as sp:
         tx_res = skale.wallets.withdraw_funds_from_validator_wallet(
             amount=amount_wei,
-            gas_price=gas_price
+            **fee
         )
         sp.write("✔ ETH withdrawn")
         print(f'Transaction hash: {tx_res.tx_hash}')
