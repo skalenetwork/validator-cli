@@ -17,6 +17,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import dataclasses
 from typing import Optional
 
 from yaspin import yaspin
@@ -56,7 +57,7 @@ def delegate(validator_id: int, amount: int, delegation_period: int, info: str,
             amount=amount_wei,
             delegation_period=delegation_period,
             info=info,
-            **fee
+            **dataclasses.asdict(fee)
         )
         sp.write("✔ Delegation request sent")
         print(f'Transaction hash: {tx_res.tx_hash}')
@@ -71,7 +72,7 @@ def cancel_pending_delegation(delegation_id: int, pk_file: str,
     with yaspin(text='Canceling delegation request', color=SPIN_COLOR) as sp:
         tx_res = skale.delegation_controller.cancel_pending_delegation(
             delegation_id=delegation_id,
-            **fee
+            **dataclasses.asdict(fee)
         )
         sp.write("✔ Delegation request canceled")
         print(f'Transaction hash: {tx_res.tx_hash}')
@@ -85,7 +86,7 @@ def undelegate(delegation_id: int, pk_file: str, fee: Optional[TxFee]) -> None:
     with yaspin(text='Requesting undelegation', color=SPIN_COLOR) as sp:
         tx_res = skale.delegation_controller.request_undelegation(
             delegation_id=delegation_id,
-            **fee
+            **dataclasses.asdict(fee)
         )
         sp.write("✔ Successfully undelegated")
         print(f'Transaction hash: {tx_res.tx_hash}')
@@ -101,8 +102,7 @@ def withdraw_bounty(validator_id: int, recipient_address: str,
         tx_res = skale.distributor.withdraw_bounty(
             validator_id=validator_id,
             to=recipient_address,
-            **fee,
-            wait_for=True
+            **dataclasses.asdict(fee)
         )
         sp.write(f'✔ Bounty successfully transferred to {recipient_address}')
         print(f'Transaction hash: {tx_res.tx_hash}')

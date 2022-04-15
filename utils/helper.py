@@ -17,17 +17,28 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import click
+import functools
+import json
+import logging
 import os
 import sys
-import json
 import urllib
-import logging
 from decimal import Decimal
 
+
 from web3 import Web3
+
+from core.transaction import TxFee
 from utils.exit_codes import CLIExitCodes
 from utils.constants import (SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE, PERMILLE_MULTIPLIER,
                              DEBUG_LOG_FILEPATH)
+from utils.texts import Texts
+
+
+G_TEXTS = Texts()
+TEXTS = G_TEXTS['validator']
+
 
 logger = logging.getLogger(__name__)
 
@@ -119,3 +130,33 @@ def error_exit(err, exit_code=CLIExitCodes.FAILURE):
         print(f'Command execution failed with {err}. Recheck your inputs')
     logger.exception(err)
     sys.exit(exit_code.value)
+
+
+def transaction_cmd(func):
+    @click.option(
+        '--pk-file',
+        help=G_TEXTS['pk_file']['help']
+    )
+    @click.option(
+        '--gas-price',
+        type=float,
+        help=G_TEXTS['gas_price']['help']
+    )
+    @click.option(
+        '--max-fee',
+        type=float,
+        help=G_TEXTS['gas_price']['help']
+    )
+    @click.option(
+        '--max-tip',
+        help=G_TEXTS['gas_price']['help']
+    )
+    @functools.wraps(func)
+    def wrapper(*args, gas_price=None, max_tip=None, max_fee=None, **kwargs):
+        fee = TxFee(
+            gas_price=to_wei(gas_price, 'gwei'),
+            max_priority_fee_per_gas=to_wei(max_tip, 'gwei'),
+            max_fee_per_gas=to_wei(max_fee, 'gwei')
+        )
+        return func(*args, fee=fee, **kwargs)
+    return wrapper

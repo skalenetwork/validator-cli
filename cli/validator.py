@@ -17,18 +17,14 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import functools
-
 import click
 from web3 import Web3
 
-from core.transaction import TxFee
 from core.validator import (register, validators_list, delegations, accept_pending_delegation,
                             get_bond_amount, link_node_address, unlink_node_address,
                             linked_addresses, info, withdraw_fee, set_mda, change_address,
                             confirm_address, earned_fees, accept_all_delegations, edit)
-from utils.helper import to_wei
-from utils.helper import abort_if_false
+from utils.helper import abort_if_false, transaction_cmd
 from utils.validations import EthAddressType, UrlType, FloatPercentageType
 from utils.texts import Texts
 
@@ -44,37 +40,6 @@ TEXTS = G_TEXTS['validator']
 @click.group()
 def validator_cli():
     pass
-
-
-def transaction_cmd(func):
-    @click.option(
-        '--pk-file',
-        help=G_TEXTS['pk_file']['help']
-    )
-    @click.option(
-        '--gas-price',
-        type=float,
-        help=G_TEXTS['gas_price']['help']
-    )
-    @click.option(
-        '--max-fee',
-        type=float,
-        help=G_TEXTS['gas_price']['help']
-    )
-    @click.option(
-        '--max-tip',
-        help=G_TEXTS['gas_price']['help']
-    )
-    @functools.wraps(func)
-    def wrapper(*args, gas_price=None, max_tip=None, max_fee=None, **kwargs):
-        fee = TxFee(
-            gas_price=to_wei(gas_price, 'gwei'),
-            max_priority_fee_per_gas=to_wei(max_tip, 'gwei'),
-            max_fee_per_gas=to_wei(max_fee, 'gwei')
-        )
-        print(f'Fee for transaction: {fee}')
-        return func(*args, fee=fee, **kwargs)
-    return wrapper
 
 
 @validator_cli.group('validator', help="Validator commands")
@@ -110,7 +75,6 @@ def validator():
 )
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False, prompt=TEXTS['register']['confirm'])
-@transaction_cmd
 def _register(
     name,
     description,

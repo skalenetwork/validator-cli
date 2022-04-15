@@ -85,8 +85,7 @@ def accept_pending_delegation(
     with yaspin(text='Accepting delegation request', color=SPIN_COLOR) as sp:
         tx_res = skale.delegation_controller.accept_pending_delegation(
             delegation_id=delegation_id,
-            wait_for=True,
-            **fee
+            **dataclasses.asdict(fee)
         )
         sp.write(f'✔ Delegation request with ID {delegation_id} accepted')
         print(f'Transaction hash: {tx_res.tx_hash}')
@@ -120,8 +119,7 @@ def accept_all_delegations(pk_file: str, fee: Optional[TxFee]) -> None:
         for delegation in pending_delegations:
             tx_res = skale.delegation_controller.accept_pending_delegation(
                 delegation_id=delegation['id'],
-                wait_for=True,
-                **fee
+                **dataclasses.asdict(fee)
             )
             sp.write(
                 f'✔ Delegation request with ID {delegation["id"]} accepted')
@@ -140,8 +138,7 @@ def link_node_address(node_address: str,
         tx_res = skale.validator_service.link_node_address(
             node_address=node_address,
             signature=signature,
-            wait_for=True,
-            **fee
+            **dataclasses.asdict(fee)
         )
         sp.write(
             f'✔ Node address {node_address} linked to your validator address')
@@ -156,8 +153,7 @@ def unlink_node_address(node_address: str, pk_file: str, fee: Optional[TxFee]) -
     with yaspin(text='Unlinking node address', color=SPIN_COLOR) as sp:
         tx_res = skale.validator_service.unlink_node_address(
             node_address=node_address,
-            wait_for=True,
-            fee=fee
+            **dataclasses.asdict(fee)
         )
         sp.write(
             f'✔ Node address {node_address} unlinked from your validator address')
@@ -216,8 +212,7 @@ def withdraw_fee(recipient_address: str, pk_file: str, fee: Optional[TxFee]) -> 
     with yaspin(text='Withdrawing fee', color=SPIN_COLOR) as sp:
         tx_res = skale.distributor.withdraw_fee(
             to=recipient_address,
-            wait_for=True,
-            fee=fee
+            **dataclasses.asdict(fee)
         )
         sp.write(
             f'✔ Earned fees successfully transferred to {recipient_address}')
@@ -241,7 +236,6 @@ def set_mda(new_mda: int, pk_file: str, fee: Optional[TxFee]) -> None:
         new_mda_wei = to_wei(new_mda)
         tx_res = skale.validator_service.set_validator_mda(
             minimum_delegation_amount=new_mda_wei,
-            wait_for=True,
             **dataclasses.asdict(fee)
         )
         sp.write(
@@ -257,8 +251,7 @@ def change_address(address: str, pk_file: str, fee: Optional[TxFee]) -> None:
     with yaspin(text='Requesting new validator address', color=SPIN_COLOR) as sp:
         tx_res = skale.validator_service.request_for_new_address(
             new_validator_address=address,
-            wait_for=True,
-            **fee
+            **dataclasses.asdict(fee)
         )
         sp.write(
             f'✔ Requested new address for your validator ID: {address}.\n'
@@ -276,8 +269,7 @@ def confirm_address(validator_id: int, pk_file: str, fee: Optional[TxFee]) -> No
     with yaspin(text='Confirming validator address change', color=SPIN_COLOR) as sp:
         tx_res = skale.validator_service.confirm_new_address(
             validator_id=validator_id,
-            wait_for=True,
-            **fee
+            **dataclasses.asdict(fee)
         )
         sp.write('✔ Validator address changed')
         print(f'Transaction hash: {tx_res.tx_hash}')
@@ -329,8 +321,7 @@ def change_validator_name(name, skale, validator, fee):
     with yaspin(text=msg, color=SPIN_COLOR) as sp:
         tx_res = skale.validator_service.set_validator_name(
             new_name=name,
-            wait_for=True,
-            **fee
+            **dataclasses.asdict(fee)
         )
         sp.write(
             f'✔ Validator name for ID {validator["id"]} changed to {name}')
@@ -343,8 +334,7 @@ def change_validator_description(description, skale, validator, fee):
     with yaspin(text=msg, color=SPIN_COLOR) as sp:
         tx_res = skale.validator_service.set_validator_description(
             new_description=description,
-            wait_for=True,
-            **fee
+            **dataclasses.asdict(fee)
         )
         sp.write(
             f'✔ Validator description for ID {validator["id"]} changed to {description}')

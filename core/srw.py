@@ -17,6 +17,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import dataclasses
 import sys
 from typing import Optional
 
@@ -24,10 +25,10 @@ import click
 from yaspin import yaspin
 
 from core.transaction import TxFee
-from utils.web3_utils import init_skale_from_config, init_skale_w_wallet_from_config
-from utils.helper import to_wei, print_gas_price
-from utils.print_formatters import print_srw_balance
 from utils.constants import SPIN_COLOR
+from utils.helper import to_wei
+from utils.print_formatters import print_srw_balance
+from utils.web3_utils import init_skale_from_config, init_skale_w_wallet_from_config
 
 
 def validator_id_by_address(skale, address):
@@ -57,7 +58,7 @@ def recharge(amount: str, validator_id: int, pk_file: str, fee: Optional[TxFee])
         tx_res = skale.wallets.recharge_validator_wallet(
             validator_id=validator_id,
             value=amount_wei,
-            **fee
+            **dataclasses.asdict(fee)
         )
         sp.write("✔ Wallet recharged")
         print(f'Transaction hash: {tx_res.tx_hash}')
@@ -78,7 +79,7 @@ def withdraw(amount: str, pk_file: str, fee: Optional[TxFee]) -> None:
     with yaspin(text='Withdrawing ETH from validator SRW wallet', color=SPIN_COLOR) as sp:
         tx_res = skale.wallets.withdraw_funds_from_validator_wallet(
             amount=amount_wei,
-            **fee
+            **dataclasses.asdict(fee)
         )
         sp.write("✔ ETH withdrawn")
         print(f'Transaction hash: {tx_res.tx_hash}')

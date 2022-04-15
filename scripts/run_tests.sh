@@ -12,4 +12,4 @@ export ENV=test
 #  bash scripts/run_sgx_simulator.sh
 
 # python $PROJECT_DIR/tests/prepare_data.py
-py.test --maxfail=1 --cov=$PROJECT_DIR/ $PROJECT_DIR/tests/cli/validator_test.py --ignore=tests/cli/metrics_node_test.py --ignore=tests/cli/metrics_validator_test.py
+py.test --cov=$PROJECT_DIR/ $PROJECT_DIR/tests/cli/srw_test.py --ignore=tests/cli/metrics_node_test.py --ignore=tests/cli/metrics_validator_test.py $@
