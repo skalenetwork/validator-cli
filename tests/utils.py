@@ -1,9 +1,14 @@
+import os
+
 from cli.validator import _register
+
 from tests.constants import (
+    DIST_DIR,
     D_VALIDATOR_NAME,
     D_VALIDATOR_DESC,
     D_VALIDATOR_FEE,
-    D_VALIDATOR_MIN_DEL
+    D_VALIDATOR_MIN_DEL,
+    EXEC_PLATFORM
 )
 
 
@@ -26,3 +31,13 @@ def create_new_validator_wallet_pk(skale, runner, new_wallet_pk):
     )
     assert result.exit_code == 0, result.output
     return wallet, pk
+
+
+def get_executable_path(
+    dist_dir=DIST_DIR,
+    prefix='sk-val',
+    version='0.0.0',
+    platform=EXEC_PLATFORM
+):
+    filename = f'{prefix}-{version}-{platform}'
+    return os.path.join(DIST_DIR, filename)

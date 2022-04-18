@@ -1,10 +1,12 @@
 """ SKALE config test """
 
 import os
+import subprocess
 import shutil
 import time
 import uuid
 from datetime import datetime
+from subprocess import PIPE
 
 import pytest
 from click.testing import CliRunner
@@ -31,6 +33,7 @@ from skale.wallets import Web3Wallet
 from skale.wallets.web3_wallet import generate_wallet
 
 from tests.constants import TEST_PK_FILE, TMP_DIR
+from tests.utils import get_executable_path
 from utils.web3_utils import init_skale_w_wallet_from_config
 
 
@@ -172,3 +175,15 @@ def bounties(skale, node_skales, nodes):
 @pytest.fixture
 def runner():
     return CliRunner()
+
+
+@pytest.fixture(scope='session')
+def executable():
+    cmd = ['scripts/build.sh', '0.0.0', 'test-branch']
+    result = subprocess.run(cmd, shell=False, stdout=PIPE, stderr=PIPE, env={**os.environ})
+    assert result.returncode == 0
+    executable_path = get_executable_path()
+    try:
+        yield executable_path
+    finally:
+        os.remove(executable_path)

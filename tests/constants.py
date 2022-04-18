@@ -9,6 +9,7 @@ TEST_PK_FILE = os.path.join(HERE, 'test-pk.txt')
 
 PROJECT_DIR = os.path.join(HERE, os.pardir)
 DIST_DIR = os.path.join(PROJECT_DIR, 'dist')
+EXEC_PLATFORM = os.getenv('EXEC_PLATFORM', 'Linux-x86_64')
 
 # validator
 
