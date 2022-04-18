@@ -28,7 +28,7 @@ from utils.helper import to_skl
 from utils.web3_utils import (init_skale_from_config,
                               init_skale_w_wallet_from_config)
 from utils.print_formatters import print_delegations
-from utils.helper import to_wei, from_wei, print_gas_price
+from utils.helper import to_wei, from_wei
 from utils.constants import SPIN_COLOR
 
 

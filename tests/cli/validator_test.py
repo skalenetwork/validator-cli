@@ -166,7 +166,10 @@ def test_delegations_skl(runner, validator, skale):
         'Delegation period (months)', 'Created At', 'Info'
     ])
     assert str_contains(output_list[-1], [
-        skale.wallet.address, str(created_time), delegation['info'], '30000000'
+        skale.wallet.address,
+        str(created_time),
+        delegation['info'],
+        str(delegation['amount'])
     ])
     assert result.exit_code == 0
 

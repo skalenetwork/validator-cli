@@ -42,7 +42,6 @@ def test_recharge(runner, skale, validator):
             ]
         )
 
-    print(result.output)
     assert result.exit_code == 0
     amount_after = skale.wallets.get_validator_balance(validator_id)
     assert amount_after == amount_before + to_wei(TEST_RECHARGE_VALUE_ETH)
@@ -98,7 +97,6 @@ def test_withdraw(runner, skale, validator):
             ]
         )
 
-    print(result.output)
     assert result.exit_code == 0
     amount_after = skale.wallets.get_validator_balance(validator_id)
     assert amount_after == amount_before - to_wei(TEST_RECHARGE_VALUE_ETH)
