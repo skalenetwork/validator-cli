@@ -11,8 +11,8 @@ def test_send_eth(runner, skale):
 
     receiver_0 = '0xf38b5dddd74b8901c9b5fb3ebd60bf5e7c1e9763'
     checksum_receiver_0 = to_checksum_address(receiver_0)
-    receiver_balance_0 = skale.web3.eth.getBalance(checksum_receiver_0)
-    balance_0 = skale.web3.eth.getBalance(address)
+    receiver_balance_0 = skale.web3.eth.get_balance(checksum_receiver_0)
+    balance_0 = skale.web3.eth.get_balance(address)
     result = runner.invoke(
         _send_eth,
         [
@@ -27,28 +27,9 @@ def test_send_eth(runner, skale):
     assert result.exit_code == 0
     assert '✔ Funds were successfully transferred' in str(output_list)
 
-    balance_1 = skale.web3.eth.getBalance(address)
+    balance_1 = skale.web3.eth.get_balance(address)
     assert balance_1 < balance_0
-    assert skale.web3.eth.getBalance(checksum_receiver_0) - receiver_balance_0 == amount_wei
-
-    receiver_1 = '0x01C19c5d3Ad1C3014145fC82263Fbae09e23924A'
-    receiver_balance_1 = skale.web3.eth.getBalance(receiver_1)
-    result = runner.invoke(
-        _send_eth,
-        [
-            receiver_1,
-            amount,
-            '--pk-file', TEST_PK_FILE,
-            '--yes'
-        ]
-    )
-
-    output_list = result.output.splitlines()
-    print(output_list)
-    assert result.exit_code == 0
-    assert '✔ Funds were successfully transferred' in str(output_list)
-    assert skale.web3.eth.getBalance(address) < balance_1
-    assert skale.web3.eth.getBalance(receiver_1) - receiver_balance_1 == amount_wei
+    assert skale.web3.eth.get_balance(checksum_receiver_0) - receiver_balance_0 == amount_wei
 
 
 def test_send_skl(runner):

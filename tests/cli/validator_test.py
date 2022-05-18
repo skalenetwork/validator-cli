@@ -9,7 +9,7 @@ import pytest
 
 from web3 import Web3
 from skale.wallets.web3_wallet import generate_wallet
-from skale.utils.account_tools import send_ether
+from skale.utils.account_tools import send_eth
 from skale.utils.contracts_provision.main import _skip_evm_time
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
 from utils.helper import from_wei, permille_to_percent
@@ -442,7 +442,7 @@ def test_change_address(runner, skale):
 def another_wallet_pk(skale, tmp_filepath):
     eth_amount = 0.1
     wallet = generate_wallet(skale.web3)
-    send_ether(skale.web3, skale.wallet, wallet.address, eth_amount)
+    send_eth(skale.web3, skale.wallet, wallet.address, eth_amount)
     with open(tmp_filepath, "w") as text_file:
         print(wallet._private_key, file=text_file)
     return wallet, tmp_filepath
@@ -501,34 +501,38 @@ def test_earned_fees(runner, skale):
 
 
 def test_edit(runner, skale, new_wallet_pk):
-    wallet_1, pk = create_new_validator_wallet_pk(skale, runner, new_wallet_pk)
-    skale.wallet = wallet_1
+    main_wallet = skale.wallet
+    try:
+        wallet_1, pk = create_new_validator_wallet_pk(skale, runner, new_wallet_pk)
+        skale.wallet = wallet_1
 
-    new_test_name = 'test_123'
-    new_test_description = 'test_description'
+        new_test_name = 'test_123'
+        new_test_description = 'test_description'
 
-    latest_id = skale.validator_service.number_of_validators()
-    validator = skale.validator_service.get(latest_id)
+        latest_id = skale.validator_service.number_of_validators()
+        validator = skale.validator_service.get(latest_id)
 
-    assert validator['name'] == D_VALIDATOR_NAME
-    assert validator['name'] != new_test_name
-    assert validator['description'] == D_VALIDATOR_DESC
-    assert validator['description'] != new_test_description
+        assert validator['name'] == D_VALIDATOR_NAME
+        assert validator['name'] != new_test_name
+        assert validator['description'] == D_VALIDATOR_DESC
+        assert validator['description'] != new_test_description
 
-    result = runner.invoke(
-        _edit,
-        [
-            '--name', new_test_name,
-            '--description', new_test_description,
-            '--pk-file', pk,
-            '--gas-price', 1,
-            '--yes'
-        ]
-    )
-    validator = skale.validator_service.get(latest_id)
-    assert validator['name'] != D_VALIDATOR_NAME
-    assert validator['name'] == new_test_name
-    assert validator['description'] != D_VALIDATOR_DESC
-    assert validator['description'] == new_test_description
+        result = runner.invoke(
+            _edit,
+            [
+                '--name', new_test_name,
+                '--description', new_test_description,
+                '--pk-file', pk,
+                '--gas-price', 1,
+                '--yes'
+            ]
+        )
+        validator = skale.validator_service.get(latest_id)
+        assert validator['name'] != D_VALIDATOR_NAME
+        assert validator['name'] == new_test_name
+        assert validator['description'] != D_VALIDATOR_DESC
+        assert validator['description'] == new_test_description
 
-    assert result.exit_code == 0
+        assert result.exit_code == 0
+    finally:
+        skale.wallet = main_wallet

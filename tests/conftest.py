@@ -28,7 +28,7 @@ from skale.utils.contracts_provision.fake_multisig_contract import (
     deploy_fake_multisig_contract
 )
 from skale.utils.account_tools import generate_account
-from skale.utils.account_tools import send_ether
+from skale.utils.account_tools import send_eth
 from skale.wallets import Web3Wallet
 from skale.wallets.web3_wallet import generate_wallet
 
@@ -68,7 +68,7 @@ def tmp_filepath(tmp_dir):
 def new_wallet(skale):
     eth_amount = 0.1
     wallet = generate_wallet(skale.web3)
-    send_ether(skale.web3, skale.wallet, wallet.address, eth_amount)
+    send_eth(skale.web3, skale.wallet, wallet.address, eth_amount)
     return wallet
 
 
@@ -94,7 +94,8 @@ def skale():
 
 @pytest.fixture(scope='session')
 def validator(skale):
-    return setup_validator(skale)
+    vid = setup_validator(skale)
+    return vid
 
 
 @pytest.fixture
