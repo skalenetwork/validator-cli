@@ -145,17 +145,23 @@ def transaction_cmd(func):
     @click.option(
         '--max-fee',
         type=float,
-        help=G_TEXTS['gas_price']['help']
+        help=G_TEXTS['max_fee']['help']
     )
     @click.option(
-        '--max-tip',
-        help=G_TEXTS['gas_price']['help']
+        '--max-priority_fee',
+        help=G_TEXTS['max_priority_fee']['help']
     )
     @functools.wraps(func)
-    def wrapper(*args, gas_price=None, max_tip=None, max_fee=None, **kwargs):
+    def wrapper(
+            *args,
+            gas_price=None,
+            max_priority_fee=None,
+            max_fee=None,
+            **kwargs
+    ):
         fee = TxFee(
             gas_price=to_wei(gas_price, 'gwei'),
-            max_priority_fee_per_gas=to_wei(max_tip, 'gwei'),
+            max_priority_fee_per_gas=to_wei(max_priority_fee, 'gwei'),
             max_fee_per_gas=to_wei(max_fee, 'gwei')
         )
         return func(*args, fee=fee, **kwargs)
