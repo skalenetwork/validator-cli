@@ -29,10 +29,11 @@ from tests.constants import (
     TEST_PK_FILE
 )
 from tests.prepare_data import set_test_mda
-from tests.utils import create_new_validator_wallet_pk, str_contains
+from tests.utils import create_new_validator_wallet_pk, str_contains, TEST_FEE_OPTIONS
 
 
-def test_register(runner, skale, new_wallet_pk):
+@pytest.mark.parametrize('fee_options', TEST_FEE_OPTIONS)
+def test_register(runner, skale, new_wallet_pk, fee_options):
     n_of_validators_before = skale.validator_service.number_of_validators()
     wallet, pk = new_wallet_pk
 
@@ -44,7 +45,7 @@ def test_register(runner, skale, new_wallet_pk):
             '-c', D_VALIDATOR_FEE,
             '--min-delegation', D_VALIDATOR_MIN_DEL,
             '--pk-file', pk,
-            '--gas-price', 1,
+            *fee_options,
             '--yes'
         ]
         )
@@ -174,7 +175,8 @@ def test_delegations_skl(runner, validator, skale):
     assert result.exit_code == 0
 
 
-def test_accept_delegation(runner, validator, skale):
+@pytest.mark.parametrize('fee_options', TEST_FEE_OPTIONS)
+def test_accept_delegation(runner, validator, skale, fee_options):
     validator_id = validator
     skale.delegation_controller.delegate(
         validator_id=validator_id,
@@ -194,7 +196,7 @@ def test_accept_delegation(runner, validator, skale):
         [
             '--delegation-id', delegation_id,
             '--pk-file', TEST_PK_FILE,
-            '--gas-price', 1.7,
+            *fee_options,
             '--yes'
         ]
     )
@@ -208,7 +210,8 @@ def test_accept_delegation(runner, validator, skale):
     _skip_evm_time(skale.web3, MONTH_IN_SECONDS)
 
 
-def test_accept_all_delegations(runner, validator, skale):
+@pytest.mark.parametrize('fee_options', TEST_FEE_OPTIONS)
+def test_accept_all_delegations(runner, validator, skale, fee_options):
     n_of_delegations = 2
     validator_id = validator
     set_test_mda()
@@ -234,7 +237,7 @@ def test_accept_all_delegations(runner, validator, skale):
             _accept_all_delegations,
             [
                 '--pk-file', TEST_PK_FILE,
-                '--gas-price', 1
+                *fee_options,
             ]
         )
 
@@ -251,7 +254,8 @@ def test_accept_all_delegations(runner, validator, skale):
     _skip_evm_time(skale.web3, MONTH_IN_SECONDS)
 
 
-def test_link_address(runner, validator, skale, new_wallet_pk):
+@pytest.mark.parametrize('fee_options', TEST_FEE_OPTIONS)
+def test_link_address(runner, validator, skale, new_wallet_pk, fee_options):
     node_wallet, _ = new_wallet_pk
     validator_id = validator
     addresses = skale.validator_service.get_linked_addresses_by_validator_address(
@@ -272,6 +276,7 @@ def test_link_address(runner, validator, skale, new_wallet_pk):
             [
                 node_wallet.address,
                 signature,
+                *fee_options,
                 '--pk-file', TEST_PK_FILE,
                 '--yes'
             ]
@@ -289,7 +294,8 @@ def test_link_address(runner, validator, skale, new_wallet_pk):
         skale.wallet = main_wallet
 
 
-def test_unlink_address(runner, skale, validator):
+@pytest.mark.parametrize('fee_options', TEST_FEE_OPTIONS)
+def test_unlink_address(runner, skale, validator, fee_options):
     validator_id = validator
     wallet = generate_wallet(skale.web3)
 
@@ -315,7 +321,7 @@ def test_unlink_address(runner, skale, validator):
         [
             wallet.address,
             '--pk-file', TEST_PK_FILE,
-            '--gas-price', 1,
+            *fee_options,
             '--yes'
         ]
     )
@@ -356,13 +362,15 @@ def test_info(runner, skale, validator):
     # assert '\x1b(0x\x1b(B Accepting delegation requests   \x1b(0x\x1b(B Yes                                        \x1b(0x\x1b(B' in output_list  # noqa
 
 
-def test_withdraw_fee(runner, skale, validator):
+@pytest.mark.parametrize('fee_options', TEST_FEE_OPTIONS)
+def test_withdraw_fee(runner, skale, validator, fee_options):
     _skip_evm_time(skale.web3, 3 * MONTH_IN_SECONDS)
     recipient_address = skale.wallet.address
     result = runner.invoke(
         _withdraw_fee,
         [
             recipient_address,
+            *fee_options,
             '--pk-file', TEST_PK_FILE,
             '--yes'
         ]
@@ -396,7 +404,8 @@ def test_bond_amount(runner, skale, validator):
     assert output == f'Bond amount for validator with id {validator_id} - {bond_wei} WEI\n'
 
 
-def test_set_mda(runner, skale, validator):
+@pytest.mark.parametrize('fee_options', TEST_FEE_OPTIONS)
+def test_set_mda(runner, skale, validator, fee_options):
     validator_id = validator
     old_mda = skale.validator_service.get(
         validator_id
@@ -408,7 +417,7 @@ def test_set_mda(runner, skale, validator):
             [
                 mda,
                 '--pk-file', TEST_PK_FILE,
-                '--gas-price', 2.9,
+                *fee_options,
                 '--yes'
             ]
         )
@@ -421,14 +430,15 @@ def test_set_mda(runner, skale, validator):
         skale.validator_service.set_validator_mda(old_mda)
 
 
-def test_change_address(runner, skale):
+@pytest.mark.parametrize('fee_options', TEST_FEE_OPTIONS)
+def test_change_address(runner, skale, fee_options):
     wallet = generate_wallet(skale.web3)
     result = runner.invoke(
         _change_address,
         [
             wallet.address,
             '--pk-file', TEST_PK_FILE,
-            '--gas-price', 1,
+            *fee_options,
             '--yes'
         ]
     )
@@ -448,7 +458,8 @@ def another_wallet_pk(skale, tmp_filepath):
     return wallet, tmp_filepath
 
 
-def test_confirm_address(runner, skale, new_wallet, another_wallet_pk):
+@pytest.mark.parametrize('fee_options', TEST_FEE_OPTIONS)
+def test_confirm_address(runner, skale, new_wallet, another_wallet_pk, fee_options):
     initial_wallet = new_wallet
     new_wallet, new_pk = another_wallet_pk
     main_wallet = skale.wallet
@@ -476,7 +487,7 @@ def test_confirm_address(runner, skale, new_wallet, another_wallet_pk):
             [
                 str(validator_id),
                 '--pk-file', new_pk,
-                '--gas-price', 1,
+                *fee_options,
                 '--yes'
             ]
         )
@@ -500,7 +511,8 @@ def test_earned_fees(runner, skale):
     assert output == f'Earned fee for {skale.wallet.address}: {earned_fee["earned"]} WEI\nEnd month: {earned_fee["end_month"]}\n'  # noqa
 
 
-def test_edit(runner, skale, new_wallet_pk):
+@pytest.mark.parametrize('fee_options', TEST_FEE_OPTIONS)
+def test_edit(runner, skale, new_wallet_pk, fee_options):
     main_wallet = skale.wallet
     try:
         wallet_1, pk = create_new_validator_wallet_pk(skale, runner, new_wallet_pk)
@@ -523,7 +535,7 @@ def test_edit(runner, skale, new_wallet_pk):
                 '--name', new_test_name,
                 '--description', new_test_description,
                 '--pk-file', pk,
-                '--gas-price', 1,
+                *fee_options,
                 '--yes'
             ]
         )

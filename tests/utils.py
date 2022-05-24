@@ -11,6 +11,12 @@ from tests.constants import (
     EXEC_PLATFORM
 )
 
+TEST_FEE_OPTIONS = [
+    ('--gas-price', '1.5'),
+    ('--max-fee', '1.5', '--max-priority-fee', '0.2'),
+    ()
+]
+
 
 def str_contains(string, values):
     return all(x in string for x in values)

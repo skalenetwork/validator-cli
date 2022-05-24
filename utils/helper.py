@@ -36,8 +36,7 @@ from utils.constants import (SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE, PERMILLE
 from utils.texts import Texts
 
 
-G_TEXTS = Texts()
-TEXTS = G_TEXTS['validator']
+TEXTS = Texts()
 
 
 logger = logging.getLogger(__name__)
@@ -135,21 +134,21 @@ def error_exit(err, exit_code=CLIExitCodes.FAILURE):
 def transaction_cmd(func):
     @click.option(
         '--pk-file',
-        help=G_TEXTS['pk_file']['help']
+        help=TEXTS['pk_file']['help']
     )
     @click.option(
         '--gas-price',
         type=float,
-        help=G_TEXTS['gas_price']['help']
+        help=TEXTS['gas_price']['help']
     )
     @click.option(
         '--max-fee',
         type=float,
-        help=G_TEXTS['max_fee']['help']
+        help=TEXTS['max_fee']['help']
     )
     @click.option(
-        '--max-priority_fee',
-        help=G_TEXTS['max_priority_fee']['help']
+        '--max-priority-fee',
+        help=TEXTS['max_priority_fee']['help']
     )
     @functools.wraps(func)
     def wrapper(

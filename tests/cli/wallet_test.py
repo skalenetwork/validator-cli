@@ -1,10 +1,13 @@
+import pytest
 from skale.utils.web3_utils import to_checksum_address
 
 from cli.wallet import _send_eth, _send_skl
 from tests.constants import TEST_PK_FILE
+from tests.utils import TEST_FEE_OPTIONS
 
 
-def test_send_eth(runner, skale):
+@pytest.mark.parametrize('fee_options', TEST_FEE_OPTIONS)
+def test_send_eth(runner, skale, fee_options):
     address = skale.wallet.address
     amount = '0.01'
     amount_wei = skale.web3.toWei(amount, 'ether')
@@ -18,6 +21,7 @@ def test_send_eth(runner, skale):
         [
             receiver_0,
             amount,
+            *fee_options,
             '--pk-file', TEST_PK_FILE,
             '--yes'
         ]
@@ -32,7 +36,8 @@ def test_send_eth(runner, skale):
     assert skale.web3.eth.get_balance(checksum_receiver_0) - receiver_balance_0 == amount_wei
 
 
-def test_send_skl(runner):
+@pytest.mark.parametrize('fee_options', TEST_FEE_OPTIONS)
+def test_send_skl(runner, fee_options):
     result = runner.invoke(
         _send_skl,
         [

@@ -14,7 +14,8 @@ def test_no_such_command_exit_code(executable):
 def test_reverted_exit_code(executable):
     cmd = [
         executable, 'validator', 'register', '-n', 'test', '-d', 'test',
-        '--commission-rate', '10', '--min-delegation', '1000', '--pk-file', TEST_PK_FILE, '--yes'
+        '--commission-rate', '0.1', '--min-delegation', '1000', '--pk-file', TEST_PK_FILE, '--yes'
     ]
     result = subprocess.run(cmd, shell=False, stdout=PIPE, stderr=PIPE, env={**os.environ})
+    print(result.stdout, result.returncode)
     assert result.returncode == 6

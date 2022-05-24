@@ -1,6 +1,8 @@
 """ Tests for cli/holder.py module """
 
 import datetime
+
+import pytest
 from skale.utils.contracts_provision.main import _skip_evm_time
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
 
@@ -15,7 +17,7 @@ from tests.constants import (
     D_DELEGATION_PERIOD,
     D_DELEGATION_INFO
 )
-from tests.utils import str_contains
+from tests.utils import str_contains, TEST_FEE_OPTIONS
 
 
 DELEGATION_AMOUNT_SKL = 1000
@@ -184,7 +186,8 @@ def test_locked(runner, skale):
     assert result.exit_code == 0
 
 
-def test_withdraw_bounty(runner, skale, validator):
+@pytest.mark.parametrize('fee_options', TEST_FEE_OPTIONS)
+def test_withdraw_bounty(runner, skale, validator, fee_options):
     validator_id = validator
     _skip_evm_time(skale.web3, MONTH_IN_SECONDS * 3)
     recipient_address = skale.wallet.address
@@ -193,7 +196,7 @@ def test_withdraw_bounty(runner, skale, validator):
         [
             str(validator_id),
             recipient_address,
-            '--gas-price', 1,
+            *fee_options,
             '--pk-file', TEST_PK_FILE,
             '--yes'
         ]

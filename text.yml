@@ -155,8 +155,8 @@ gas_price:
   help: gasPrice value in Gwei for transaction
 max_fee:
   help: maxFeePerGas value in Gwei for transaction
-max_priority_fee: maxPriorityFeePerGas value in Gwei for transaction
-  help: 
+max_priority_fee:
+  help: maxPriorityFeePerGas value in Gwei for transaction
 address_index:
   help: Index of the address to use (only for `ledger` wallet type)
   prompt: Please enter the address index (staring from 0)
