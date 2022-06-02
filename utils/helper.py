@@ -17,7 +17,6 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import click
 import functools
 import json
 import logging
@@ -27,6 +26,7 @@ import urllib
 from decimal import Decimal
 
 
+import click
 from web3 import Web3
 
 from core.transaction import TxFee
