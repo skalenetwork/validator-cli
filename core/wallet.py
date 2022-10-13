@@ -58,6 +58,7 @@ def transfer_skl(receiver_address, amount, pk_file, fee: Optional[TxFee]):
 def transfer_funds(receiver_address, amount, pk_file, fee: Optional[TxFee], token_type):
     skale = init_skale_w_wallet_from_config(pk_file)
     receiver_address = to_checksum_address(receiver_address)
+    fee = fee or TxFee(gas_price=skale.gas_price)
     with yaspin(text='Transferring funds', color=SPIN_COLOR) as sp:
         try:
             if token_type == 'eth':
