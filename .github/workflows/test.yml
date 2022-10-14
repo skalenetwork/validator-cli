@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python-version: [3.10.7]
+        python-version: [3.9]
     env:
       ETH_PRIVATE_KEY: ${{ secrets.ETH_PRIVATE_KEY }}
       ENDPOINT: ${{ secrets.ENDPOINT }}
