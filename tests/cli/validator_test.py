@@ -28,7 +28,7 @@ from tests.constants import (
     D_DELEGATION_INFO,
     TEST_PK_FILE
 )
-from tests.prepare_data import set_test_mda
+# from tests.prepare_data import set_test_mda
 from tests.utils import create_new_validator_wallet_pk, str_contains, TEST_FEE_OPTIONS
 
 
@@ -214,7 +214,7 @@ def test_accept_delegation(runner, validator, skale, fee_options):
 def test_accept_all_delegations(runner, validator, skale, fee_options):
     n_of_delegations = 2
     validator_id = validator
-    set_test_mda()
+    # set_test_mda()
     for _ in range(n_of_delegations):
         skale.delegation_controller.delegate(
             validator_id=validator_id,
