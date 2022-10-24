@@ -22,7 +22,7 @@ import click
 
 from core.srw import recharge, withdraw, balance
 from utils.texts import Texts
-from utils.helper import to_wei
+from utils.helper import transaction_cmd
 
 
 G_TEXTS = Texts()
@@ -42,46 +42,30 @@ def srw():
 
 
 @srw.command('recharge', help=TEXTS['recharge']['help'])
+@transaction_cmd
 @click.argument('amount')
 @click.option(
     '--validator-id',
     type=int,
     help=TEXTS['recharge']['validator_id']['help'],
 )
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
-)
-def _recharge(amount, validator_id, pk_file, gas_price):
+def _recharge(amount, validator_id, pk_file, fee):
     recharge(
         amount=amount,
         validator_id=validator_id,
         pk_file=pk_file,
-        gas_price=to_wei(gas_price, 'gwei')
+        fee=fee
     )
 
 
 @srw.command('withdraw', help=TEXTS['withdraw']['help'])
+@transaction_cmd
 @click.argument('amount')
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
-)
-def _withdraw(amount, pk_file, gas_price):
+def _withdraw(amount, pk_file, fee):
     withdraw(
         amount=amount,
         pk_file=pk_file,
-        gas_price=to_wei(gas_price, 'gwei')
+        fee=fee
     )
 
 

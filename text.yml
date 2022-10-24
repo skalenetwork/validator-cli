@@ -152,7 +152,11 @@ msg:
 pk_file:
   help: Path to file with private key (only for `software` wallet type)
 gas_price:
-  help: Gas price value in Gwei for transaction
+  help: gasPrice value in Gwei for transaction
+max_fee:
+  help: maxFeePerGas value in Gwei for transaction
+max_priority_fee:
+  help: maxPriorityFeePerGas value in Gwei for transaction
 address_index:
   help: Index of the address to use (only for `ledger` wallet type)
   prompt: Please enter the address index (staring from 0)

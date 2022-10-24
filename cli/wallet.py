@@ -20,8 +20,8 @@
 import logging
 import click
 
-from core.wallet import send_eth, send_skl, setup_ledger
-from utils.helper import abort_if_false
+from core.wallet import setup_ledger, transfer_eth, transfer_skl
+from utils.helper import abort_if_false, transaction_cmd
 from utils.texts import Texts
 from utils.constants import LEDGER_KEYS_TYPES
 
@@ -42,29 +42,23 @@ def wallet():
 
 
 @wallet.command('send-eth', help=TEXTS['send_eth']['help'])
+@transaction_cmd
 @click.argument('receiver_address')
-@click.argument('amount')
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
+@click.argument('amount', type=float)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False, prompt=TEXTS['send_eth']['confirm'])
-def _send_eth(receiver_address, amount, pk_file):
-    send_eth(receiver_address, amount, pk_file)
+def _send_eth(receiver_address, amount, pk_file, fee):
+    transfer_eth(receiver_address, amount, pk_file, fee=fee)
 
 
 @wallet.command('send-skl', help=TEXTS['send_skl']['help'])
+@transaction_cmd
 @click.argument('receiver_address')
-@click.argument('amount')
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
+@click.argument('amount', type=float)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False, prompt=TEXTS['send_skl']['confirm'])
-def _send_skl(receiver_address, amount, pk_file):
-    send_skl(receiver_address, amount, pk_file)
+def _send_skl(receiver_address, amount, pk_file, fee):
+    transfer_skl(receiver_address, amount, pk_file, fee=fee)
 
 
 @wallet.command('setup-ledger', help=TEXTS['setup_ledger']['help'])

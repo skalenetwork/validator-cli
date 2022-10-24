@@ -5,7 +5,7 @@ import shutil
 import mock
 import pytest
 from distutils.dir_util import copy_tree
-from skale.utils.account_tools import send_ether
+from skale.utils.account_tools import send_eth
 
 from cli.main import init as sk_val_init
 from cli.sgx_wallet import info, init
@@ -127,7 +127,7 @@ def run_validator_register(runner):
 
 def transfer_eth_to_sgx(skale, sgx_address):
     eth_amount = 10
-    send_ether(skale.web3, skale.wallet, sgx_address, eth_amount)
+    send_eth(skale.web3, skale.wallet, sgx_address, eth_amount)
 
 
 @pytest.fixture
