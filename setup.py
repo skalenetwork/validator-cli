@@ -78,7 +78,7 @@ setup(
         "yaspin==0.16.0",
         "texttable==1.6.2",
         "pandas==1.2.2",
-        "terminaltables==3.1.0",
+        "terminaltables==3.1.10",
     ],
     python_requires='>=3.7,<4',
     extras_require=extras_require,
