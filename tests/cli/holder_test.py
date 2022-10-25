@@ -202,7 +202,7 @@ def test_withdraw_bounty(runner, skale, validator, fee_options):
         ]
     )
     output_list = result.output.splitlines()
-    expected_output = f'\x1b[K✔ Bounty successfully transferred to {skale.wallet.address}'
+    expected_output = f'✔ Bounty successfully transferred to {skale.wallet.address}'
     assert expected_output in output_list
     assert result.exit_code == 0
 

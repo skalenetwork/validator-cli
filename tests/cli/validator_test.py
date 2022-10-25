@@ -281,8 +281,13 @@ def test_link_address(runner, validator, skale, new_wallet_pk, fee_options):
                 '--yes'
             ]
         )
+        print('IVD', result.output)
+        print('IVD', repr(result.stdout_bytes.decode('utf-8')))
+        print('IVD', result.stderr_bytes)
+        print('IVD', result.exit_code)
+        print('IVD', result.exc_info)
         output_list = result.output.splitlines()
-        expected_output = f'\x1b[K✔ Node address {node_wallet.address} linked to your validator address'  # noqa
+        expected_output = f'✔ Node address {node_wallet.address} linked to your validator address'  # noqa
         assert expected_output in output_list
         assert result.exit_code == 0
 
@@ -326,7 +331,7 @@ def test_unlink_address(runner, skale, validator, fee_options):
         ]
     )
     output_list = result.output.splitlines()
-    expected_output = f'\x1b[K✔ Node address {wallet.address} unlinked from your validator address'
+    expected_output = f'✔ Node address {wallet.address} unlinked from your validator address'
     assert expected_output in output_list
     assert result.exit_code == 0
 
@@ -377,7 +382,7 @@ def test_withdraw_fee(runner, skale, validator, fee_options):
     )
     output_list = result.output.splitlines()
     assert result.exit_code == 0
-    expected_output = f'\x1b[K✔ Earned fees successfully transferred to {skale.wallet.address}'
+    expected_output = f'✔ Earned fees successfully transferred to {skale.wallet.address}'
     assert expected_output in output_list
     assert result.exit_code == 0
 
@@ -425,7 +430,7 @@ def test_set_mda(runner, skale, validator, fee_options):
         assert vdata['minimum_delegation_amount'] == int(mda) * 10 ** 18
         output_list = result.output.splitlines()
         assert result.exit_code == 0
-        assert f'\x1b[K✔ Minimum delegation amount for your validator ID changed to {mda}.0' in output_list  # noqa
+        assert f'✔ Minimum delegation amount for your validator ID changed to {mda}.0' in output_list  # noqa
     finally:
         skale.validator_service.set_validator_mda(old_mda)
 
@@ -444,7 +449,7 @@ def test_change_address(runner, skale, fee_options):
     )
     output_list = result.output.splitlines()
     assert result.exit_code == 0
-    assert f'\x1b[K✔ Requested new address for your validator ID: {wallet.address}.' in output_list
+    assert f'✔ Requested new address for your validator ID: {wallet.address}.' in output_list
     assert f'You can finish the procedure by running < sk-val validator confirm-address > using the new key.' in output_list  # noqa
 
 
@@ -495,7 +500,7 @@ def test_confirm_address(runner, skale, new_wallet, another_wallet_pk, fee_optio
         vdata['validator_address'] == new_wallet.address
         output_list = result.output.splitlines()
         assert result.exit_code == 0
-        assert '\x1b[K✔ Validator address changed' in output_list
+        assert '✔ Validator address changed' in output_list
     finally:
         skale.wallet = main_wallet
 
