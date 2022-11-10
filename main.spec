@@ -30,7 +30,7 @@ a = Analysis(['./cli/main.py'],
                  (os.path.dirname(wcwidth.__file__), 'wcwidth'),
                  *external_data
                  ],
-             hiddenimports=['pkg_resources.py2_warn', 'cmath'],
+             hiddenimports=['eth_hash.pkg_resources.pysha3', 'pkg_resources.py2_warn', 'cmath'],
              hookspath=[],
              runtime_hooks=[],
              excludes=['tkinter'],

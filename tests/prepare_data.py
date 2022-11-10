@@ -45,13 +45,9 @@ def create_nodes(skale, nodes_count):
 
 def get_bounties(skale):
     go_to_next_reward_date(skale)
-    tx_res = skale.manager.get_bounty(NODE_ID, wait_for=True)
-    tx_res.raise_for_status()
-    tx_res = skale.manager.get_bounty(NODE_ID + 1, wait_for=True)
-    tx_res.raise_for_status()
+    skale.manager.get_bounty(NODE_ID, wait_for=True)
     go_to_next_reward_date(skale)
-    tx_res = skale.manager.get_bounty(NODE_ID, wait_for=True)
-    tx_res.raise_for_status()
+    skale.manager.get_bounty(NODE_ID, wait_for=True)
 
 
 def go_to_next_reward_date(skale):
@@ -70,8 +66,8 @@ def go_to_date(web3, date):
 
 
 def get_block_timestamp(web3):
-    last_block_number = web3.eth.blockNumber
-    block_data = web3.eth.getBlock(last_block_number)
+    last_block_number = web3.eth.block_number
+    block_data = web3.eth.get_block(last_block_number)
     return block_data['timestamp']
 
 

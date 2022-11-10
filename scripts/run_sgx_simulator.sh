@@ -10,4 +10,5 @@ echo Going to run $SGX_WALLET_IMAGE_NAME ...
 
 docker rm -f $SGX_WALLET_CONTAINER_NAME || true
 docker pull $SGX_WALLET_IMAGE_NAME
-docker run -d -p 1026-1028:1026-1028 --name $SGX_WALLET_CONTAINER_NAME $SGX_WALLET_IMAGE_NAME -s -y -a
+docker run -d --network host --name $SGX_WALLET_CONTAINER_NAME $SGX_WALLET_IMAGE_NAME -s -y -d -e
+sleep 5
