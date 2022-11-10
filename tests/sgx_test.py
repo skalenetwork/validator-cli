@@ -9,8 +9,10 @@ from utils.constants import SGX_DATA_DIR
 
 @pytest.fixture
 def dir_cleanup():
-    yield
-    shutil.rmtree(SGX_DATA_DIR)
+    try:
+        yield
+    finally:
+        shutil.rmtree(SGX_DATA_DIR)
 
 
 def test_generate_sgx_account(dir_cleanup):

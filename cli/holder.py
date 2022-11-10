@@ -25,7 +25,7 @@ from core.holder import (delegate, delegations,
                          cancel_pending_delegation, locked,
                          undelegate, withdraw_bounty, earned_bounties)
 from utils.constants import DELEGATION_PERIOD_OPTIONS
-from utils.helper import to_wei
+from utils.helper import transaction_cmd
 from utils.validations import EthAddressType
 
 
@@ -46,6 +46,7 @@ def holder():
 
 
 @holder.command('delegate', help=TEXTS['delegate']['help'])
+@transaction_cmd
 @click.option(
     '--validator-id',
     type=int,
@@ -70,27 +71,18 @@ def holder():
     help=TEXTS['delegate']['info']['help'],
     prompt=TEXTS['delegate']['info']['prompt']
 )
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
-)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=TEXTS['delegate']['confirm'])
 def _delegate(validator_id, amount, delegation_period, info, pk_file,
-              gas_price):
+              fee):
     delegate(
         validator_id=validator_id,
         amount=amount,
         delegation_period=int(delegation_period),
         info=info,
         pk_file=pk_file,
-        gas_price=to_wei(gas_price, 'gwei')
+        fee=fee
     )
 
 
@@ -102,68 +94,52 @@ def _delegations(address, wei):
 
 
 @holder.command('cancel-delegation', help=TEXTS['cancel_delegation']['help'])
+@transaction_cmd
 @click.argument('delegation_id')
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
-)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=TEXTS['cancel_delegation']['confirm'])
-def _cancel_delegation(delegation_id, pk_file, gas_price):
+def _cancel_delegation(delegation_id, pk_file, fee):
     cancel_pending_delegation(
         delegation_id=int(delegation_id),
         pk_file=pk_file,
-        gas_price=to_wei(gas_price, 'gwei')
+        fee=fee
     )
 
 
 @holder.command('undelegate', help=TEXTS['undelegate']['help'])
+@transaction_cmd
 @click.argument('delegation_id')
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
-)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=TEXTS['undelegate']['confirm'])
-def _undelegate(delegation_id, pk_file, gas_price):
+def _undelegate(delegation_id, pk_file, fee):
     undelegate(
         delegation_id=int(delegation_id),
         pk_file=pk_file,
-        gas_price=to_wei(gas_price, 'gwei')
+        fee=fee
     )
 
 
 @holder.command('withdraw-bounty', help=TEXTS['withdraw_bounty']['help'])
-@click.argument('validator_id')
+@transaction_cmd
+@click.argument('validator_id', type=int)
 @click.argument('recipient_address')
-@click.option(
-    '--pk-file',
-    help=G_TEXTS['pk_file']['help']
-)
-@click.option(
-    '--gas-price',
-    type=float,
-    help=G_TEXTS['gas_price']['help']
-)
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
               prompt=TEXTS['withdraw_bounty']['confirm'])
-def _withdraw_bounty(validator_id, recipient_address, pk_file,
-                     gas_price):
-    withdraw_bounty(int(validator_id), recipient_address,
-                    pk_file=pk_file, gas_price=to_wei(gas_price, 'gwei'))
+def _withdraw_bounty(
+        validator_id,
+        recipient_address,
+        pk_file,
+        fee
+):
+    withdraw_bounty(
+        validator_id,
+        recipient_address,
+        pk_file=pk_file,
+        fee=fee
+    )
 
 
 @holder.command('locked', help=TEXTS['locked']['help'])

@@ -43,15 +43,13 @@ UNAME_RES="$(uname -s)"
 
 if [[ "$UNAME_RES" == "Darwin"  ]]; then
     echo "Building macOS binary..."
-    pyinstaller --onefile main.spec --hidden-import=eth_hash.backends.pysha3 \
-        --hidden-import=pkg_resources.py2_warn --additional-hooks-dir pyinstaller-hooks \
+    pyinstaller main.spec --additional-hooks-dir pyinstaller-hooks \
         --runtime-hook pyinstaller-hooks/pyi_rth__tkinter.py \
         --add-binary='/System/Library/Frameworks/Tk.framework/Tk':'tk' \
-        --add-binary='/System/Library/Frameworks/Tcl.framework/Tcl':'tcl' 
+        --add-binary='/System/Library/Frameworks/Tcl.framework/Tcl':'tcl'
 else
     echo "Building Linux binary..."
-    pyinstaller --onefile main.spec --hidden-import=eth_hash.backends.pysha3 \
-        --hidden-import=pkg_resources.py2_warn --hidden-import cmath
+    pyinstaller main.spec
 fi
 
 mv $PARENT_DIR/dist/main $PARENT_DIR/dist/$EXECUTABLE_NAME

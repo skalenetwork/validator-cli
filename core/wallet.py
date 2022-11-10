@@ -17,12 +17,15 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import dataclasses
 import logging
+from typing import Optional
 
-from skale.utils.account_tools import send_ether, send_tokens
+from skale.utils.account_tools import send_eth, send_tokens
 from skale.utils.web3_utils import to_checksum_address
 from yaspin import yaspin
 
+from core.transaction import TxFee
 from core.wallet_tools import save_ledger_wallet_info
 
 from utils.constants import SPIN_COLOR
@@ -32,23 +35,47 @@ from utils.helper import print_err_with_log_path, get_config
 logger = logging.getLogger(__name__)
 
 
-def send_eth(receiver_address, amount, pk_file):
-    _send_funds(receiver_address, amount, pk_file, 'eth')
+def transfer_eth(receiver_address, amount, pk_file, fee: Optional[TxFee]):
+    transfer_funds(
+        receiver_address,
+        amount,
+        pk_file,
+        fee=fee,
+        token_type='eth'
+    )
 
 
-def send_skl(receiver_address, amount, pk_file):
-    _send_funds(receiver_address, amount, pk_file, 'skl')
+def transfer_skl(receiver_address, amount, pk_file, fee: Optional[TxFee]):
+    transfer_funds(
+        receiver_address,
+        amount,
+        pk_file,
+        fee=fee,
+        token_type='skl'
+    )
 
 
-def _send_funds(receiver_address, amount, pk_file, token_type):
+def transfer_funds(receiver_address, amount, pk_file, fee: Optional[TxFee], token_type):
     skale = init_skale_w_wallet_from_config(pk_file)
     receiver_address = to_checksum_address(receiver_address)
+    fee = fee or TxFee(gas_price=skale.gas_price)
     with yaspin(text='Transferring funds', color=SPIN_COLOR) as sp:
         try:
             if token_type == 'eth':
-                send_ether(skale.web3, skale.wallet, receiver_address, amount)
+                send_eth(
+                    skale.web3,
+                    skale.wallet,
+                    receiver_address,
+                    amount,
+                    **dataclasses.asdict(fee)
+                )
             elif token_type == 'skl':
-                send_tokens(skale, skale.wallet, receiver_address, amount)
+                send_tokens(
+                    skale,
+                    receiver_address,
+                    amount,
+                    **dataclasses.asdict(fee)
+                )
             msg = '✔ Funds were successfully transferred'
             logger.info(msg)
             sp.write(msg)
