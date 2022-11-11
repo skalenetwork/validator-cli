@@ -1,12 +1,8 @@
 name: Build and publish
 on:
   pull_request:
-    types: [closed]
     branches:
-      - master
-      - develop
-      - beta
-      - stable
+      - debug-publish-pipeline
 
 jobs:
   create_release:
