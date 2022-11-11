@@ -1,6 +1,6 @@
 name: Build and publish
 on:
-  pull_request:
+  push:
     branches:
       - debug-publish-pipeline
 
