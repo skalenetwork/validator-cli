@@ -23,15 +23,15 @@ for package, files in package_imports:
 block_cipher = None
 binaries = ()
 runtime_hooks = ()
+hookspath = () 
 
 if sys.platform == 'darwin':
     binaries = (
         "'/System/Library/Frameworks/Tk.framework/Tk':'tk'",
         "'/System/Library/Frameworks/Tcl.framework/Tcl':'tcl"
     )
-    runtime_hooks = (
-        'pyinstaller-hooks/pyi_rth__tkinter.py',
-    )
+    runtime_hooks = ('pyinstaller-hooks/pyi_rth__tkinter.py',)
+    hookspath = ("pyinstaller-hooks",)
 
 a = Analysis(
     ['./cli/main.py'],
@@ -47,7 +47,7 @@ a = Analysis(
         'pkg_resources.py2_warn', 
         'cmath'
     ],
-    hookspath=[],
+    hookspath=hookspath,
     runtime_hooks=runtime_hooks,
     excludes=['tkinter'],
     win_no_prefer_redirects=False,
