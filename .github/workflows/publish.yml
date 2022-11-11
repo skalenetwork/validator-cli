@@ -12,7 +12,7 @@ jobs:
   create_release:
     if: github.event.pull_request.merged
     name: Create release
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
       version: ${{ steps.export_outputs.outputs.version }}
@@ -47,20 +47,21 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-18.04
+          - os: ubuntu-22.04
             asset_name: sk-val-${{ needs.create_release.outputs.version }}-Linux-x86_64
           - os: macos-latest
             asset_name: sk-val-${{ needs.create_release.outputs.version }}-Darwin-x86_64
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.7
+    - name: Set up Python 3.8
       uses: actions/setup-python@v1
       with:
-        python-version: 3.7
+        python-version: 3.8
     - name: Install ubuntu dependencies
-      if: matrix.os == 'ubuntu-18.04'
+      if: matrix.os == 'ubuntu-22.04'
       run: |
         sudo apt-get update
+        sudo apt-get install libssl3=3.0.2-0ubuntu1.7
         sudo apt-get install libudev-dev
         sudo apt-get install libusb-1.0-0-dev
     - name: Install macOS dependencies
