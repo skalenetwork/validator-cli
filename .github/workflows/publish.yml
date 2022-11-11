@@ -5,39 +5,39 @@ on:
       - debug-publish-pipeline
 
 jobs:
-  create_release:
-    if: github.event.pull_request.merged
-    name: Create release
-    runs-on: ubuntu-22.04
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-      version: ${{ steps.export_outputs.outputs.version }}
-      branch: ${{ steps.export_outputs.outputs.branch }}
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-      - name: Set Versions
-        run: |
-          bash ./scripts/set_versions_ga.sh
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ env.VERSION }}
-          release_name: ${{ env.VERSION }}
-          draft: false
-          prerelease: true
-      - name: Export outputs
-        id: export_outputs
-        run: |
-          echo "::set-output name=version::$VERSION"
-          echo "::set-output name=branch::$BRANCH"
+  #create_release:
+  #  if: github.event.pull_request.merged
+  #  name: Create release
+  #  runs-on: ubuntu-22.04
+  #  outputs:
+  #    upload_url: ${{ steps.create_release.outputs.upload_url }}
+  #    version: ${{ steps.export_outputs.outputs.version }}
+  #    branch: ${{ steps.export_outputs.outputs.branch }}
+  #  steps:
+  #    - uses: actions/checkout@v2
+  #      with:
+  #        submodules: true
+  #    - name: Set Versions
+  #      run: |
+  #        bash ./scripts/set_versions_ga.sh
+  #    - name: Create Release
+  #      id: create_release
+  #      uses: actions/create-release@v1
+  #      env:
+  #        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #      with:
+  #        tag_name: ${{ env.VERSION }}
+  #        release_name: ${{ env.VERSION }}
+  #        draft: false
+  #        prerelease: true
+  #    - name: Export outputs
+  #      id: export_outputs
+  #      run: |
+  #        echo "::set-output name=version::$VERSION"
+  #        echo "::set-output name=branch::$BRANCH"
   build_and_publish:
-    if: github.event.pull_request.merged
-    needs: create_release
+    # if: github.event.pull_request.merged
+    # needs: create_release
     name: Build and publish for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
