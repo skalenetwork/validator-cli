@@ -77,7 +77,7 @@ setup(
         "skale.py==5.8dev3",
         "yaspin==2.2.0",
         "texttable==1.6.4",
-        "pandas==1.5.1",
+        "pandas==1.5.2",
         "terminaltables==3.1.10",
     ],
     python_requires='>=3.7,<4',
