@@ -76,7 +76,7 @@ setup(
         "click==7.1.2",
         "skale.py==5.8dev3",
         "yaspin==2.2.0",
-        "texttable==1.6.4",
+        "texttable==1.6.7",
         "pandas==1.5.1",
         "terminaltables==3.1.10",
     ],
