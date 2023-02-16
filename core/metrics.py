@@ -100,10 +100,10 @@ def get_metrics_from_events(skale, node_id, start_date=None, end_date=None,
 
     block_number = skale.monitors.get_last_bounty_block(node_id)
     while True:
-        block_data = skale.web3.eth.getBlock(block_number)
+        block_data = skale.web3.eth.get_block(block_number)
         txs = block_data["transactions"]
         for tx in txs:
-            rec = skale.web3.eth.getTransactionReceipt(tx)
+            rec = skale.web3.eth.get_transaction_receipt(tx)
             if rec["to"] != skale.manager.contract.address:
                 continue
             h_receipt = skale.manager.contract.events.BountyReceived().processReceipt(
