@@ -24,7 +24,7 @@ jobs:
     - name: Install ubuntu dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install libssl3=3.0.2-0ubuntu1.7
+        sudo apt-get install libssl3
         sudo apt-get install python-setuptools
         sudo apt-get install libudev-dev
         sudo apt-get install libusb-1.0-0-dev
