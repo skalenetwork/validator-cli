@@ -124,3 +124,7 @@ recharge-test-pk.txt
 
 node_metrics.csv
 validator_metrics.csv
+
+# Docs Automation
+node_modules
+package-lock.json
