@@ -11,7 +11,7 @@ on:
 
 jobs:
   create_release:
-    if: github.event.pull_request.merged
+    # if: github.event.pull_request.merged
     name: Create release
     runs-on: ubuntu-22.04
     outputs:
@@ -42,7 +42,7 @@ jobs:
           echo "::set-output name=branch::$BRANCH"
   build_and_publish:
     # if: github.event.pull_request.merged
-    # needs: create_release
+    needs: create_release
     name: Build and publish for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
