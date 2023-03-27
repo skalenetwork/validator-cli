@@ -1,7 +1,7 @@
 name: Build and publish
 on:
   pull_request:
-    types: [closed]
+    types: [push]
     branches:
       - master
       - develop
