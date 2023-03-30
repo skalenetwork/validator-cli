@@ -95,7 +95,7 @@ jobs:
 
     - name: Upload Release Asset Ubuntu
       if: matrix.os == 'ubuntu-20.04'
-      id: upload-release-asset 
+      id: upload-release-asset-ubuntu
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -107,7 +107,7 @@ jobs:
 
     - name: Upload Release Asset Mac
       if: matrix.os == 'macos-latest'
-      id: upload-release-asset 
+      id: upload-release-asset-mac
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
