@@ -109,7 +109,7 @@ jobs:
 
     - name: Upload release checksum
       if: matrix.os == 'ubuntu-20.04'
-      id: upload-release-checksum
+      id: upload-release-checksum-ubuntu
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -133,7 +133,7 @@ jobs:
 
     - name: Upload release checksum
       if: matrix.os == 'macos-latest'
-      id: upload-release-checksum
+      id: upload-release-checksum-mac
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
