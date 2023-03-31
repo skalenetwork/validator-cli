@@ -93,7 +93,7 @@ jobs:
       if: matrix.os == 'macos-latest'
       run: |
         bash ./scripts/build.sh ${{ needs.create_release.outputs.version }} ${{ needs.create_release.outputs.branch }}
-        sudo sha512sum ./dist/${{ matrix.asset_name }} | sudo tee > /dev/null /home/ubuntu/dist/sha512sum
+        sudo shasum -a 512 ./dist/${{ matrix.asset_name }} | sudo tee > /dev/null /home/ubuntu/dist/sha512sum
 
     - name: Upload Release Asset Ubuntu
       if: matrix.os == 'ubuntu-20.04'
