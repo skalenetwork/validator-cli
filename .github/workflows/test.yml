@@ -37,13 +37,17 @@ jobs:
     - name: Lint with flake8
       run: |
         flake8 .
-    - name: Build binary
+    - name: Build binary in 20.04 environment
       run: |
         mkdir dist
         docker build . -t builder
         docker run  -v /home/ubuntu/dist:/app/dist builder scripts/build.sh test test
         ls -altr /home/ubuntu/dist/
         docker rm -f $(docker ps -aq)
+
+    - name: Build binary in Ubuntu lastest environment
+      run: |
+        scripts/build.sh test test
 
     - name: Deploy manager contracts
       run: |
