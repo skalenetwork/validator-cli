@@ -39,7 +39,7 @@ jobs:
         flake8 .
     - name: Build binary
       run: |
-        mkdir /home/ubuntu/dist
+        mkdir dist
         docker build . -t builder
         docker run  -v /home/ubuntu/dist:/app/dist builder scripts/build.sh ${{ needs.create_release.outputs.version }} ${{ needs.create_release.outputs.branch }}
         ls -altr /home/ubuntu/dist/
