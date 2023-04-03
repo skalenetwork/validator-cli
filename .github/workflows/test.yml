@@ -3,10 +3,10 @@ name: Test
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python-version: [3.8]
+        python-version: [3.9]
     env:
       ETH_PRIVATE_KEY: ${{ secrets.ETH_PRIVATE_KEY }}
       ENDPOINT: ${{ secrets.ENDPOINT }}
@@ -24,7 +24,7 @@ jobs:
     - name: Install ubuntu dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install libssl3=3.0.2-0ubuntu1.7
+        sudo apt-get install libssl-dev
         sudo apt-get install python-setuptools
         sudo apt-get install libudev-dev
         sudo apt-get install libusb-1.0-0-dev
@@ -33,13 +33,22 @@ jobs:
         python -m pip install --upgrade pip
         pip install -e .
         pip install -e .[dev]
-        pip install --upgrade 'setuptools<45.0.0'
+        pip install --upgrade 'setuptools==63.2.0'
     - name: Lint with flake8
       run: |
         flake8 .
-    - name: Build binary
+    - name: Build binary in 20.04 environment
       run: |
-        bash scripts/build.sh 0.0.0 test-branch
+        mkdir dist
+        docker build . -t builder
+        docker run  -v /home/ubuntu/dist:/app/dist builder scripts/build.sh test test
+        ls -altr /home/ubuntu/dist/
+        docker rm -f $(docker ps -aq)
+
+    - name: Build binary in Ubuntu lastest environment
+      run: |
+        scripts/build.sh test test
+
     - name: Deploy manager contracts
       run: |
         bash ./helper-scripts/deploy_test_manager.sh
