@@ -73,7 +73,7 @@ setup(
     author_email='support@skalelabs.com',
     url='https://github.com/skalenetwork/validator-cli',
     install_requires=[
-        "click==7.1.2",
+        "click==8.1.3",
         "skale.py==5.8dev3",
         "yaspin==2.2.0",
         "texttable==1.6.4",
