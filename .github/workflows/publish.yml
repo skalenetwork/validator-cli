@@ -8,6 +8,7 @@ on:
       - beta
       - stable
   push:
+    branches:
       - test-build
 
 jobs:
