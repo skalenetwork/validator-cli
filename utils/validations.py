@@ -20,13 +20,14 @@
 from urllib.parse import urlparse
 
 import click
-from web3.auto import w3
 
 
 class EthAddressType(click.ParamType):
     name = 'eth_address'
 
     def convert(self, value, param, ctx):
+        from web3.auto import w3
+
         if w3.isAddress(value):
             return value
         else:

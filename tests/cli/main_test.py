@@ -6,10 +6,32 @@ import shutil
 from distutils.dir_util import copy_tree
 
 from click.testing import CliRunner
-from cli.main import init
+from cli.main import info, init, version
 from utils.constants import SKALE_VAL_CONFIG_FOLDER, SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE
 
 TMP_CONFIG_FOLDER = '/tmp/.skale-val-config'
+
+
+def test_info():
+    runner = CliRunner()
+    result = runner.invoke(info)
+
+    assert result.exit_code == 0
+    assert 'Version: 1.3.3' in result.output
+    assert 'Full version: 1.3.3' in result.output
+    assert 'Build time:' in result.output
+    assert 'Build OS:' in result.output
+    assert 'Commit:' in result.output
+    assert 'Git branch:' in result.output
+    assert 'unknown' not in result.output
+
+
+def test_version():
+    runner = CliRunner()
+    result = runner.invoke(version)
+
+    assert result.exit_code == 0
+    assert result.output == '1.3.3\n'
 
 
 def test_init_fail():

@@ -34,7 +34,12 @@ ENV = _get_env()
 CURRENT_FILE_LOCATION = os.path.dirname(os.path.realpath(__file__))
 
 if ENV == 'dev':
-    ROOT_DIR = os.path.join(CURRENT_FILE_LOCATION, os.pardir)
+    # When installed as a package, text.yml is bundled inside utils/
+    _pkg_text = os.path.join(CURRENT_FILE_LOCATION, 'text.yml')
+    if os.path.exists(_pkg_text):
+        ROOT_DIR = CURRENT_FILE_LOCATION
+    else:
+        ROOT_DIR = os.path.join(CURRENT_FILE_LOCATION, os.pardir)
 else:
     ROOT_DIR = os.path.join(sys._MEIPASS, 'data')
 

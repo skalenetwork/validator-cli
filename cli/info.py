@@ -1,0 +1,5 @@
+BUILD_DATETIME = 'not built'
+COMMIT = 'not built'
+BRANCH = 'not built'
+OS = 'not built'
+VERSION = '1.3.3'

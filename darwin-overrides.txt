@@ -1,0 +1,8 @@
+pyzmq>=25.0.0
+M2Crypto>=0.41.0
+pandas>=2.0.0
+pyyaml>=6.0.3
+cytoolz>=1.1.0
+websockets>=14.0
+setuptools<74.0.0
+parsimonious>=0.10.0

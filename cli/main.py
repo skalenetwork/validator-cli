@@ -22,16 +22,9 @@ import logging
 import inspect
 
 import click
-from skale.transactions.exceptions import TransactionError, RevertError
 
 from cli import __version__
 from cli.info import BUILD_DATETIME, COMMIT, BRANCH, OS, VERSION
-from cli.validator import validator_cli
-# from cli.metrics import metrics_cli
-from cli.holder import holder_cli
-from cli.sgx_wallet import sgx_cli
-from cli.wallet import wallet_cli
-from cli.srw import srw_cli
 from utils.validations import UrlType
 from utils.texts import Texts
 from utils.logs import init_logger, init_log_dir
@@ -63,6 +56,11 @@ def info():
             Git branch: {BRANCH}
             {LONG_LINE}
         '''))
+
+
+@cli.command('version')
+def version():
+    print(__version__)
 
 
 @cli.command('init', help=TEXTS['init']['help'])
@@ -105,7 +103,17 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 
 sys.excepthook = handle_exception
 
-if __name__ == '__main__':
+
+def main():
+    from skale.transactions.exceptions import TransactionError, RevertError
+
+    from cli.validator import validator_cli
+    # from cli.metrics import metrics_cli
+    from cli.holder import holder_cli
+    from cli.sgx_wallet import sgx_cli
+    from cli.wallet import wallet_cli
+    from cli.srw import srw_cli
+
     init_log_dir()
     init_logger()
     logger.info(f'cmd: {" ".join(str(x) for x in sys.argv)}, v.{__version__}')
@@ -121,3 +129,7 @@ if __name__ == '__main__':
         error_exit(err, exit_code=CLIExitCodes.TRANSACTION_ERROR)
     except Exception as err:
         error_exit(err)
+
+
+if __name__ == '__main__':
+    main()

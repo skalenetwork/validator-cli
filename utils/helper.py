@@ -27,9 +27,7 @@ from decimal import Decimal
 
 
 import click
-from web3 import Web3
 
-from core.transaction import TxFee
 from utils.exit_codes import CLIExitCodes
 from utils.constants import (SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE, PERMILLE_MULTIPLIER,
                              DEBUG_LOG_FILEPATH)
@@ -87,6 +85,8 @@ def abort_if_false(ctx, param, value):
 
 
 def to_skl(wei, unit='ether'):  # todo: replace with from_wei()
+    from web3 import Web3
+
     if wei is None:
         return None
     if wei == 0:
@@ -95,12 +95,16 @@ def to_skl(wei, unit='ether'):  # todo: replace with from_wei()
 
 
 def from_wei(val, unit='ether'):
+    from web3 import Web3
+
     if val is None:
         return None
     return Web3.fromWei(Decimal(val), unit)
 
 
 def to_wei(val, unit='ether'):
+    from web3 import Web3
+
     if val is None:
         return None
     return Web3.toWei(Decimal(val), unit)
@@ -158,6 +162,8 @@ def transaction_cmd(func):
             max_fee=None,
             **kwargs
     ):
+        from core.transaction import TxFee
+
         fee = TxFee(
             gas_price=to_wei(gas_price, 'gwei'),
             max_priority_fee_per_gas=to_wei(max_priority_fee, 'gwei'),

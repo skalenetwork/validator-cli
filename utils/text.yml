@@ -1,0 +1,237 @@
+info:
+  help: Show validator CLI info
+init:
+  done: Validator CLI initialized successfully
+  help: Set Ethereum endpoint and contracts URL
+  endpoint:
+    help: Endpoint of an Ethereum network
+    prompt: Please enter an endpoint for the Ethereum network to connect
+  contracts_url:
+    help: Download URL for the SKALE Manager ABIs and addresses
+    prompt: Please enter the URL for the SKALE Manager ABIs and addresses
+  wallet:
+    help: Type of wallet that will be used for signing transactions
+    prompt: Please enter the type of the wallet that will be used for signing transactions
+validator:
+  register:
+    confirm: |-
+      Are you sure you want to register a new validator account?
+      Please, re-check all values above before confirming.
+    help: Register a new SKALE validator
+    name:
+      help: Validator name
+      prompt: Please enter validator name
+    description:
+      help: Validator description
+      prompt: Please enter validator description
+    commission_rate:
+      help: Commission rate (percent %)
+      prompt: Please enter validator commission rate in percent (0 - 100)
+    min_delegation:
+      help: Validator minimum delegation amount
+      prompt: Please enter minimum delegation amount in SKALE tokens
+  ls:
+    help: List of available validators
+    wei:
+      help: Show delegation amount in wei
+  info:
+    help: Info about the validator
+  delegations:
+    help: List delegations for a validator
+    wei:
+      help: Show delegation amount in wei
+  accept_delegation:
+    help: Accept pending delegation request by delegation ID
+    confirm: |-
+      Are you sure you want to accept this delegation request?
+      Please, re-check all provided values before confirming.
+    delegation_id:
+      help: ID of the delegation request to accept
+      prompt: Please enter ID of the delegation request to accept
+  accept_all_delegations:
+    help: Accept ALL pending delegations request for your address
+    confirm: |-
+      Are you sure you want to accept ALL delegation requests?
+      Please, re-check all pending delegations by running < sk-val validator delegations >
+  link_address:
+    help: Link node address to your validator account
+    node_address:
+      help: Address of the node to link
+      prompt: Please enter address of the node to link
+    confirm: |-
+      Are you sure you want to link this address to your validator account?
+  unlink_address:
+    help: Unlink node address from your validator account
+    node_address:
+      help: Address of the node to unlink
+      prompt: Please enter address of the node to unlink
+    confirm: |-
+      Are you sure you want to unlink this address from your validator account?
+  linked_addresses:
+    help: List of the linked addresses for validator ID
+  withdraw_fee:
+    help: Withdraw earned fee to specified address
+    confirm: |-
+      Are you sure you want to withdraw fees?
+  bond_amount:
+    help: Get amount of tokens that validator delegated to himself
+    wei:
+      help: Show bond amount in wei
+  set_mda:
+    help: Set a new minimum delegation amount for the validator
+  change_address:
+    help: Request address change for the validator
+  confirm_address:
+    help: Confirm address change for the validator
+  earned_fees:
+    help: Get earned fee amount for the validator address
+  edit:
+    help: Edit name or description of your validator
+    name:
+      help: Validator name
+    description:
+      help: Validator description
+  enable_auto_accepting:
+    help: Automatically accept all new delegation requests
+  disable_auto_accepting:
+    help: Disable automatic acceptance of new delegation requests
+holder:
+  help: Token holder commands
+  delegate:
+    help: Delegate tokens to validator
+    validator_id:
+      help: ID of the validator to delegate
+      prompt: Please enter ID of the validator to delegate
+    amount:
+      help: Amount of SKALE tokens to delegate
+      prompt: Please enter amount of SKALE tokens to delegate
+    delegation_period:
+      help: Delegation period (in months)
+      prompt: Please enter delegation period (in months)
+    info:
+      help: Delegation request info
+      prompt: Please enter delegation request info
+    confirm: |-
+      Are you sure you want to delegate your tokens?
+  delegations:
+    help: List of delegations for address
+    wei:
+      help: Show delegation amount in wei
+  cancel_delegation:
+    help: Cancel pending delegation request
+    confirm: |-
+      Are you sure you want to cancel delegation?
+  undelegate:
+    help: Request undelegation in the end of delegation period
+    confirm: |-
+      Are you sure you want to undelegate?
+  locked:
+    help: Show amount of locked tokens for address
+    wei:
+      help: Show amount in wei
+  withdraw_bounty:
+    help: Withdraw earned bounty to specified address
+    confirm: |-
+      Are you sure you want to withdraw bounty?
+  earned_bounties:
+    help: Get earned bounties amount by token holder for the validator address
+msg:
+  run_init: You should run < init > first
+  limit:
+    help: Number of records to show
+  since:
+    help: Show requested data since a given date inclusively (e.g. 2020-01-20)
+  till:
+    help: Show requested data before a given date not inclusively (e.g. 2020-01-21)
+  wei:
+    help: Show bounty amount in wei
+  no_nodes: There's no registered nodes for a given validator
+  no_data: No data found for a given period
+
+
+pk_file:
+  help: Path to file with private key (only for `software` wallet type)
+gas_price:
+  help: gasPrice value in Gwei for transaction
+max_fee:
+  help: maxFeePerGas value in Gwei for transaction
+max_priority_fee:
+  help: maxPriorityFeePerGas value in Gwei for transaction
+address_index:
+  help: Index of the address to use (only for `ledger` wallet type)
+  prompt: Please enter the address index (staring from 0)
+legacy:
+  help: Use Ledger Legacy keys (Ledger Live keys will be used by default)
+yes_opt:
+  prompt: Are you sure?
+wei:
+  help: Show amount in wei
+
+metrics:
+  help: Node metrics commands
+  node:
+    help: "List of bounties and metrics for a node with a given id.\n\n
+          Collecting data from blockchain can take a long time.
+          It is recommended to use optional arguments (-s, -t, -l) for limiting output by time or a row count"
+    index:
+      help: Node ID
+      prompt: Enter node ID
+      valid_id_msg: "Error: Node ID should be greater than 0"
+      id_error_msg: "Error: Node ID doesn't exist"
+      wait_msg: Please wait - collecting metrics data from blockchain...
+  validator:
+    help: "List of metrics and bounties for all nodes of a validator with a given id.\n\n
+          Collecting data from blockchain can take a long time.
+          It is recommended to use optional arguments (-s, -t, -l) for limiting output by time or a row count"
+    index:
+      help: Validator ID
+      prompt: Enter validator ID
+      valid_id_msg: "Error: Validator ID should be greater than 0"
+      id_error_msg: "Error: Validator ID doesn't exist"
+      wait_msg: Please wait - collecting metrics data from blockchain...
+    save_to_file:
+      help: Save metrics to .csv file
+
+sgx:
+  help: Sgx wallet commands
+  init:
+    help: "Init sgx account by using sgx server prodvided with SGX-URL argument. \n
+         Note: sgx server must be available over the network"
+    param:
+        ssl_port: Port that is used by sgx server to establish tls connection
+    msg:
+      already_inited: The sgx wallet is already inited. Use --force to rewrite the data
+      success: Sgx account created
+      warning: "WARNING: If you lost the key you will be unable to access your account again"
+
+  info: 
+    help: Show information about sgx wallet
+
+wallet:
+  help: Wallet commands
+  send_eth:
+    help: Send ETH tokens to address
+    confirm: |-
+      Are you sure you want to send ETH?
+      Please, re-check all values above before confirming.
+  send_skl:
+    help: Send SKL tokens to address
+    confirm: |-
+      Are you sure you want to send SKL?
+      Please, re-check all values above before confirming.
+  setup_ledger:
+    help: Configure Ledger device account
+    keys_type:
+      help: Type of the Ledger keys (live or legacy)
+      prompt: Enter type of the Ledger keys (live or legacy)
+
+srw:
+  help: Self-recharging wallet commands
+  recharge:
+    help: Recharge validator SRW wallet
+    validator_id:
+      help: ID of the validator to delegate
+  withdraw:
+    help: Withdraw money from SRW wallet
+  balance:
+    help: Show balance of SRW wallet
