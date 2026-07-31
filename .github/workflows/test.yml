@@ -43,8 +43,9 @@ jobs:
 
         command -v sk-val
 
-        version_expr='(builtins.fromTOML (builtins.readFile ./pyproject.toml)).project.version'
-        expected_version="$(nix eval --raw --expr "$version_expr")"
+        expected_version="$(
+          python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])'
+        )"
         actual_version="$(sk-val version)"
 
         test "$actual_version" = "$expected_version"

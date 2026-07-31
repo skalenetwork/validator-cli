@@ -22,6 +22,9 @@
 
   outputs = inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
+      # nixpkgs-unstable no longer evaluates x86_64-darwin, so Intel macOS is
+      # intentionally omitted. Use the nixpkgs 26.05 Darwin branch if that
+      # platform needs to be restored later.
       systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
 
       perSystem = { pkgs, ... }:

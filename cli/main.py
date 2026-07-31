@@ -60,7 +60,7 @@ def info():
 
 @cli.command('version')
 def version():
-    print(__version__)
+    click.echo(__version__)
 
 
 @cli.command('init', help=TEXTS['init']['help'])

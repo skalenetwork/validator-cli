@@ -23,9 +23,9 @@ command -v uv  >/dev/null 2>&1 || { echo "uv is not installed — see https://do
 command -v nix >/dev/null 2>&1 || { echo "nix is not installed — see https://nixos.org/download/"; exit 1; }
 command -v brew >/dev/null 2>&1 || { echo "brew is not installed — see https://brew.sh/"; exit 1; }
 
-OPENSSL_PREFIX="$(HOMEBREW_NO_AUTO_UPDATE=1 brew --prefix openssl 2>/dev/null | tail -1)"
+OPENSSL_PREFIX="$(HOMEBREW_NO_AUTO_UPDATE=1 brew --prefix openssl@3 2>/dev/null | tail -1)"
 if [ -z "$OPENSSL_PREFIX" ] || [ ! -d "$OPENSSL_PREFIX" ]; then
-    echo "OpenSSL not found via brew. Install with: brew install openssl"
+    echo "OpenSSL not found via brew. Install with: brew install openssl@3"
     exit 1
 fi
 

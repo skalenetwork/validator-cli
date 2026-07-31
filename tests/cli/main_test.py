@@ -6,6 +6,8 @@ import shutil
 from distutils.dir_util import copy_tree
 
 from click.testing import CliRunner
+from cli import __version__
+from cli.info import VERSION
 from cli.main import info, init, version
 from utils.constants import SKALE_VAL_CONFIG_FOLDER, SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE
 
@@ -17,8 +19,8 @@ def test_info():
     result = runner.invoke(info)
 
     assert result.exit_code == 0
-    assert 'Version: 1.3.3' in result.output
-    assert 'Full version: 1.3.3' in result.output
+    assert f'Version: {__version__}' in result.output
+    assert f'Full version: {VERSION}' in result.output
     assert 'Build time:' in result.output
     assert 'Build OS:' in result.output
     assert 'Commit:' in result.output
@@ -31,7 +33,7 @@ def test_version():
     result = runner.invoke(version)
 
     assert result.exit_code == 0
-    assert result.output == '1.3.3\n'
+    assert result.output == f'{__version__}\n'
 
 
 def test_init_fail():

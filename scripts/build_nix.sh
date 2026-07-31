@@ -7,7 +7,7 @@
 # any separate brew or nix-store invocations.
 #
 # Usage (from repo root):
-#   nix develop --command bash scripts/build_darwin_nix.sh VERSION BRANCH
+#   nix develop --command bash scripts/build_nix.sh VERSION BRANCH
 
 set -e
 
@@ -15,7 +15,7 @@ VERSION="$1"
 BRANCH="$2"
 
 if [ -z "$VERSION" ] || [ -z "$BRANCH" ]; then
-    echo "Usage: build_darwin_nix.sh VERSION BRANCH" >&2
+    echo "Usage: build_nix.sh VERSION BRANCH" >&2
     exit 1
 fi
 

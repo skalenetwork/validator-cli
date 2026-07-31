@@ -159,7 +159,7 @@ max_priority_fee:
   help: maxPriorityFeePerGas value in Gwei for transaction
 address_index:
   help: Index of the address to use (only for `ledger` wallet type)
-  prompt: Please enter the address index (staring from 0)
+  prompt: Please enter the address index (starting from 0)
 legacy:
   help: Use Ledger Legacy keys (Ledger Live keys will be used by default)
 yes_opt:
@@ -195,7 +195,7 @@ metrics:
 sgx:
   help: Sgx wallet commands
   init:
-    help: "Init sgx account by using sgx server prodvided with SGX-URL argument. \n
+    help: "Init sgx account by using sgx server provided with SGX-URL argument. \n
          Note: sgx server must be available over the network"
     param:
         ssl_port: Port that is used by sgx server to establish tls connection

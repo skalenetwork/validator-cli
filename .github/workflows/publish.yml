@@ -46,6 +46,8 @@ jobs:
     name: Build and publish for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      # nixpkgs-unstable no longer evaluates x86_64-darwin, so macos-13
+      # (Intel macOS) is intentionally not built by this release matrix.
       matrix:
         include:
           - os: ubuntu-20.04
@@ -54,8 +56,6 @@ jobs:
             asset_name: sk-val-${{ needs.create_release.outputs.version }}-Linux-aarch64
           - os: macos-14
             asset_name: sk-val-${{ needs.create_release.outputs.version }}-Darwin-arm64
-          - os: macos-13
-            asset_name: sk-val-${{ needs.create_release.outputs.version }}-Darwin-x86_64
     steps:
       - uses: actions/checkout@v4
 
