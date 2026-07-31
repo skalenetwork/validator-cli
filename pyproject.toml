@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=80.9.0,<81", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -17,33 +17,34 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: GNU Affero General Public License v3 (AGPLv3)",
     "Natural Language :: English",
-    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.14",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 dependencies = [
-    "click==7.1.2",
+    "click>=8.3.0",
     "skale.py==5.8dev3",
-    "yaspin==2.2.0",
-    "texttable==1.6.4",
-    "pandas==1.5.1",
-    "terminaltables==3.1.10",
-    "setuptools",
+    "yaspin>=3.3.0",
+    "texttable>=1.7.0",
+    "pandas>=3.0.5",
+    "terminaltables>=3.1.10",
+    "setuptools>=80.9.0,<81",
 ]
 
 [project.optional-dependencies]
 linter = [
-    "flake8==3.7.9",
-    "isort>=4.2.15,<5.4.3",
+    "flake8>=7.3.0",
+    "isort>=7.0.0,<9.0.0",
 ]
 dev = [
-    "flake8==3.7.9",
-    "isort>=4.2.15,<5.4.3",
-    "PyInstaller==5.5",
-    "pytest==5.4.2",
-    "twine==3.1.1",
-    "mock==4.0.2",
-    "boto3==1.13.7",
-    "pytest-cov==2.9.0",
+    "flake8>=7.3.0",
+    "isort>=7.0.0,<9.0.0",
+    "PyInstaller>=6.18.0",
+    "pytest>=9.1.1",
+    "twine>=6.2.0",
+    "mock>=5.2.0",
+    "boto3>=1.42.0",
+    "pytest-cov>=7.0.0",
 ]
 
 [project.scripts]
@@ -60,12 +61,12 @@ exclude = ["tests"]
 
 [tool.uv]
 override-dependencies = [
-    "pyzmq>=25.0.0",
-    "M2Crypto>=0.41.0",
-    "pandas>=2.0.0",
+    "pyzmq>=27.1.0",
+    "M2Crypto>=0.48.0",
+    "pandas>=3.0.5",
     "pyyaml>=6.0.3",
     "cytoolz>=1.1.0",
-    "websockets>=14.0",
-    "setuptools<74.0.0",
-    "parsimonious>=0.10.0",
+    "websockets>=16.1.1",
+    "setuptools>=80.9.0,<81",
+    "parsimonious>=0.11.0",
 ]

@@ -22,7 +22,7 @@
 
   outputs = inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
+      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
 
       perSystem = { pkgs, ... }:
         let
@@ -76,6 +76,7 @@
 
               python-baseconv = withSetuptools prev.python-baseconv;
               varint           = withSetuptools prev.varint;
+              bitarray         = withSetuptools prev.bitarray;
 
               # cli/info.py is gitignored (generated at PyInstaller build time).
               # Nix generates it here with real values from the flake evaluation
@@ -87,6 +88,8 @@
               # omit rev.
               "validator-cli" = prev."validator-cli".overrideAttrs (old: {
                 postPatch = (old.postPatch or "") + ''
+                  rm -rf build dist *.egg-info
+
                   cat > cli/info.py <<'NIXEOF'
                   BUILD_DATETIME = ${builtins.toJSON buildDate}
                   COMMIT = ${builtins.toJSON commit}
@@ -98,7 +101,7 @@
               });
             };
 
-          python = pkgs.python311;
+          python = pkgs.python314;
 
           pythonSet = (pkgs.callPackage inputs.pyproject-nix.build.packages {
             inherit python;
@@ -110,11 +113,13 @@
             ]
           );
 
-          venv = pythonSet.mkVirtualEnv "validator-cli-env" workspace.deps.default;
+          venv = pythonSet.mkVirtualEnv "validator-cli-env" (workspace.deps.default // {
+            setuptools = [];
+          });
         in
         {
           ## Nix package — `nix profile install` / `nix run`
-          ## Exposes only the sk-val binary so the venv's python3/python3.11 and
+          ## Exposes only the sk-val binary so the venv's python3/python3.14 and
           ## other interpreter symlinks don't conflict with home-manager or system
           ## Python entries in the user's Nix profile.
           packages.default = pkgs.runCommand "sk-val" {
@@ -132,7 +137,7 @@
               openssl
               openssl.dev
               uv
-              python311
+              python314
             ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [
               libusb1
             ];
