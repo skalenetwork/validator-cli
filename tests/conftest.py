@@ -11,6 +11,10 @@ from subprocess import PIPE
 import pytest
 from click.testing import CliRunner
 
+# Load the Python 3.14 compatibility shim before importing the legacy SKALE
+# SDK dependency chain below.
+import cli
+
 from skale import SkaleManager
 
 from skale.utils.contracts_provision.main import (

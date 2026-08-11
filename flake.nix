@@ -80,6 +80,7 @@
               python-baseconv = withSetuptools prev.python-baseconv;
               varint           = withSetuptools prev.varint;
               bitarray         = withSetuptools prev.bitarray;
+              parsimonious     = withSetuptools prev.parsimonious;
 
               # cli/info.py is gitignored (generated at PyInstaller build time).
               # Nix generates it here with real values from the flake evaluation

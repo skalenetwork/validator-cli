@@ -11,4 +11,6 @@ export ENV=test
 
 bash scripts/run_sgx_simulator.sh
 
-py.test --cov=$PROJECT_DIR/ $PROJECT_DIR/tests/ --ignore=tests/cli/metrics_node_test.py --ignore=tests/cli/metrics_validator_test.py $@
+# eth-account registers a legacy Web3 pytest plugin that imports before this
+# project's compatibility shim. Load only pytest-cov, which this script needs.
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 py.test -p pytest_cov --cov=$PROJECT_DIR/ $PROJECT_DIR/tests/ --ignore=tests/cli/metrics_node_test.py --ignore=tests/cli/metrics_validator_test.py $@

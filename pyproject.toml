@@ -68,5 +68,5 @@ override-dependencies = [
     "cytoolz>=1.1.0",
     "websockets>=16.1.1",
     "setuptools>=80.9.0,<81",
-    "parsimonious>=0.11.0",
+    "parsimonious==0.8.1",
 ]
