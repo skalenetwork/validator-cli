@@ -2,11 +2,64 @@ on: [push, pull_request]
 name: Test
 
 jobs:
+  nix-functional:
+    name: Nix functional test for ${{ matrix.system }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-20.04
+            system: x86_64-linux
+          - os: ubuntu-24.04-arm
+            system: aarch64-linux
+          - os: macos-14
+            system: aarch64-darwin
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+
+    - name: Install Nix
+      uses: DeterminateSystems/nix-installer-action@v14
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Install sk-val from local flake
+      run: |
+        nix profile install .# --print-build-logs
+
+    - name: Run sk-val smoke test
+      env:
+        EXPECTED_SYSTEM: ${{ matrix.system }}
+      run: |
+        set -euo pipefail
+
+        nix_profile_bin="$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin"
+        mkdir -p "$RUNNER_TEMP/sk-val-home"
+
+        export PATH="${nix_profile_bin}:${PATH}"
+        export HOME="$RUNNER_TEMP/sk-val-home"
+
+        command -v sk-val
+
+        expected_version="$(
+          python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])'
+        )"
+        actual_version="$(sk-val version)"
+
+        test "$actual_version" = "$expected_version"
+
+        sk-val info | tee sk-val-info.txt
+        grep "Version: $expected_version" sk-val-info.txt
+        grep "Full version: $expected_version" sk-val-info.txt
+        grep "Build OS: $EXPECTED_SYSTEM" sk-val-info.txt
+
   test:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python-version: [3.9]
+        python-version: ["3.11", "3.14"]
     env:
       ETH_PRIVATE_KEY: ${{ secrets.ETH_PRIVATE_KEY }}
       ENDPOINT: ${{ secrets.ENDPOINT }}
@@ -14,18 +67,17 @@ jobs:
       MANAGER_TAG: "1.9.3-beta.0"
       SGX_WALLET_TAG: "1.83.0-beta.5"
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         submodules: true
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install ubuntu dependencies
       run: |
         sudo apt-get update
         sudo apt-get install libssl-dev
-        sudo apt-get install python-setuptools
         sudo apt-get install libudev-dev
         sudo apt-get install libusb-1.0-0-dev
     - name: Install python dependencies
@@ -33,7 +85,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -e .
         pip install -e .[dev]
-        pip install --upgrade 'setuptools==63.2.0'
     - name: Lint with flake8
       run: |
         flake8 .

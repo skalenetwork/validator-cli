@@ -19,6 +19,43 @@
 
 ## Installation
 
+### Install with Nix
+
+If you use Nix flakes, install `sk-val` directly from the `develop` branch:
+
+```bash
+nix profile install github:skalenetwork/validator-cli/develop
+```
+
+Check the installed CLI:
+
+```bash
+sk-val version
+sk-val info
+```
+
+To update an existing profile installation, upgrade the named profile entry:
+
+```bash
+nix profile upgrade validator-cli --refresh
+```
+
+> [!NOTE]
+> `nix profile install github:skalenetwork/validator-cli/develop --refresh` does not replace an existing
+> `validator-cli` profile entry. If you need to force a reinstall from the flake URL, remove the existing entry
+> first:
+
+```bash
+nix profile remove validator-cli
+nix profile install github:skalenetwork/validator-cli/develop --refresh
+```
+
+You can also run the flake without installing it:
+
+```bash
+nix run github:skalenetwork/validator-cli/develop -- version
+```
+
 ### Requirements
 
 -   Linux x86_64 machine

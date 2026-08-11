@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=80.9.0,<81", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "validator-cli"
+version = "1.3.3"
+description = "SKALE validator tools"
+readme = "README.md"
+license = { text = "AGPL-3.0-or-later" }
+authors = [
+    { name = "SKALE Labs", email = "support@skalelabs.com" },
+]
+keywords = ["skale", "cli"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU Affero General Public License v3 (AGPLv3)",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.14",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "click>=8.3.0",
+    "skale.py==5.8dev3",
+    "yaspin>=3.3.0",
+    "texttable>=1.7.0",
+    "pandas>=3.0.5",
+    "terminaltables>=3.1.10",
+    "setuptools>=80.9.0,<81",
+]
+
+[project.optional-dependencies]
+linter = [
+    "flake8>=7.3.0",
+    "isort>=7.0.0,<9.0.0",
+]
+dev = [
+    "flake8>=7.3.0",
+    "isort>=7.0.0,<9.0.0",
+    "PyInstaller>=6.18.0",
+    "pytest>=9.1.1",
+    "twine>=6.2.0",
+    "mock>=5.2.0",
+    "boto3>=1.42.0",
+    "pytest-cov>=7.0.0",
+]
+
+[project.scripts]
+sk-val = "cli.main:main"
+
+[project.urls]
+Homepage = "https://github.com/skalenetwork/validator-cli"
+
+[tool.setuptools.packages.find]
+exclude = ["tests"]
+
+[tool.setuptools.package-data]
+"utils" = ["text.yml"]
+
+[tool.uv]
+override-dependencies = [
+    "pyzmq>=27.1.0",
+    "M2Crypto>=0.48.0",
+    "pandas>=3.0.5",
+    "pyyaml>=6.0.3",
+    "cytoolz>=1.1.0",
+    "websockets>=16.1.1",
+    "setuptools>=80.9.0,<81",
+    "parsimonious==0.8.1",
+]
