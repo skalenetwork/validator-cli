@@ -5,6 +5,7 @@ import datetime
 import pytest
 from skale.utils.contracts_provision.main import _skip_evm_time
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
+from skale.types.delegation import DelegationStatus
 
 from cli.holder import (
     _delegate, _delegations, _cancel_delegation,
@@ -115,7 +116,7 @@ def test_cancel_delegation(runner, skale, validator):
         validator_id=validator_id
     )
     delegation_id = delegations[-1]['id']
-    assert delegations[-1]['status'] == 'PROPOSED'
+    assert delegations[-1]['status'] == DelegationStatus.PROPOSED
 
     result = runner.invoke(
         _cancel_delegation,
@@ -131,7 +132,7 @@ def test_cancel_delegation(runner, skale, validator):
         validator_id=validator_id
     )
     assert delegations[-1]['id'] == delegation_id
-    assert delegations[-1]['status'] == 'CANCELED'
+    assert delegations[-1]['status'] == DelegationStatus.CANCELED
     assert result.exit_code == 0
     _skip_evm_time(skale.web3, MONTH_IN_SECONDS)
 
@@ -169,7 +170,7 @@ def test_undelegate(runner, skale, validator):
         validator_id=validator_id
     )
     assert delegations[-1]['id'] == delegation_id
-    assert delegations[-1]['status'] == 'UNDELEGATION_REQUESTED'
+    assert delegations[-1]['status'] == DelegationStatus.UNDELEGATION_REQUESTED
     assert result.exit_code == 0
 
 

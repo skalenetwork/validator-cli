@@ -12,6 +12,7 @@ from skale.wallets.web3_wallet import generate_wallet
 from skale.utils.account_tools import send_eth
 from skale.utils.contracts_provision.main import _skip_evm_time
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
+from skale.types.delegation import DelegationStatus
 from utils.helper import from_wei, permille_to_percent
 
 from cli.validator import (_bond_amount, _register, _ls, _delegations, _accept_delegation,
@@ -189,7 +190,7 @@ def test_accept_delegation(runner, validator, skale, fee_options):
         validator_id=validator_id
     )
     delegation_id = delegations[-1]['id']
-    assert delegations[-1]['status'] == 'PROPOSED'
+    assert delegations[-1]['status'] == DelegationStatus.PROPOSED
 
     result = runner.invoke(
         _accept_delegation,
@@ -205,7 +206,7 @@ def test_accept_delegation(runner, validator, skale, fee_options):
         validator_id=validator_id
     )
     assert delegations[-1]['id'] == delegation_id
-    assert delegations[-1]['status'] == 'ACCEPTED'
+    assert delegations[-1]['status'] == DelegationStatus.ACCEPTED
     assert result.exit_code == 0
     _skip_evm_time(skale.web3, MONTH_IN_SECONDS)
 
@@ -229,8 +230,8 @@ def test_accept_all_delegations(runner, validator, skale, fee_options):
 
     delegation_id_1 = delegations[-1]['id']
     delegation_id_2 = delegations[-2]['id']
-    assert delegations[-1]['status'] == 'PROPOSED'
-    assert delegations[-2]['status'] == 'PROPOSED'
+    assert delegations[-1]['status'] == DelegationStatus.PROPOSED
+    assert delegations[-2]['status'] == DelegationStatus.PROPOSED
 
     with mock.patch('click.confirm', return_value=True):
         result = runner.invoke(
@@ -245,10 +246,10 @@ def test_accept_all_delegations(runner, validator, skale, fee_options):
         validator_id=validator_id
     )
     assert delegations[-1]['id'] == delegation_id_1
-    assert delegations[-1]['status'] == 'ACCEPTED'
+    assert delegations[-1]['status'] == DelegationStatus.ACCEPTED
 
     assert delegations[-2]['id'] == delegation_id_2
-    assert delegations[-2]['status'] == 'ACCEPTED'
+    assert delegations[-2]['status'] == DelegationStatus.ACCEPTED
 
     assert result.exit_code == 0
     _skip_evm_time(skale.web3, MONTH_IN_SECONDS)
@@ -275,7 +276,7 @@ def test_link_address(runner, validator, skale, new_wallet_pk, fee_options):
             _link_address,
             [
                 node_wallet.address,
-                signature,
+                signature.hex(),
                 *fee_options,
                 '--pk-file', TEST_PK_FILE,
                 '--yes'
@@ -391,7 +392,7 @@ def test_bond_amount(runner, skale, validator):
     validator_id = validator
     bond_wei = skale.validator_service.get_and_update_bond_amount(
         validator_id)
-    bond = Web3.fromWei(bond_wei, 'ether')
+    bond = Web3.from_wei(bond_wei, 'ether')
 
     result = runner.invoke(
         _bond_amount,
