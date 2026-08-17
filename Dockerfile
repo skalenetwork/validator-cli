@@ -12,8 +12,7 @@ RUN apt-get install -y  \
                        build-essential \
                        zlib1g-dev \
                        libssl-dev \
-                       libffi-dev \
-                       swig
+                       libffi-dev
 
 RUN mkdir /app
 WORKDIR /app
@@ -22,6 +21,5 @@ COPY . .
 
 ENV PATH=/app/buildvenv/bin:$PATH
 RUN python3.14 -m venv /app/buildvenv && \
-    pip install --upgrade pip && \
-    pip install wheel setuptools==63.2.0 && \
-    pip install -e '.[dev]' 
+    pip install --upgrade pip setuptools wheel && \
+    pip install -e '.[dev]'

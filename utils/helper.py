@@ -91,19 +91,19 @@ def to_skl(wei, unit='ether'):  # todo: replace with from_wei()
         return None
     if wei == 0:
         return Decimal(wei)
-    return Web3.fromWei(Decimal(wei), unit)
+    return Web3.from_wei(Decimal(wei), unit)
 
 
 def from_wei(val, unit='ether'):
     if val is None:
         return None
-    return Web3.fromWei(Decimal(val), unit)
+    return Web3.from_wei(Decimal(val), unit)
 
 
 def to_wei(val, unit='ether'):
     if val is None:
         return None
-    return Web3.toWei(Decimal(val), unit)
+    return Web3.to_wei(Decimal(val), unit)
 
 
 def permille_to_percent(val):

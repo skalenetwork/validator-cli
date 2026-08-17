@@ -18,7 +18,7 @@ jobs:
       version: ${{ steps.export_outputs.outputs.version }}
       branch: ${{ steps.export_outputs.outputs.branch }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           submodules: true
       - name: Set Versions
@@ -52,27 +52,22 @@ jobs:
           - os: macos-latest
             asset_name: sk-val-${{ needs.create_release.outputs.version }}-Darwin-x86_64
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Python 3.14
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v5
       with:
         python-version: '3.14'
     - name: Install ubuntu dependencies
       if: matrix.os == 'ubuntu-24.04'
       run: |
         sudo apt-get update
-        sudo apt-get install libssl-dev
-        sudo apt-get install libudev-dev
-        sudo apt-get install libusb-1.0-0-dev
+        sudo apt-get install -y libssl-dev libudev-dev libusb-1.0-0-dev
 
     - name: Install macOS dependencies
       if: matrix.os == 'macos-latest'
       run: |
-        bash ./scripts/m2crypto_macos_fix.sh
-        python -m pip install --upgrade pip
-        pip install -e .
-        pip install -e .[dev]
-        pip install wheel
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install -e '.[dev]'
 
     - name: Checkout submodules
       run: git submodule update --init

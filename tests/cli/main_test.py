@@ -3,7 +3,6 @@
 import os
 import json
 import shutil
-from distutils.dir_util import copy_tree
 
 from click.testing import CliRunner
 from cli.main import init
@@ -23,7 +22,7 @@ def test_init_fail():
 
 def test_init():
     if os.path.isdir(SKALE_VAL_CONFIG_FOLDER):
-        copy_tree(SKALE_VAL_CONFIG_FOLDER, TMP_CONFIG_FOLDER)
+        shutil.copytree(SKALE_VAL_CONFIG_FOLDER, TMP_CONFIG_FOLDER, dirs_exist_ok=True)
         shutil.rmtree(SKALE_VAL_CONFIG_FOLDER)
     assert not os.path.isdir(SKALE_VAL_CONFIG_FOLDER)
     runner = CliRunner()
@@ -44,4 +43,4 @@ def test_init():
     assert result.output == 'Validator CLI initialized successfully\n'
 
     if os.path.isdir(TMP_CONFIG_FOLDER):
-        copy_tree(TMP_CONFIG_FOLDER, SKALE_VAL_CONFIG_FOLDER)
+        shutil.copytree(TMP_CONFIG_FOLDER, SKALE_VAL_CONFIG_FOLDER, dirs_exist_ok=True)

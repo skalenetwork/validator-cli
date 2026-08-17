@@ -14,26 +14,21 @@ jobs:
       MANAGER_TAG: "1.9.3-beta.0"
       SGX_WALLET_TAG: "1.83.0-beta.5"
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         submodules: true
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install ubuntu dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install libssl-dev
-        sudo apt-get install python3-setuptools
-        sudo apt-get install libudev-dev
-        sudo apt-get install libusb-1.0-0-dev
+        sudo apt-get install -y libssl-dev libudev-dev libusb-1.0-0-dev
     - name: Install python dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -e .
-        pip install -e .[dev]
-        pip install --upgrade 'setuptools==63.2.0'
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install -e '.[dev]'
     - name: Lint with flake8
       run: |
         flake8 .
