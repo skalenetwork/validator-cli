@@ -12,7 +12,7 @@ TEST_RECHARGE_VALUE_ETH = '0.1'
 def test_balance(runner, skale, validator):
     validator_id = validator
     amount_wei = skale.wallets.get_validator_balance(validator_id)
-    amount = Web3.fromWei(amount_wei, 'ether')
+    amount = Web3.from_wei(amount_wei, 'ether')
 
     result = runner.invoke(
         _balance,

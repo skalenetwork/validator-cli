@@ -11,8 +11,6 @@ from subprocess import PIPE
 import pytest
 from click.testing import CliRunner
 
-from skale import SkaleManager
-
 from skale.utils.contracts_provision.main import (
     add_test_permissions,
     add_test2_schain_type,
@@ -34,7 +32,7 @@ from skale.wallets.web3_wallet import generate_wallet
 
 from tests.constants import TEST_PK_FILE, TMP_DIR
 from tests.utils import get_executable_path
-from utils.web3_utils import init_skale_w_wallet_from_config
+from utils.web3_utils import create_skale_manager, init_skale_w_wallet_from_config
 
 
 NUMBER_OF_NODES = 2
@@ -112,7 +110,7 @@ def node_wallets(skale):
 @pytest.fixture
 def node_skales(skale, node_wallets):
     return [
-        SkaleManager(skale._endpoint, skale._abi_filepath, wallet)
+        create_skale_manager(skale._endpoint, wallet)
         for wallet in node_wallets
     ]
 
@@ -120,7 +118,7 @@ def node_skales(skale, node_wallets):
 @pytest.fixture
 def nodes(skale, node_skales, validator):
     link_nodes_to_validator(skale, validator, node_skales)
-    ids = create_nodes(skale)
+    ids = create_nodes(node_skales)
     try:
         yield ids
     finally:

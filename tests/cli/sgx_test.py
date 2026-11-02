@@ -4,7 +4,6 @@ import shutil
 
 import mock
 import pytest
-from distutils.dir_util import copy_tree
 from skale.utils.account_tools import send_eth
 
 from cli.main import init as sk_val_init
@@ -101,7 +100,7 @@ def test_get_sgx_info_raw(runner):
 
 def run_val_cli_init(runner):
     if os.path.isdir(SKALE_VAL_CONFIG_FOLDER):
-        copy_tree(SKALE_VAL_CONFIG_FOLDER, TMP_CONFIG_FOLDER)
+        shutil.copytree(SKALE_VAL_CONFIG_FOLDER, TMP_CONFIG_FOLDER, dirs_exist_ok=True)
         shutil.rmtree(SKALE_VAL_CONFIG_FOLDER)
     assert not os.path.isdir(SKALE_VAL_CONFIG_FOLDER)
     return runner.invoke(

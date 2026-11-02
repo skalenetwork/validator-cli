@@ -39,20 +39,20 @@ def find_version(*file_paths):
 
 extras_require = {
     'linter': [
-        "flake8==3.7.9",
-        "isort>=4.2.15,<5.4.3",
+        "flake8==7.3.0",
+        "isort==8.0.1",
     ],
     'dev': [
-        "PyInstaller==5.5",
-        "pytest==5.4.2",
-        "twine==3.1.1",
-        "mock==4.0.2",
-        "boto3==1.13.7",
-        "pytest-cov==2.9.0",
-        "codecov==2.1.7"
+        "PyInstaller==6.22.1",
+        "pytest==9.1.1",
+        "twine==7.0.0",
+        "mock==5.2.0",
+        "boto3==1.43.72",
+        "pytest-cov==7.1.0",
+        "codecov==2.1.13"
     ],
     'hw-wallet': [
-        "ledgerblue==0.1.31"
+        "ledgerblue==0.1.58"
     ]
 }
 
@@ -68,19 +68,26 @@ setup(
     version=find_version("cli", "__init__.py"),
     include_package_data=True,
     description='SKALE validator tools',
-    long_description_markdown_filename='README.md',
+    long_description=read('README.md'),
+    long_description_content_type='text/markdown',
     author='SKALE Labs',
     author_email='support@skalelabs.com',
     url='https://github.com/skalenetwork/validator-cli',
     install_requires=[
-        "click==7.1.2",
-        "skale.py==5.8dev3",
-        "yaspin==2.2.0",
-        "texttable==1.6.4",
-        "pandas==1.5.1",
+        "click==8.4.2",
+        "skale.py==7.92dev0",
+        "skale-contracts==2.0.0a10",
+        "sgx-py==0.11dev0",
+        "web3==7.14.0",
+        "hexbytes==1.3.1",
+        "yaspin==3.4.0",
+        "PyYAML==6.0.3",
+        "texttable==1.7.0",
+        "pandas==3.0.5",
         "terminaltables==3.1.10",
+        "wcwidth==0.8.2",
     ],
-    python_requires='>=3.7,<4',
+    python_requires='>=3.11,<4',
     extras_require=extras_require,
 
     keywords=['skale', 'cli'],
@@ -90,6 +97,6 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU Affero General Public License v3 (AGPLv3)',
         'Natural Language :: English',
-        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.14',
     ],
 )

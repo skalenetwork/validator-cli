@@ -27,7 +27,7 @@ class EthAddressType(click.ParamType):
     name = 'eth_address'
 
     def convert(self, value, param, ctx):
-        if w3.isAddress(value):
+        if w3.is_address(value):
             return value
         else:
             self.fail(f'Wrong Ethereum address provided: {value}', param, ctx)

@@ -10,7 +10,7 @@ from tests.utils import TEST_FEE_OPTIONS
 def test_send_eth(runner, skale, fee_options):
     address = skale.wallet.address
     amount = '0.01'
-    amount_wei = skale.web3.toWei(amount, 'ether')
+    amount_wei = skale.web3.to_wei(amount, 'ether')
 
     receiver_0 = '0xf38b5dddd74b8901c9b5fb3ebd60bf5e7c1e9763'
     checksum_receiver_0 = to_checksum_address(receiver_0)

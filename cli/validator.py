@@ -101,7 +101,7 @@ def _ls(wei, all):
 
 
 @validator.command('delegations', help=TEXTS['delegations']['help'])
-@click.argument('validator_id')
+@click.argument('validator_id', type=int)
 @click.option('--wei', '-w', is_flag=True, help=TEXTS['delegations']['wei']['help'])
 def _delegations(validator_id, wei):
     delegations(validator_id, wei)
@@ -143,7 +143,7 @@ def _accept_all_delegations(pk_file, fee):
               expose_value=False,
               prompt=TEXTS['link_address']['confirm'])
 def _link_address(node_address, signature, pk_file, fee):
-    node_address = Web3.toChecksumAddress(node_address)
+    node_address = Web3.to_checksum_address(node_address)
     link_node_address(
         node_address,
         signature,
@@ -169,11 +169,9 @@ def _linked_addresses(address):
 
 
 @validator.command('info', help=TEXTS['info']['help'])
-@click.argument('validator_id')
+@click.argument('validator_id', type=int)
 def _info(validator_id):
-    info(
-        validator_id=int(validator_id)
-    )
+    info(validator_id=validator_id)
 
 
 @validator.command('withdraw-fee', help=TEXTS['withdraw_fee']['help'])

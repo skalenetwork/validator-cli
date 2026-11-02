@@ -22,8 +22,10 @@ import sys
 from typing import Optional
 
 import click
+from hexbytes import HexBytes
 from yaspin import yaspin
 from terminaltables import SingleTable
+from skale.types.delegation import DelegationStatus
 
 from core.transaction import TxFee
 from utils.web3_utils import (
@@ -101,8 +103,10 @@ def accept_all_delegations(pk_file: str, fee: Optional[TxFee]) -> None:
     delegations_list = skale.delegation_controller.get_all_delegations_by_validator(
         validator_id)
 
-    pending_delegations = list(filter(lambda delegation: delegation['status'] == 'PROPOSED',
-                                      delegations_list))
+    pending_delegations = list(filter(
+        lambda delegation: delegation['status'] == DelegationStatus.PROPOSED,
+        delegations_list
+    ))
     n_of_pending_delegations = len(pending_delegations)
     if n_of_pending_delegations == 0:
         print('No pending delegations to accept')
@@ -137,7 +141,7 @@ def link_node_address(node_address: str,
     with yaspin(text='Linking node address', color=SPIN_COLOR) as sp:
         tx_res = skale.validator_service.link_node_address(
             node_address=node_address,
-            signature=signature,
+            signature=HexBytes(signature),
             **dataclasses.asdict(fee)
         )
         sp.write(
@@ -176,7 +180,7 @@ def get_addresses_info(skale, addresses):
         {
             'address': address,
             'status': 'Primary' if skale.validator_service.is_main_address(address) else 'Linked',
-            'balance': str(skale.web3.fromWei(skale.web3.eth.getBalance(address), 'ether'))
+            'balance': str(skale.web3.from_wei(skale.web3.eth.get_balance(address), 'ether'))
         }
         for address in addresses
     ]

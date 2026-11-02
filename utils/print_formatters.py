@@ -103,7 +103,7 @@ def print_delegations(delegations: list, wei: bool) -> None:
         rows.append([
             delegation['id'],
             delegation['address'],
-            delegation['status'],
+            getattr(delegation['status'], 'name', delegation['status']),
             delegation['validator_id'],
             amount,
             delegation['delegation_period'],
