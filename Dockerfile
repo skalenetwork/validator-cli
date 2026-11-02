@@ -1,25 +1,29 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04 AS builder
+
+ENV UV_PYTHON_INSTALL_DIR=/opt/python
+
+COPY --from=ghcr.io/astral-sh/uv:0.13.6 /uv /usr/local/bin/uv
+
+WORKDIR /app
+
+COPY pyproject.toml ./
+
+RUN uv venv --python 3.14.10 /opt/venv && \
+    uv pip install --python /opt/venv --no-cache ".[dev]"
+
+FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update --fix-missing && apt-get install -y software-properties-common
-RUN add-apt-repository ppa:deadsnakes/ppa
-RUN apt-get install -y  \
-                       git \
-                       python3.14 \
-                       libpython3.14-dev \
-                       python3.14-venv \
-                       python3.14-dev \
-                       build-essential \
-                       zlib1g-dev \
-                       libssl-dev \
-                       libffi-dev
 
-RUN mkdir /app
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends binutils git && \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
+
+COPY --from=builder /opt/python /opt/python
+COPY --from=builder /opt/venv /opt/venv
 
 COPY . .
 
-ENV PATH=/app/buildvenv/bin:$PATH
-RUN python3.14 -m venv /app/buildvenv && \
-    pip install --upgrade pip setuptools wheel && \
-    pip install -e '.[dev]'
+ENV PATH="/opt/venv/bin:$PATH"

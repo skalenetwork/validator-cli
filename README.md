@@ -11,9 +11,8 @@
     2.1 [Init](#init)  
     2.2 [Validator commands](#validator-commands)  
     2.3 [Holder commands](#holder-commands)  
-    2.4 [Metrics commands](#metrics-commands)  
-    2.5 [Wallet commands](#wallet-commands)  
-    2.6 [Self-recharging wallet commands](#self-recharging-wallet-commands)
+    2.4 [Wallet commands](#wallet-commands)  
+    2.5 [Self-recharging wallet commands](#self-recharging-wallet-commands)
 3.  [Exit codes](#exit-codes)
 4.  [Development](#development)
 
@@ -21,7 +20,7 @@
 
 ### Requirements
 
--   Linux x86_64 machine
+-   Linux x86_64 or macOS on Apple silicon
 
 -   Download executable
 
@@ -599,39 +598,45 @@ Exit codes conventions for SKALE CLI tools
 
 ### Setup repo
 
+#### Dependencies
+
+-   [uv](https://docs.astral.sh/uv/) 0.13.6+ (installs Python 3.14 from `.python-version`)
+-   Git
+
 #### Install development dependencies
 
 ```bash
-pip install -e .[dev]
+uv sync --all-extras
 ```
 
-##### Add flake8 git hook
+#### Add linting git hook
 
 In file `.git/hooks/pre-commit` add:
 
 ```bash
 #!/bin/sh
-flake8 .
+uv run ruff check
 ```
 
 ### Debugging
 
-Run commands in dev mode:
+Generate `cli/info.py`, then run commands in dev mode:
 
 ```bash
-python main.py YOUR_COMMAND
+bash scripts/generate_info.sh 1.0.0 my-branch
+uv run python cli/main.py YOUR_COMMAND
 ```
 
-### Setting up Travis
+### Tests
 
-Required environment variables:
+The tests deploy skale-manager to a local Anvil chain and run the SGX simulator in Docker. Export `ETH_PRIVATE_KEY`, `MANAGER_TAG` and `SGX_WALLET_TAG` as set in `.github/workflows/test.yml`, then run:
 
--   `ACCESS_KEY_ID` - DO Spaces/AWS S3 API Key ID
--   `SECRET_ACCESS_KEY` - DO Spaces/AWS S3 Secret access key
--   `GITHUB_EMAIL` - Email of GitHub user
--   `GITHUB_OAUTH_TOKEN` - GitHub auth token
--   `ETH_PRIVATE_KEY` - Ethereum private key for tests (without `0x` prefix)
--   `MANAGER_BRANCH` - Branch of the `skale-manager` to pull from DockerHub (`$MANAGER_BRANCH-latest` tag will be used)
+```bash
+RUN_ANVIL=true bash helper-scripts/deploy_manager.sh
+bash scripts/prepare_configs.sh
+bash scripts/generate_info.sh test test
+uv run bash scripts/run_tests.sh
+```
 
 ### License
 

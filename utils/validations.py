@@ -20,14 +20,14 @@
 from urllib.parse import urlparse
 
 import click
-from web3.auto import w3
+from web3 import Web3
 
 
 class EthAddressType(click.ParamType):
     name = 'eth_address'
 
     def convert(self, value, param, ctx):
-        if w3.is_address(value):
+        if Web3.is_address(value):
             return value
         else:
             self.fail(f'Wrong Ethereum address provided: {value}', param, ctx)

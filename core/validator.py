@@ -24,13 +24,13 @@ from typing import Optional
 import click
 from hexbytes import HexBytes
 from yaspin import yaspin
-from terminaltables import SingleTable
 from skale.types.delegation import DelegationStatus
+from web3.exceptions import ContractLogicError
 
 from core.transaction import TxFee
 from utils.web3_utils import (
     init_skale_from_config, init_skale_w_wallet_from_config)
-from utils.print_formatters import (print_bond_amount, print_validators,
+from utils.print_formatters import (Formatter, print_bond_amount, print_validators,
                                     print_delegations, print_linked_addresses)
 from utils.helper import to_wei, from_wei, percent_to_permille, permille_to_percent
 from utils.constants import SPIN_COLOR
@@ -191,21 +191,15 @@ def info(validator_id):
     if not skale:
         return
     validator_info = skale.validator_service.get(validator_id)
-    # is_accepting_new_requests = skale.validator_service.is_accepting_new_requests(validator_id)
-    # accepting_delegation_requests = 'Yes' if is_accepting_new_requests else 'No'
     minimum_delegation_amount = from_wei(
         validator_info['minimum_delegation_amount'])
     fee_rate_percent = permille_to_percent(validator_info['fee_rate'])
-    table = SingleTable([
-        ['Validator ID', validator_id],
+    print(Formatter().table(['Validator ID', validator_id], [
         ['Name', validator_info['name']],
         ['Address', validator_info['validator_address']],
         ['Fee rate (percent %)', fee_rate_percent],
         ['Minimum delegation amount (SKL)', minimum_delegation_amount]
-        # ['Auto accept', validator_info['auto_accept_delegations']],
-        # ['Accepting delegation requests', accepting_delegation_requests]
-    ])
-    print(table.table)
+    ]))
 
 
 def withdraw_fee(recipient_address: str, pk_file: str, fee: Optional[TxFee]) -> None:
@@ -307,7 +301,7 @@ def edit(name: str, description: str, pk_file: str, fee: Optional[TxFee]) -> Non
     try:
         validator_id = skale.validator_service.validator_id_by_address(
             skale.wallet.address)
-    except ValueError:
+    except ContractLogicError:
         print(
             f'Validator ID is not found for your address: {skale.wallet.address}')
         sys.exit(2)

@@ -1,4 +1,4 @@
-import mock
+from unittest import mock
 from web3 import Web3
 
 from cli.srw import _balance, _recharge, _withdraw
