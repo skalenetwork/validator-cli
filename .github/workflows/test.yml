@@ -1,58 +1,57 @@
-on: [push, pull_request]
 name: Test
+
+on: [push]
+
+permissions:
+  contents: read
+
+env:
+  ETH_PRIVATE_KEY: "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+  MANAGER_TAG: 1.12.0-develop.23
+  SGX_WALLET_TAG: e548b375cae741af8fd11db54d6925c27a947af9
 
 jobs:
   test:
     runs-on: ubuntu-24.04
-    strategy:
-      matrix:
-        python-version: ['3.14']
-    env:
-      ETH_PRIVATE_KEY: ${{ secrets.ETH_PRIVATE_KEY }}
-      ENDPOINT: ${{ secrets.ENDPOINT }}
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      MANAGER_TAG: "1.9.3-beta.0"
-      SGX_WALLET_TAG: "1.83.0-beta.5"
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: true
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install ubuntu dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libssl-dev libudev-dev libusb-1.0-0-dev
-    - name: Install python dependencies
-      run: |
-        python -m pip install --upgrade pip setuptools wheel
-        python -m pip install -e '.[dev]'
-    - name: Lint with flake8
-      run: |
-        flake8 .
-    - name: Build binary in 22.04 environment
-      run: |
-        mkdir dist
-        docker build . -t builder
-        docker run  -v /home/ubuntu/dist:/app/dist builder scripts/build.sh test test
-        ls -altr /home/ubuntu/dist/
-        docker rm -f $(docker ps -aq)
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
 
-    - name: Build binary in Ubuntu lastest environment
-      run: |
-        scripts/build.sh test test
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version: "0.13.6"
 
-    - name: Deploy manager contracts
-      run: |
-        bash ./helper-scripts/deploy_test_manager.sh
-    - name: Prepare configs
-      run: |
-        bash ./scripts/prepare_configs.sh
-    - name: Run tests
-      run: |
-        bash ./scripts/run_tests.sh
-    - name: Codecov
-      run: |
-        codecov -t $CODECOV_TOKEN
+      - name: Install python dependencies
+        run: uv sync --all-extras
+
+      - name: Generate info
+        run: bash ./scripts/generate_info.sh test test
+
+      - name: Check with ruff
+        run: uv run ruff check
+
+      - name: Build binary
+        run: |
+          mkdir -p ./dist
+          docker build . -t validator-cli-builder
+          docker run --rm -v "$PWD/dist":/app/dist validator-cli-builder bash scripts/build.sh test test
+
+      - name: Check binary
+        run: ./dist/sk-val-test-Linux-x86_64 info
+
+      - name: Deploy manager contracts
+        run: RUN_ANVIL=true bash ./helper-scripts/deploy_manager.sh
+
+      - name: Prepare configs
+        run: bash ./scripts/prepare_configs.sh
+
+      - name: Run tests
+        run: uv run bash ./scripts/run_tests.sh
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml

@@ -135,18 +135,6 @@ holder:
       Are you sure you want to withdraw bounty?
   earned_bounties:
     help: Get earned bounties amount by token holder for the validator address
-msg:
-  run_init: You should run < init > first
-  limit:
-    help: Number of records to show
-  since:
-    help: Show requested data since a given date inclusively (e.g. 2020-01-20)
-  till:
-    help: Show requested data before a given date not inclusively (e.g. 2020-01-21)
-  wei:
-    help: Show bounty amount in wei
-  no_nodes: There's no registered nodes for a given validator
-  no_data: No data found for a given period
 
 
 pk_file:
@@ -166,31 +154,6 @@ yes_opt:
   prompt: Are you sure?
 wei:
   help: Show amount in wei
-
-metrics:
-  help: Node metrics commands
-  node:
-    help: "List of bounties and metrics for a node with a given id.\n\n
-          Collecting data from blockchain can take a long time.
-          It is recommended to use optional arguments (-s, -t, -l) for limiting output by time or a row count"
-    index:
-      help: Node ID
-      prompt: Enter node ID
-      valid_id_msg: "Error: Node ID should be greater than 0"
-      id_error_msg: "Error: Node ID doesn't exist"
-      wait_msg: Please wait - collecting metrics data from blockchain...
-  validator:
-    help: "List of metrics and bounties for all nodes of a validator with a given id.\n\n
-          Collecting data from blockchain can take a long time.
-          It is recommended to use optional arguments (-s, -t, -l) for limiting output by time or a row count"
-    index:
-      help: Validator ID
-      prompt: Enter validator ID
-      valid_id_msg: "Error: Validator ID should be greater than 0"
-      id_error_msg: "Error: Validator ID doesn't exist"
-      wait_msg: Please wait - collecting metrics data from blockchain...
-    save_to_file:
-      help: Save metrics to .csv file
 
 sgx:
   help: Sgx wallet commands

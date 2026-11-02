@@ -3,7 +3,6 @@
 set -e
 
 : "${ETH_PRIVATE_KEY?Need to set ETH_PRIVATE_KEY}"
-: "${ENDPOINT?Need to set ENDPOINT}"
 
 export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 

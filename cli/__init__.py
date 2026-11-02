@@ -1,4 +1,6 @@
-__version__ = '1.3.3'
+from importlib.metadata import version
+
+__version__ = version('validator-cli')
 
 
 if __name__ == "__main__":

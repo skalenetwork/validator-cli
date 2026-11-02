@@ -5,7 +5,6 @@ import subprocess
 import shutil
 import time
 import uuid
-from datetime import datetime
 from subprocess import PIPE
 
 import pytest
@@ -14,28 +13,17 @@ from click.testing import CliRunner
 from skale.utils.contracts_provision.main import (
     add_test_permissions,
     add_test2_schain_type,
-    cleanup_nodes,
-    cleanup_schains,
-    create_nodes,
-    create_schain,
-    link_nodes_to_validator,
     setup_validator,
-    _skip_evm_time
 )
 from skale.utils.contracts_provision.fake_multisig_contract import (
     deploy_fake_multisig_contract
 )
-from skale.utils.account_tools import generate_account
 from skale.utils.account_tools import send_eth
-from skale.wallets import Web3Wallet
 from skale.wallets.web3_wallet import generate_wallet
 
 from tests.constants import TEST_PK_FILE, TMP_DIR
 from tests.utils import get_executable_path
-from utils.web3_utils import create_skale_manager, init_skale_w_wallet_from_config
-
-
-NUMBER_OF_NODES = 2
+from utils.web3_utils import init_skale_w_wallet_from_config
 
 
 @pytest.fixture(scope='session')
@@ -94,81 +82,6 @@ def skale():
 def validator(skale):
     vid = setup_validator(skale)
     return vid
-
-
-@pytest.fixture
-def node_wallets(skale):
-    wallets = []
-    for i in range(NUMBER_OF_NODES):
-        acc = generate_account(skale.web3)
-        pk = acc['private_key']
-        wallet = Web3Wallet(pk, skale.web3)
-        wallets.append(wallet)
-    return wallets
-
-
-@pytest.fixture
-def node_skales(skale, node_wallets):
-    return [
-        create_skale_manager(skale._endpoint, wallet)
-        for wallet in node_wallets
-    ]
-
-
-@pytest.fixture
-def nodes(skale, node_skales, validator):
-    link_nodes_to_validator(skale, validator, node_skales)
-    ids = create_nodes(node_skales)
-    try:
-        yield ids
-    finally:
-        cleanup_nodes(skale, ids)
-
-
-@pytest.fixture
-def schain(skale, nodes):
-    try:
-        yield create_schain(skale, random_name=True)
-    finally:
-        cleanup_schains(skale)
-
-
-def get_bounties(skale, node_skales, nodes):
-    go_to_next_reward_date(skale, nodes[0])
-    node_skales[0].skale.manager.get_bounty(nodes[0])
-    node_skales[1].skale.manager.get_bounty(nodes[1])
-    go_to_next_reward_date(skale, nodes[1])
-    node_skales[0].skale.manager.get_bounty(nodes[0])
-    node_skales[1].skale.manager.get_bounty(nodes[1])
-
-
-def go_to_next_reward_date(skale, node_id):
-    reward_date = skale.nodes.contract.functions.getNodeNextRewardDate(
-        node_id).call()
-    go_to_date(skale.web3, reward_date)
-    time.sleep(5)
-
-
-def go_to_date(web3, date):
-    block_timestamp = get_block_timestamp(web3)
-    print(
-        f'Block timestamp before: {datetime.utcfromtimestamp(block_timestamp)}')
-    delta = date - block_timestamp
-    _skip_evm_time(web3, delta)
-    block_timestamp = get_block_timestamp(web3)
-    print(
-        f'Block timestamp after: {datetime.utcfromtimestamp(block_timestamp)}')
-
-
-def get_block_timestamp(web3):
-    last_block_number = web3.eth.block_number
-    block_data = web3.eth.get_block(last_block_number)
-    return block_data['timestamp']
-
-
-@pytest.fixture
-def bounties(skale, node_skales, nodes):
-    get_bounties(skale, node_skales, nodes)
 
 
 @pytest.fixture

@@ -18,7 +18,6 @@
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
-import re
 import sys
 import logging
 
@@ -26,7 +25,6 @@ from yaspin import yaspin
 
 from skale import SkaleManager
 from skale.utils.web3_utils import init_web3
-from skale_contracts.projects.skale_manager import SkaleManagerContract
 from skale.wallets import LedgerWallet, SgxWallet, Web3Wallet
 from skale.wallets.ledger_wallet import LedgerCommunicationError
 
@@ -39,34 +37,11 @@ DISABLE_SPIN = os.getenv('DISABLE_SPIN')
 logger = logging.getLogger(__name__)
 
 
-def get_contracts_data():
-    return read_json(SKALE_VAL_ABI_FILE)
-
-
-def get_skale_manager_address(contracts):
-    try:
-        return contracts['skale_manager_address']
-    except KeyError as exc:
-        raise ValueError('SKALE Manager address is missing from the contracts data') from exc
-
-
-def get_local_abi(contracts):
-    abi = {}
-    for contract_name in SkaleManagerContract:
-        key = re.sub(r'(?<!^)(?=[A-Z])', '_', contract_name.value).lower() + '_abi'
-        if key in contracts:
-            abi[contract_name.value] = contracts[key]
-    return abi
-
-
 def create_skale_manager(endpoint, wallet=None):
-    contracts = get_contracts_data()
-    skale = SkaleManager(endpoint, get_skale_manager_address(contracts), wallet)
-    local_abi = get_local_abi(contracts)
-    if local_abi:
-        # Prefer the deployment ABI downloaded by `sk-val init` over a remote copy.
-        skale.instance._abi = local_abi
-    return skale
+    contracts = read_json(SKALE_VAL_ABI_FILE)
+    if 'skale_manager_address' not in contracts:
+        raise ValueError('SKALE Manager address is missing from the contracts data')
+    return SkaleManager(endpoint, contracts['skale_manager_address'], wallet)
 
 
 def init_skale(endpoint, wallet=None, disable_spin=DISABLE_SPIN):
