@@ -42,7 +42,7 @@ All validator-cli version numbers are available here: https://github.com/skalene
 
 ### Init
 
-Download SKALE Manager contracts info and set the endpoint.
+Set the endpoint and the SKALE Manager alias or address.
 
 ```bash
 sk-val init
@@ -51,15 +51,17 @@ sk-val init
 Required arguments:
 
 -   `--endpoint/-e` - RPC endpoint of the node in the network where SKALE manager is deployed (`http` or `https`)
--   `--contracts-url/-c` - - URL to SKALE Manager contracts ABI and addresses
+-   `--manager-contracts/-c` - SKALE Manager alias or address
 -   `-w/--wallet` - Type of the wallet that will be used for signing transactions (software, sgx or hardware)
+
+> In `--manager-contracts`, if you are using a recognized network (e.g., 'Mainnet', 'Hoodi'), you can use a recognized alias (e.g., 'production', 'testnet'). You can check the list of recognized networks and aliases in [contract deployments](https://github.com/skalenetwork/skale-contracts/tree/deployments). On any other network, provide the SKALE Manager address.
 
 If you want to use sgx wallet you need to initialize it first (see **SGX commands**)
 
 Usage example:
 
 ```bash
-sk-val init -e ws://geth.test.com:8546 -c https://test.com/manager.json --wallet software
+sk-val init -e https://geth.test.com -c production --wallet software
 ```
 
 ### SGX commands

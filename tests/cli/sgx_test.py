@@ -105,7 +105,7 @@ def run_val_cli_init(runner):
     assert not os.path.isdir(SKALE_VAL_CONFIG_FOLDER)
     return runner.invoke(
         sk_val_init,
-        ['-e', 'http://example.com/', '-c', 'http://example.com/',
+        ['-e', 'http://example.com/', '-c', 'production',
          '-w', 'sgx']
     )
 
@@ -139,7 +139,8 @@ def cleanup():
 def test_tx_with_sgx(runner, cleanup):
     config = get_config()
     get_config_mock = mock.Mock(return_value={'wallet': 'sgx',
-                                              'endpoint': config['endpoint']})
+                                              'endpoint': config['endpoint'],
+                                              'manager_contracts': config['manager_contracts']})
     with mock.patch('utils.web3_utils.get_config', new=get_config_mock):
         res = run_validator_register(runner)
         assert res.exit_code == 0

@@ -2,13 +2,13 @@ info:
   help: Show validator CLI info
 init:
   done: Validator CLI initialized successfully
-  help: Set Ethereum endpoint and contracts URL
+  help: Set Ethereum endpoint and SKALE Manager alias or address
   endpoint:
     help: Endpoint of an Ethereum network
     prompt: Please enter an endpoint for the Ethereum network to connect
-  contracts_url:
-    help: Download URL for the SKALE Manager ABIs and addresses
-    prompt: Please enter the URL for the SKALE Manager ABIs and addresses
+  manager_contracts:
+    help: SKALE Manager alias or address
+    prompt: Please enter the SKALE Manager alias or address
   wallet:
     help: Type of wallet that will be used for signing transactions
     prompt: Please enter the type of the wallet that will be used for signing transactions

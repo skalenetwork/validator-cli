@@ -6,7 +6,7 @@ import shutil
 
 from click.testing import CliRunner
 from cli.main import init
-from utils.constants import SKALE_VAL_CONFIG_FOLDER, SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE
+from utils.constants import SKALE_VAL_CONFIG_FOLDER, SKALE_VAL_CONFIG_FILE
 
 TMP_CONFIG_FOLDER = '/tmp/.skale-val-config'
 
@@ -17,7 +17,12 @@ def test_init_fail():
         init,
         ['-e', 'abc']
     )
-    assert result.output == 'Usage: init [OPTIONS]\nTry \'init --help\' for help.\n\nError: Invalid value for \'--endpoint\' / \'-e\': Expected valid url. Got abc\n' # noqa
+    assert result.output == 'Usage: init [OPTIONS]\nTry \'init --help\' for help.\n\nError: Invalid value for \'--endpoint\' / \'-e\': Expected http or https url. Got abc\n' # noqa
+    result = runner.invoke(
+        init,
+        ['-e', 'wss://example.com']
+    )
+    assert result.output == 'Usage: init [OPTIONS]\nTry \'init --help\' for help.\n\nError: Invalid value for \'--endpoint\' / \'-e\': Expected http or https url. Got wss://example.com\n' # noqa
 
 
 def test_init():
@@ -28,16 +33,16 @@ def test_init():
     runner = CliRunner()
     result = runner.invoke(
         init,
-        ['-e', 'http://example.com/', '-c', 'http://example.com/', '-w', 'software']
+        ['-e', 'http://example.com/', '-c', 'production', '-w', 'software']
     )
 
     assert os.path.isfile(SKALE_VAL_CONFIG_FILE)
-    assert os.path.isfile(SKALE_VAL_ABI_FILE)
 
     with open(SKALE_VAL_CONFIG_FILE, "r") as f:
         config = json.load(f)
         assert config['wallet'] == 'software'
         assert config['endpoint'] == 'http://example.com/'
+        assert config['manager_contracts'] == 'production'
 
     assert result.exit_code == 0
     assert result.output == 'Validator CLI initialized successfully\n'
