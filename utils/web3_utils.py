@@ -30,18 +30,15 @@ from skale.wallets.ledger_wallet import LedgerCommunicationError
 
 from core.wallet_tools import get_ledger_wallet_info
 from core.sgx_tools import get_sgx_info, sgx_inited
-from utils.constants import SGX_SSL_CERTS_PATH, SKALE_VAL_ABI_FILE, SPIN_COLOR
-from utils.helper import get_config, print_err_with_log_path, read_json
+from utils.constants import SGX_SSL_CERTS_PATH, SPIN_COLOR
+from utils.helper import get_config, print_err_with_log_path
 
 DISABLE_SPIN = os.getenv('DISABLE_SPIN')
 logger = logging.getLogger(__name__)
 
 
 def create_skale_manager(endpoint, wallet=None):
-    contracts = read_json(SKALE_VAL_ABI_FILE)
-    if 'skale_manager_address' not in contracts:
-        raise ValueError('SKALE Manager address is missing from the contracts data')
-    return SkaleManager(endpoint, contracts['skale_manager_address'], wallet)
+    return SkaleManager(endpoint, get_config()['manager_contracts'], wallet)
 
 
 def init_skale(endpoint, wallet=None, disable_spin=DISABLE_SPIN):

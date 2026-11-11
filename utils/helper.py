@@ -22,7 +22,6 @@ import json
 import logging
 import os
 import sys
-import urllib
 from decimal import Decimal
 
 
@@ -31,7 +30,7 @@ from web3 import Web3
 
 from core.transaction import TxFee
 from utils.exit_codes import CLIExitCodes
-from utils.constants import (SKALE_VAL_CONFIG_FILE, SKALE_VAL_ABI_FILE, PERMILLE_MULTIPLIER,
+from utils.constants import (SKALE_VAL_CONFIG_FILE, PERMILLE_MULTIPLIER,
                              DEBUG_LOG_FILEPATH)
 from utils.texts import Texts
 
@@ -59,21 +58,14 @@ def write_json(path, content):
         json.dump(content, outfile, indent=4)
 
 
-def download_file(url, filepath):
-    try:
-        return urllib.request.urlretrieve(url, filepath)
-    except urllib.error.HTTPError:
-        print(f'Couldn\'t donwload file: {url}')
-
-
 def config_exists():
     return os.path.exists(SKALE_VAL_CONFIG_FILE)
 
 
 def read_config():
     config = read_json(SKALE_VAL_CONFIG_FILE)
-    config['abi'] = read_json(SKALE_VAL_ABI_FILE)
-    return config
+    if 'manager_contracts' in config:
+        return config
 
 
 def get_config():

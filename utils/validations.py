@@ -90,6 +90,6 @@ class UrlType(click.ParamType):
         except ValueError:
             self.fail(f'Some characters are not allowed in {value}',
                       param, ctx)
-        if not all([result.scheme, result.netloc]):
-            self.fail(f'Expected valid url. Got {value}', param, ctx)
+        if result.scheme not in ('http', 'https') or not result.netloc:
+            self.fail(f'Expected http or https url. Got {value}', param, ctx)
         return value
