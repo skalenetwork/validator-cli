@@ -53,7 +53,7 @@ jobs:
         if: runner.os == 'macOS'
         uses: astral-sh/setup-uv@v10.3.3
         with:
-          version: "0.13.6"
+          version: "0.13.8"
 
       - name: Build macOS binary
         if: runner.os == 'macOS'
