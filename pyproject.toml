@@ -7,10 +7,10 @@ name = "validator-cli"
 version = "1.4.0"
 requires-python = ">=3.14"
 dependencies = [
-  "click==8.5.0",
+  "click==8.5.1",
   "PyYAML==6.0.3",
   "skale.py[hw-wallet]==8.0dev0",
-  "texttable==1.7.2",
+  "texttable==1.7.3",
   "yaspin==3.5.1",
 ]
 
@@ -19,7 +19,7 @@ dev = [
   "PyInstaller==6.22.3",
   "pytest==9.2.0",
   "pytest-cov==7.1.0",
-  "ruff==0.17.3",
+  "ruff==0.17.5",
 ]
 
 [tool.setuptools.packages.find]
