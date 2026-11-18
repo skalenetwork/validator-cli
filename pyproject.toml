@@ -9,7 +9,7 @@ requires-python = ">=3.14"
 dependencies = [
   "click==8.5.1",
   "PyYAML==6.0.3",
-  "skale.py[hw-wallet]==8.0dev0",
+  "skale.py[hw-wallet]==8.0dev3",
   "texttable==1.7.3",
   "yaspin==3.5.1",
 ]
