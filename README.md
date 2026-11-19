@@ -11,9 +11,8 @@
     2.1 [Init](#init)  
     2.2 [Validator commands](#validator-commands)  
     2.3 [Holder commands](#holder-commands)  
-    2.4 [Metrics commands](#metrics-commands)  
-    2.5 [Wallet commands](#wallet-commands)  
-    2.6 [Self-recharging wallet commands](#self-recharging-wallet-commands)
+    2.4 [Wallet commands](#wallet-commands)  
+    2.5 [Self-recharging wallet commands](#self-recharging-wallet-commands)
 3.  [Exit codes](#exit-codes)
 4.  [Development](#development)
 
@@ -21,7 +20,7 @@
 
 ### Requirements
 
--   Linux x86_64 machine
+-   Linux x86_64 or macOS on Apple silicon
 
 -   Download executable
 
@@ -43,7 +42,7 @@ All validator-cli version numbers are available here: https://github.com/skalene
 
 ### Init
 
-Download SKALE Manager contracts info and set the endpoint.
+Set the endpoint and the SKALE Manager alias or address.
 
 ```bash
 sk-val init
@@ -52,15 +51,17 @@ sk-val init
 Required arguments:
 
 -   `--endpoint/-e` - RPC endpoint of the node in the network where SKALE manager is deployed (`http` or `https`)
--   `--contracts-url/-c` - - URL to SKALE Manager contracts ABI and addresses
+-   `--manager-contracts/-c` - SKALE Manager alias or address
 -   `-w/--wallet` - Type of the wallet that will be used for signing transactions (software, sgx or hardware)
+
+> In `--manager-contracts`, if you are using a recognized network (e.g., 'Mainnet', 'Hoodi'), you can use a recognized alias (e.g., 'production', 'testnet'). You can check the list of recognized networks and aliases in [contract deployments](https://github.com/skalenetwork/skale-contracts/tree/deployments). On any other network, provide the SKALE Manager address.
 
 If you want to use sgx wallet you need to initialize it first (see **SGX commands**)
 
 Usage example:
 
 ```bash
-sk-val init -e ws://geth.test.com:8546 -c https://test.com/manager.json --wallet software
+sk-val init -e https://geth.test.com -c production --wallet software
 ```
 
 ### SGX commands
@@ -599,39 +600,45 @@ Exit codes conventions for SKALE CLI tools
 
 ### Setup repo
 
+#### Dependencies
+
+-   [uv](https://docs.astral.sh/uv/) 0.13.8+ (installs Python 3.14 from `.python-version`)
+-   Git
+
 #### Install development dependencies
 
 ```bash
-pip install -e .[dev]
+uv sync --all-extras
 ```
 
-##### Add flake8 git hook
+#### Add linting git hook
 
 In file `.git/hooks/pre-commit` add:
 
 ```bash
 #!/bin/sh
-flake8 .
+uv run ruff check
 ```
 
 ### Debugging
 
-Run commands in dev mode:
+Generate `cli/info.py`, then run commands in dev mode:
 
 ```bash
-python main.py YOUR_COMMAND
+bash scripts/generate_info.sh 1.0.0 my-branch
+uv run python cli/main.py YOUR_COMMAND
 ```
 
-### Setting up Travis
+### Tests
 
-Required environment variables:
+The tests deploy skale-manager to a local Anvil chain and run the SGX simulator in Docker. Export `ETH_PRIVATE_KEY`, `MANAGER_TAG` and `SGX_WALLET_TAG` as set in `.github/workflows/test.yml`, then run:
 
--   `ACCESS_KEY_ID` - DO Spaces/AWS S3 API Key ID
--   `SECRET_ACCESS_KEY` - DO Spaces/AWS S3 Secret access key
--   `GITHUB_EMAIL` - Email of GitHub user
--   `GITHUB_OAUTH_TOKEN` - GitHub auth token
--   `ETH_PRIVATE_KEY` - Ethereum private key for tests (without `0x` prefix)
--   `MANAGER_BRANCH` - Branch of the `skale-manager` to pull from DockerHub (`$MANAGER_BRANCH-latest` tag will be used)
+```bash
+RUN_ANVIL=true bash helper-scripts/deploy_manager.sh
+bash scripts/prepare_configs.sh
+bash scripts/generate_info.sh test test
+uv run bash scripts/run_tests.sh
+```
 
 ### License
 

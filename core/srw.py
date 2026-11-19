@@ -22,6 +22,7 @@ import sys
 from typing import Optional
 
 import click
+from web3.exceptions import ContractLogicError
 from yaspin import yaspin
 
 from core.transaction import TxFee
@@ -34,7 +35,7 @@ from utils.web3_utils import init_skale_from_config, init_skale_w_wallet_from_co
 def validator_id_by_address(skale, address):
     try:
         return skale.validator_service.validator_id_by_address(address)
-    except ValueError:
+    except ContractLogicError:
         print(f'Error occurred when trying to get validator ID by address ({address})')
         sys.exit(2)
 

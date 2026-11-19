@@ -4,7 +4,7 @@ import copy
 import random
 from datetime import datetime
 
-import mock
+from unittest import mock
 import pytest
 
 from web3 import Web3
@@ -12,6 +12,7 @@ from skale.wallets.web3_wallet import generate_wallet
 from skale.utils.account_tools import send_eth
 from skale.utils.contracts_provision.main import _skip_evm_time
 from skale.utils.contracts_provision import MONTH_IN_SECONDS
+from skale.types.delegation import DelegationStatus
 from utils.helper import from_wei, permille_to_percent
 
 from cli.validator import (_bond_amount, _register, _ls, _delegations, _accept_delegation,
@@ -28,7 +29,6 @@ from tests.constants import (
     D_DELEGATION_INFO,
     TEST_PK_FILE
 )
-# from tests.prepare_data import set_test_mda
 from tests.utils import create_new_validator_wallet_pk, str_contains, TEST_FEE_OPTIONS
 
 
@@ -189,7 +189,7 @@ def test_accept_delegation(runner, validator, skale, fee_options):
         validator_id=validator_id
     )
     delegation_id = delegations[-1]['id']
-    assert delegations[-1]['status'] == 'PROPOSED'
+    assert delegations[-1]['status'] == DelegationStatus.PROPOSED
 
     result = runner.invoke(
         _accept_delegation,
@@ -205,7 +205,7 @@ def test_accept_delegation(runner, validator, skale, fee_options):
         validator_id=validator_id
     )
     assert delegations[-1]['id'] == delegation_id
-    assert delegations[-1]['status'] == 'ACCEPTED'
+    assert delegations[-1]['status'] == DelegationStatus.ACCEPTED
     assert result.exit_code == 0
     _skip_evm_time(skale.web3, MONTH_IN_SECONDS)
 
@@ -214,7 +214,6 @@ def test_accept_delegation(runner, validator, skale, fee_options):
 def test_accept_all_delegations(runner, validator, skale, fee_options):
     n_of_delegations = 2
     validator_id = validator
-    # set_test_mda()
     for _ in range(n_of_delegations):
         skale.delegation_controller.delegate(
             validator_id=validator_id,
@@ -229,8 +228,8 @@ def test_accept_all_delegations(runner, validator, skale, fee_options):
 
     delegation_id_1 = delegations[-1]['id']
     delegation_id_2 = delegations[-2]['id']
-    assert delegations[-1]['status'] == 'PROPOSED'
-    assert delegations[-2]['status'] == 'PROPOSED'
+    assert delegations[-1]['status'] == DelegationStatus.PROPOSED
+    assert delegations[-2]['status'] == DelegationStatus.PROPOSED
 
     with mock.patch('click.confirm', return_value=True):
         result = runner.invoke(
@@ -245,10 +244,10 @@ def test_accept_all_delegations(runner, validator, skale, fee_options):
         validator_id=validator_id
     )
     assert delegations[-1]['id'] == delegation_id_1
-    assert delegations[-1]['status'] == 'ACCEPTED'
+    assert delegations[-1]['status'] == DelegationStatus.ACCEPTED
 
     assert delegations[-2]['id'] == delegation_id_2
-    assert delegations[-2]['status'] == 'ACCEPTED'
+    assert delegations[-2]['status'] == DelegationStatus.ACCEPTED
 
     assert result.exit_code == 0
     _skip_evm_time(skale.web3, MONTH_IN_SECONDS)
@@ -275,7 +274,7 @@ def test_link_address(runner, validator, skale, new_wallet_pk, fee_options):
             _link_address,
             [
                 node_wallet.address,
-                signature,
+                signature.hex(),
                 *fee_options,
                 '--pk-file', TEST_PK_FILE,
                 '--yes'
@@ -359,12 +358,12 @@ def test_info(runner, skale, validator):
     output_list = result.output.splitlines()
 
     assert result.exit_code == 0
-    assert f'\x1b(0x\x1b(B Validator ID                    \x1b(0x\x1b(B {validator_id}                                          \x1b(0x\x1b(B' in output_list  # noqa
-    assert '\x1b(0x\x1b(B Name                            \x1b(0x\x1b(B test                                       \x1b(0x\x1b(B' in output_list  # noqa
-    assert f'\x1b(0x\x1b(B Address                         \x1b(0x\x1b(B {skale.wallet.address} \x1b(0x\x1b(B' in output_list  # noqa
-    assert '\x1b(0x\x1b(B Fee rate (percent %)            \x1b(0x\x1b(B 1.0                                        \x1b(0x\x1b(B' in output_list  # noqa
-    assert '\x1b(0x\x1b(B Minimum delegation amount (SKL) \x1b(0x\x1b(B 0                                          \x1b(0x\x1b(B', '\x1b(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj\x1b(B'  # noqa
-    # assert '\x1b(0x\x1b(B Accepting delegation requests   \x1b(0x\x1b(B Yes                                        \x1b(0x\x1b(B' in output_list  # noqa
+    assert output_list[0].split() == ['Validator', 'ID', str(validator_id)]
+    assert f'{"Name":<31}   {"test":<42}' in output_list
+    assert f'{"Address":<31}   {skale.wallet.address}' in output_list
+    assert f'{"Fee rate (percent %)":<31}   {"1.0":<42}' in output_list
+    mda = from_wei(skale.validator_service.get(validator_id)['minimum_delegation_amount'])
+    assert f'{"Minimum delegation amount (SKL)":<31}   {str(mda):<42}' in output_list
 
 
 @pytest.mark.parametrize('fee_options', TEST_FEE_OPTIONS)
@@ -391,7 +390,7 @@ def test_bond_amount(runner, skale, validator):
     validator_id = validator
     bond_wei = skale.validator_service.get_and_update_bond_amount(
         validator_id)
-    bond = Web3.fromWei(bond_wei, 'ether')
+    bond = Web3.from_wei(bond_wei, 'ether')
 
     result = runner.invoke(
         _bond_amount,

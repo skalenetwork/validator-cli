@@ -2,9 +2,8 @@ import json
 import os
 import shutil
 
-import mock
+from unittest import mock
 import pytest
-from distutils.dir_util import copy_tree
 from skale.utils.account_tools import send_eth
 
 from cli.main import init as sk_val_init
@@ -51,7 +50,7 @@ def sgx_init_mock(*args, **kwargs):
 def test_init(runner):
     res = run_sgx_init(runner)
     assert res.exit_code == 0
-    assert res.output == 'Sgx account created\n\x1b(0lqqqqqqqqqqqqwqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqk\x1b(B\n\x1b(0x\x1b(B KEY        \x1b(0x\x1b(B VALUE                               \x1b(0x\x1b(B\n\x1b(0tqqqqqqqqqqqqnqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqu\x1b(B\n\x1b(0x\x1b(B Server url \x1b(0x\x1b(B https://127.0.0.1:1026              \x1b(0x\x1b(B\n\x1b(0x\x1b(B SSL port   \x1b(0x\x1b(B 1027                                \x1b(0x\x1b(B\n\x1b(0x\x1b(B Address    \x1b(0x\x1b(B 0x0AAAAAAAAAAAAAAAAAAAAAAaA         \x1b(0x\x1b(B\n\x1b(0x\x1b(B Key        \x1b(0x\x1b(B NEK:1232132132132321313312312321321 \x1b(0x\x1b(B\n\x1b(0mqqqqqqqqqqqqvqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj\x1b(B\nWARNING: If you lost the key you will be unable to access your account again\n'  # noqa
+    assert res.output == 'Sgx account created\n   KEY                      VALUE               \n------------------------------------------------\nServer url   https://127.0.0.1:1026             \nSSL port     1027                               \nAddress      0x0AAAAAAAAAAAAAAAAAAAAAAaA        \nKey          NEK:1232132132132321313312312321321\nWARNING: If you lost the key you will be unable to access your account again\n'  # noqa
 
 
 @mock.patch('cli.sgx_wallet.sgx_inited', sgx_inited_mock_true)
@@ -63,7 +62,7 @@ def test_init_already_inited(runner):
 
     res = run_sgx_init(runner, force=True)
     assert res.exit_code == 0
-    assert res.output == 'Sgx account created\n\x1b(0lqqqqqqqqqqqqwqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqk\x1b(B\n\x1b(0x\x1b(B KEY        \x1b(0x\x1b(B VALUE                               \x1b(0x\x1b(B\n\x1b(0tqqqqqqqqqqqqnqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqu\x1b(B\n\x1b(0x\x1b(B Server url \x1b(0x\x1b(B https://127.0.0.1:1026              \x1b(0x\x1b(B\n\x1b(0x\x1b(B SSL port   \x1b(0x\x1b(B 1027                                \x1b(0x\x1b(B\n\x1b(0x\x1b(B Address    \x1b(0x\x1b(B 0x0AAAAAAAAAAAAAAAAAAAAAAaA         \x1b(0x\x1b(B\n\x1b(0x\x1b(B Key        \x1b(0x\x1b(B NEK:1232132132132321313312312321321 \x1b(0x\x1b(B\n\x1b(0mqqqqqqqqqqqqvqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj\x1b(B\nWARNING: If you lost the key you will be unable to access your account again\n'  # noqa
+    assert res.output == 'Sgx account created\n   KEY                      VALUE               \n------------------------------------------------\nServer url   https://127.0.0.1:1026             \nSSL port     1027                               \nAddress      0x0AAAAAAAAAAAAAAAAAAAAAAaA        \nKey          NEK:1232132132132321313312312321321\nWARNING: If you lost the key you will be unable to access your account again\n'  # noqa
 
 
 def get_info_mock(*args, **kwargs):
@@ -88,7 +87,7 @@ def test_get_sgx_info_not_inited(runner):
 def test_get_sgx_info_table(runner):
     res = runner.invoke(info)
     assert res.exit_code == 0
-    assert res.output == '\x1b(0lqqqqqqqqqqqqwqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqk\x1b(B\n\x1b(0x\x1b(B KEY        \x1b(0x\x1b(B VALUE                               \x1b(0x\x1b(B\n\x1b(0tqqqqqqqqqqqqnqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqu\x1b(B\n\x1b(0x\x1b(B Server url \x1b(0x\x1b(B https://127.0.0.1:1026              \x1b(0x\x1b(B\n\x1b(0x\x1b(B SSL port   \x1b(0x\x1b(B 1027                                \x1b(0x\x1b(B\n\x1b(0x\x1b(B Address    \x1b(0x\x1b(B 0x0AAAAAAAAAAAAAAAAAAAAAAaA         \x1b(0x\x1b(B\n\x1b(0x\x1b(B Key        \x1b(0x\x1b(B NEK:1232132132132321313312312321321 \x1b(0x\x1b(B\n\x1b(0mqqqqqqqqqqqqvqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj\x1b(B\n'  # noqa
+    assert res.output == '   KEY                      VALUE               \n------------------------------------------------\nServer url   https://127.0.0.1:1026             \nSSL port     1027                               \nAddress      0x0AAAAAAAAAAAAAAAAAAAAAAaA        \nKey          NEK:1232132132132321313312312321321\n'  # noqa
 
 
 @mock.patch('cli.sgx_wallet.get_sgx_info', get_info_mock)
@@ -101,12 +100,12 @@ def test_get_sgx_info_raw(runner):
 
 def run_val_cli_init(runner):
     if os.path.isdir(SKALE_VAL_CONFIG_FOLDER):
-        copy_tree(SKALE_VAL_CONFIG_FOLDER, TMP_CONFIG_FOLDER)
+        shutil.copytree(SKALE_VAL_CONFIG_FOLDER, TMP_CONFIG_FOLDER, dirs_exist_ok=True)
         shutil.rmtree(SKALE_VAL_CONFIG_FOLDER)
     assert not os.path.isdir(SKALE_VAL_CONFIG_FOLDER)
     return runner.invoke(
         sk_val_init,
-        ['-e', 'http://example.com/', '-c', 'http://example.com/',
+        ['-e', 'http://example.com/', '-c', 'production',
          '-w', 'sgx']
     )
 
@@ -140,7 +139,8 @@ def cleanup():
 def test_tx_with_sgx(runner, cleanup):
     config = get_config()
     get_config_mock = mock.Mock(return_value={'wallet': 'sgx',
-                                              'endpoint': config['endpoint']})
+                                              'endpoint': config['endpoint'],
+                                              'manager_contracts': config['manager_contracts']})
     with mock.patch('utils.web3_utils.get_config', new=get_config_mock):
         res = run_validator_register(runner)
         assert res.exit_code == 0

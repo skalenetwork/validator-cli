@@ -22,12 +22,15 @@ import logging
 import inspect
 
 import click
-from skale.transactions.exceptions import TransactionError, RevertError
+from skale.transactions.exceptions import (
+    DryRunRevertError,
+    TransactionError,
+    TransactionRevertError,
+)
 
 from cli import __version__
 from cli.info import BUILD_DATETIME, COMMIT, BRANCH, OS, VERSION
 from cli.validator import validator_cli
-# from cli.metrics import metrics_cli
 from cli.holder import holder_cli
 from cli.sgx_wallet import sgx_cli
 from cli.wallet import wallet_cli
@@ -35,10 +38,10 @@ from cli.srw import srw_cli
 from utils.validations import UrlType
 from utils.texts import Texts
 from utils.logs import init_logger, init_log_dir
-from utils.helper import safe_mk_dirs, write_json, download_file, error_exit
+from utils.helper import safe_mk_dirs, write_json, error_exit
 from utils.exit_codes import CLIExitCodes
 from utils.constants import (SKALE_VAL_CONFIG_FOLDER, SKALE_VAL_CONFIG_FILE,
-                             SKALE_VAL_ABI_FILE, LONG_LINE, WALLET_TYPES)
+                             LONG_LINE, WALLET_TYPES)
 
 
 logger = logging.getLogger(__name__)
@@ -73,10 +76,9 @@ def info():
     prompt=TEXTS['init']['endpoint']['prompt']
 )
 @click.option(
-    '--contracts-url', '-c',
-    type=URL_TYPE,
-    help=TEXTS['init']['contracts_url']['help'],
-    prompt=TEXTS['init']['contracts_url']['prompt']
+    '--manager-contracts', '-c',
+    help=TEXTS['init']['manager_contracts']['help'],
+    prompt=TEXTS['init']['manager_contracts']['prompt']
 )
 @click.option(
     '--wallet', '-w',
@@ -84,11 +86,11 @@ def info():
     help=TEXTS['init']['wallet']['help'],
     prompt=TEXTS['init']['wallet']['prompt']
 )
-def init(endpoint, contracts_url, wallet):
+def init(endpoint, manager_contracts, wallet):
     safe_mk_dirs(SKALE_VAL_CONFIG_FOLDER)
-    download_file(contracts_url, SKALE_VAL_ABI_FILE)
     config = {
         'endpoint': endpoint.strip(),
+        'manager_contracts': manager_contracts.strip(),
         'wallet': wallet
     }
     write_json(SKALE_VAL_CONFIG_FILE, config)
@@ -115,7 +117,7 @@ if __name__ == '__main__':
         cmd_collection()
     except SystemExit as err:
         raise err
-    except RevertError as err:
+    except (DryRunRevertError, TransactionRevertError) as err:
         error_exit(err, exit_code=CLIExitCodes.REVERT_ERROR)
     except TransactionError as err:
         error_exit(err, exit_code=CLIExitCodes.TRANSACTION_ERROR)

@@ -1,14 +1,10 @@
 #!/usr/bin/env bash
-
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-PROJECT_DIR=$(dirname $DIR)
+set -e
 
 export DISABLE_SPIN=True
 export SGX_SERVER_URL='https://127.0.0.1:1026'
-
 export SGX_DATA_DIR='tests/tmp-test-sgx'
-export ENV=test
 
 bash scripts/run_sgx_simulator.sh
 
-py.test --cov=$PROJECT_DIR/ $PROJECT_DIR/tests/ --ignore=tests/cli/metrics_node_test.py --ignore=tests/cli/metrics_validator_test.py $@
+pytest --cov=cli --cov=core --cov=utils --cov-report=xml tests/ "$@"

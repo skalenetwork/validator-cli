@@ -28,7 +28,6 @@ from utils.texts import Texts
 
 G_TEXTS = Texts()
 TEXTS = G_TEXTS['sgx']
-MSGS = G_TEXTS['msg']
 
 
 @click.group()

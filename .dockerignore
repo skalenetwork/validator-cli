@@ -1,0 +1,11 @@
+*
+!.git
+!cli
+!core
+!utils
+!main.spec
+!pyproject.toml
+!scripts/build.sh
+!scripts/generate_info.sh
+!text.yml
+**/__pycache__
